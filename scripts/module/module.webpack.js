@@ -34,6 +34,7 @@ module.exports = (config = {}) => ({
       if (packageUtil.isExternalPackageRequest(package, request)) {
         return callback(null, 'commonjs ' + request);
       }
+      console.log('non external package:', request);
       return callback();
     }
   ],
