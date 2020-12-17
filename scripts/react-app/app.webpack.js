@@ -6,15 +6,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
 
-const defaultConfig = {
+const defaultParams = {
   entryFile: undefined,
   outputPath: undefined,
   addHtmlOutput: true,
   addRuntimeConfig: true,
+  dev: false,
   runtimeConfigVars: {},
 };
 
-module.exports = (config = defaultConfig) => {
+module.exports = (inputParams = {}) => {
+  const params = {...defaultParams, ...inputParams};
   const package = JSON.parse(fs.readFileSync(path.join(process.cwd(), './package.json'), 'utf8'));
   return {
     name: package.name,
@@ -23,13 +25,13 @@ module.exports = (config = defaultConfig) => {
       'regenerator-runtime/runtime',
       'whatwg-fetch',
       'react-hot-loader/patch',
-      config.entryFile || path.join(process.cwd(), './src/index.tsx'),
+      params.entryFile || path.join(process.cwd(), './src/index.tsx'),
     ],
     target: 'web',
     output: {
-      chunkFilename: '[name].[hash:8].bundle.js',
       filename: '[name].[hash:8].js',
-      path: config.outputPath || path.join(process.cwd(), './dist'),
+      chunkFilename: '[name].[hash:8].bundle.js',
+      path: params.outputPath || path.join(process.cwd(), './dist'),
       publicPath: '/',
       pathinfo: false,
     },
@@ -46,7 +48,7 @@ module.exports = (config = defaultConfig) => {
     },
     plugins: [
       new webpack.HashedModuleIdsPlugin(),
-      ...(config.addHtmlOutput ? [
+      ...(params.addHtmlOutput ? [
         new HtmlWebpackPlugin({
           inject: true,
           template: path.join(__dirname, './index.html'),
@@ -65,64 +67,12 @@ module.exports = (config = defaultConfig) => {
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
-      ...(config.addRuntimeConfig ? [
-        new CreateRuntimeConfigPlugin(config.runtimeConfigVars)
+      ...(params.addRuntimeConfig ? [
+        new CreateRuntimeConfigPlugin(params.runtimeConfigVars)
       ] : []),
+      ...(params.dev ? [
+        new webpack.HotModuleReplacementPlugin(),
+      ] : [])
     ],
   };
 };
-module.exports = (config = {}) => ({
-  name: package.name,
-  mode: config.dev ? 'development' : 'production',
-  entry: [
-    'core-js/stable',
-    'regenerator-runtime/runtime',
-    'whatwg-fetch',
-    'react-hot-loader/patch',
-    path.join(process.cwd(), './src/index.tsx')
-  ],
-  target: 'web',
-  output: {
-    chunkFilename: '[name].[hash:8].bundle.js',
-    filename: '[name].[hash:8].js',
-    path: path.join(process.cwd(), './dist'),
-    publicPath: '/',
-    pathinfo: false,
-  },
-  resolve: {
-    alias: {
-      'react-dom': '@hot-loader/react-dom',
-    }
-  },
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      chunks: 'all',
-    },
-  },
-  plugins: [
-    new webpack.HashedModuleIdsPlugin(),
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: path.join(__dirname, './index.html'),
-    }),
-    new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
-      PUBLIC_URL: '',
-    }),
-    new CopyPlugin({
-      patterns: [
-        { from: path.join(process.cwd(), './public'), noErrorOnMissing: true },
-      ]
-    }),
-    new webpack.DefinePlugin({
-      APP_NAME: JSON.stringify(package.name),
-      APP_VERSION: JSON.stringify(package.version),
-      APP_DESCRIPTION: JSON.stringify(package.description),
-    }),
-    new CreateRuntimeConfigPlugin({
-    }),
-    ...(config.dev ? [
-      new webpack.HotModuleReplacementPlugin(),
-    ] : [])
-  ],
-});

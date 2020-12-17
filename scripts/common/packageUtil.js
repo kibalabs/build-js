@@ -11,7 +11,12 @@ const isExternalPackageRequest = (package, request) => {
   });
 }
 
+const isInNodeModules = (package, request) => {
+  return isExternalPackageRequest(package, request);
+}
+
 module.exports = {
   getExternalPackages: getExternalPackages,
   isExternalPackageRequest: isExternalPackageRequest,
+  isInNodeModules: isInNodeModules,
 };

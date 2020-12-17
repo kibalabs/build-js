@@ -2,7 +2,6 @@
 'use strict';
 
 const commander = require('commander');
-
 const build = require('./build');
 
 const params = commander
@@ -12,4 +11,4 @@ const params = commander
   .option('-a, --analyze-bundle')
   .parse(process.argv);
 
-build(params.webpackConfigModifier, params.dev, params.start, params.analyzeBundle);
+build(params);

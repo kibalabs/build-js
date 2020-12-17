@@ -11,25 +11,33 @@ const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
 const buildAppWebpackConfig = require('./app.webpack');
 
-export const build = (webpackConfigModifier = undefined, dev = false, analyzeBundle = false, start = false) => {
+const defaultParams = {
+  webpackConfigModifier: undefined,
+  dev: false,
+  analyzeBundle: false,
+  start: false
+};
+
+module.exports = (inputParams = {}) => {
+  const params = {...defaultParams, ...inputParams};
   process.env.NODE_ENV = dev ? 'development' : 'production';
 
   var mergedConfig = webpackMerge.merge(
-    buildCommonWebpackConfig({analyze: analyzeBundle}),
+    buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
     buildJsWebpackConfig({polyfill: true, react: true}),
     buildCssWebpackConfig(),
     buildImagesWebpackConfig(),
-    buildAppWebpackConfig({dev: dev}),
+    buildAppWebpackConfig({dev: params.dev}),
   );
 
-  if (webpackConfigModifier) {
-    const webpackConfigModifier = require(path.join(process.cwd(), webpackConfigModifier));
+  if (params.webpackConfigModifier) {
+    const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = webpackUtil.createCompiler(mergedConfig, start);
+  const compiler = webpackUtil.createCompiler(mergedConfig, params.start);
 
-  if (start) {
+  if (params.start) {
     const host = '0.0.0.0';
     const port = 3000;
     const server = new webpackDevServer(compiler, {
@@ -65,4 +73,3 @@ export const build = (webpackConfigModifier = undefined, dev = false, analyzeBun
     compiler.run();
   }
 };
-export default build;
