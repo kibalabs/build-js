@@ -16,7 +16,10 @@ const defaultParams = {
   webpackConfigModifier: undefined,
   dev: false,
   analyzeBundle: false,
-  start: false
+  start: false,
+  multiEntry: null,
+  allFiles: false,
+  recursive: false,
 };
 
 module.exports = (inputParams = {}) => {

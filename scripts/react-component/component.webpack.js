@@ -4,21 +4,41 @@ const webpack = require('webpack');
 const packageUtil = require('../common/packageUtil');
 
 const defaultParams = {
+  dev: false,
+  packagePath: undefined,
   entryFile: undefined,
   outputPath: undefined,
-  dev: false,
+  excludeAllNodeModules: false,
+  packagePath: undefined,
+  nodeModulesPath: undefined,
+  // NOTE(krish): allow multiple node_modules paths to cater for lerna
+  nodeModulesPaths: undefined,
 };
 
 module.exports = (inputParams = {}) => {
+  console.log('building react component');
   const params = {...defaultParams, ...inputParams};
-  const package = JSON.parse(fs.readFileSync(path.join(process.cwd(), './package.json'), 'utf8'));
-  console.log('Building component with package:', package);
+  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const nodeModulesPaths = params.nodeModulesPaths ? params.nodeModulesPaths : (params.nodeModulesPath ? [params.nodeModulesPath] : [path.join(process.cwd(), './node_modules')]);
+  const externalModules = [];
+  if (params.excludeAllNodeModules) {
+    nodeModulesPaths.forEach(nodeModulesPath => {
+      externalModules.push(...packageUtil.getNodeModules(nodeModulesPath));
+    });
+  } else {
+    externalModules.push(...packageUtil.getExternalModules(package));
+  }
   return {
-    name: package.name,
     entry: [
       params.entryFile || path.join(process.cwd(), './src/index.ts'),
     ],
     target: 'node',
+    // NOTE(krishan711): apparently this is not needed in webpack5: https://github.com/webpack/webpack/issues/1599
+    node: {
+      __dirname: false,
+      __filename: false,
+    },
     output: {
       filename: '[name].js',
       chunkFilename: '[name].bundle.js',
@@ -39,15 +59,14 @@ module.exports = (inputParams = {}) => {
     ],
     externals: [
       function(context, request, callback) {
-        if (packageUtil.isExternalPackageRequest(package, request)) {
+        if (packageUtil.isExternalModuleRequest(externalModules, request)) {
           return callback(null, 'commonjs ' + request);
         }
-        console.log('external', request);
         return callback();
       }
     ],
     // need to set devtool to none otherwise the "require"s for externals
     // don't work when used with an app that is run with start-dev
-    devtool: params.dev ? 'none' : 'eval',
+    devtool: params.dev ? 'none' : false,
   };
 }

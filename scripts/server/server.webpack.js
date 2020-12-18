@@ -2,18 +2,18 @@ const fs = require('fs');
 const path = require('path');
 
 const defaultParams = {
+  dev: false,
+  packagePath: undefined,
   entryFile: undefined,
   outputPath: undefined,
 };
 
 module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
-  const package = JSON.parse(fs.readFileSync(path.join(process.cwd(), './package.json'), 'utf8'));
+  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
-    name: package.name,
-    entry: [
-      params.entryFile || path.join(process.cwd(), './src/index.ts'),
-    ],
+    entry: params.entryFile || path.join(process.cwd(), './src/index.ts'),
     target: 'node',
     node: {
       __dirname: false,

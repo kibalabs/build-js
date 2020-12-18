@@ -20,7 +20,7 @@ const defaultParams = {
 
 module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
-  process.env.NODE_ENV = dev ? 'development' : 'production';
+  process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
   var mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),

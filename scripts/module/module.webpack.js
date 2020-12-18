@@ -4,19 +4,35 @@ const webpack = require('webpack');
 const packageUtil = require('../common/packageUtil');
 
 const defaultParams = {
+  dev: false,
+  packagePath: undefined,
   entryFile: undefined,
   outputPath: undefined,
+  excludeAllNodeModules: false,
+  nodeModulesPath: undefined,
+  // NOTE(krish): allow multiple node_modules paths to cater for lerna
+  nodeModulesPaths: undefined,
 };
 
 module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
-  const package = JSON.parse(fs.readFileSync(path.join(process.cwd(), './package.json'), 'utf8'));
+  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const nodeModulesPaths = params.nodeModulesPaths ? params.nodeModulesPaths : (params.nodeModulesPath ? [params.nodeModulesPath] : [path.join(process.cwd(), './node_modules')]);
+  const externalModules = [];
+  if (params.excludeAllNodeModules) {
+    nodeModulesPaths.forEach(nodeModulesPath => {
+      externalModules.push(...packageUtil.getNodeModules(nodeModulesPath));
+    });
+  } else {
+    externalModules.push(...packageUtil.getExternalModules(package));
+  }
   return {
-    name: package.name,
     entry: [
       params.entryFile || path.join(process.cwd(), './src/index.ts'),
     ],
     target: 'node',
+    // NOTE(krishan711): apparently this is not needed in webpack5: https://github.com/webpack/webpack/issues/1599
     node: {
       __dirname: false,
       __filename: false,
@@ -39,7 +55,7 @@ module.exports = (inputParams = {}) => {
     ],
     externals: [
       function(context, request, callback) {
-        if (packageUtil.isExternalPackageRequest(package, request)) {
+        if (packageUtil.isExternalModuleRequest(externalModules, request)) {
           return callback(null, 'commonjs ' + request);
         }
         return callback();

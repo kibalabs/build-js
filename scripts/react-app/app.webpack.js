@@ -7,19 +7,20 @@ const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
 
 const defaultParams = {
+  dev: false,
+  packagePath: undefined,
   entryFile: undefined,
   outputPath: undefined,
   addHtmlOutput: true,
   addRuntimeConfig: true,
-  dev: false,
   runtimeConfigVars: {},
 };
 
 module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
-  const package = JSON.parse(fs.readFileSync(path.join(process.cwd(), './package.json'), 'utf8'));
+  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
-    name: package.name,
     entry: [
       'core-js/stable',
       'regenerator-runtime/runtime',
@@ -37,7 +38,9 @@ module.exports = (inputParams = {}) => {
     },
     resolve: {
       alias: {
-        'react-dom': '@hot-loader/react-dom',
+        ...(params.dev ? {
+          'react-dom': '@hot-loader/react-dom',
+        } : {}),
       }
     },
     optimization: {
@@ -67,12 +70,8 @@ module.exports = (inputParams = {}) => {
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
-      ...(params.addRuntimeConfig ? [
-        new CreateRuntimeConfigPlugin(params.runtimeConfigVars)
-      ] : []),
-      ...(params.dev ? [
-        new webpack.HotModuleReplacementPlugin(),
-      ] : [])
+      ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
+      ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : [])
     ],
   };
 };
