@@ -1,3 +1,4 @@
+
 class CreateRuntimeConfigPlugin {
 
   constructor(vars = {}, filename = 'runtimeConfig.js') {

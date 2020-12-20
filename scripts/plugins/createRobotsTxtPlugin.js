@@ -1,8 +1,19 @@
 
 class CreateRobotsTxtPlugin {
   apply(compiler) {
-    compiler.hooks.afterEmit.tap('CreateRobots', async () => {
-      fs.writeFileSync(path.join(compiler.options.output.path, 'robots.txt'), 'User-agent: *\nDisallow:\n');
+    compiler.hooks.emit.tapAsync('CreateRuntimeConfigPlugin', (compilation, callback) => {
+      const filename = 'robots.txt';
+      const fileContent = 'User-agent: *\nDisallow:\n';
+      compilation.assets[filename] = {
+        source: function() {
+          return fileContent;
+        },
+        size: function() {
+          return fileContent.length;
+        }
+      };
+
+      callback();
     });
   }
 }
