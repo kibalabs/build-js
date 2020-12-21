@@ -16,7 +16,6 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  console.log('building react component');
   const params = {...defaultParams, ...inputParams};
   const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
@@ -40,7 +39,7 @@ module.exports = (inputParams = {}) => {
       __filename: false,
     },
     output: {
-      filename: '[name].js',
+      filename: 'index.js',
       chunkFilename: '[name].bundle.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,

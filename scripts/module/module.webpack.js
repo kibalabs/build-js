@@ -38,7 +38,8 @@ module.exports = (inputParams = {}) => {
       __filename: false,
     },
     output: {
-      filename: '[name].js',
+      filename: 'index.js',
+      chunkFilename: '[name].bundle.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,
       path: params.outputPath || path.join(process.cwd(), './dist'),

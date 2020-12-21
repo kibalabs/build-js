@@ -34,7 +34,7 @@
     "@types/webpack-env": "1.16.0",
     "babel-loader": "8.2.1",
     "chalk": "4.1.0",
-    "commander": "5.1.0",
+    "commander": "6.2.1",
     "copy-webpack-plugin": "6.3.2",
     "core-js": "3.7.0",
     "css-loader": "3.6.0",

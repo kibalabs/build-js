@@ -34,11 +34,6 @@ module.exports = (inputParams = {}) => {
     buildComponentWebpackConfig({dev: params.dev}),
   );
 
-  if (params.webpackConfigModifier) {
-    const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
-    mergedConfig = webpackConfigModifier(mergedConfig);
-  }
-
   if (params.multiEntry) {
     const indicesOnly = !params.allFiles;
     const fileNamePattern = indicesOnly ? 'index' : '*';
@@ -48,14 +43,17 @@ module.exports = (inputParams = {}) => {
       accumulator[file.replace(new RegExp(`^\.\/${params.multiEntry}\/`), '').replace(/\.(j|t)sx?$/, '')] = file;
       return accumulator;
     }, {});
-  } else {
-    mergedConfig.output.filename = 'index.js';
+  }
+
+  if (params.webpackConfigModifier) {
+    const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
+    mergedConfig = webpackConfigModifier(mergedConfig);
   }
 
   const onBuild = () => {
     if (!params.dev) {
-      console.log('Generating ts declarations...');
-      generateDeclarations(typeof mergedConfig.entry === 'string' ? [mergedConfig.entry] : Object.values(mergedConfig.entry), {
+      const entryPoints = typeof mergedConfig.entry === 'string' ? [mergedConfig.entry] : Object.values(mergedConfig.entry).flat();
+      generateDeclarations(entryPoints, {
         ...tsConfig.compilerOptions,
         outDir: mergedConfig.output.path,
         jsx: 'react',
