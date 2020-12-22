@@ -25,7 +25,7 @@ module.exports = (inputParams = {}) => {
 
   var mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
-    buildJsWebpackConfig({polyfill: params.standalone}),
+    buildJsWebpackConfig({dev: params.dev, polyfill: params.standalone}),
     buildModuleWebpackConfig(),
   );
 

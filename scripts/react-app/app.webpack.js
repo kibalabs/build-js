@@ -5,6 +5,10 @@ const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+<<<<<<< HEAD
+=======
+
+>>>>>>> new
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -82,6 +86,7 @@ module.exports = (inputParams = {}) => {
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
+      new CreateRobotsTxtPlugin(),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
       ...(params.dev ? [
         // new webpack.HotModuleReplacementPlugin(),
