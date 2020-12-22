@@ -53,6 +53,7 @@ module.exports = (inputParams = {}) => {
         name: 'vendor',
         chunks: 'all',
       },
+      moduleIds: 'deterministic',
       usedExports: true,
       minimize: true,
       minimizer: [
@@ -74,7 +75,7 @@ module.exports = (inputParams = {}) => {
       ] : []),
       new CopyPlugin({
         patterns: [
-          { from: params.publicDirectory || path.join.join(process.cwd(), './public'), noErrorOnMissing: true },
+          { from: params.publicDirectory || path.join(process.cwd(), './public'), noErrorOnMissing: true },
         ]
       }),
       new webpack.DefinePlugin({
