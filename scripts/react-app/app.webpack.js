@@ -53,7 +53,6 @@ module.exports = (inputParams = {}) => {
         name: 'vendor',
         chunks: 'all',
       },
-      moduleIds: 'deterministic',
       usedExports: true,
       minimize: true,
       minimizer: [
