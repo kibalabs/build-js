@@ -2,8 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+
+const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
 
 const defaultParams = {
@@ -14,6 +17,7 @@ const defaultParams = {
   addHtmlOutput: true,
   addRuntimeConfig: true,
   runtimeConfigVars: {},
+  publicDirectory: undefined,
 };
 
 module.exports = (inputParams = {}) => {
@@ -46,8 +50,16 @@ module.exports = (inputParams = {}) => {
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
+        name: 'vendor',
         chunks: 'all',
       },
+      usedExports: true,
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          extractComments: true,
+        }),
+      ],
     },
     plugins: [
       new webpack.HashedModuleIdsPlugin(),
@@ -62,7 +74,7 @@ module.exports = (inputParams = {}) => {
       ] : []),
       new CopyPlugin({
         patterns: [
-          { from: path.join(process.cwd(), './public'), noErrorOnMissing: true },
+          { from: params.publicDirectory || path.join.join(process.cwd(), './public'), noErrorOnMissing: true },
         ]
       }),
       new webpack.DefinePlugin({
@@ -70,6 +82,7 @@ module.exports = (inputParams = {}) => {
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
+      new CreateRobotsTxtPlugin(),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
       ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : [])
     ],

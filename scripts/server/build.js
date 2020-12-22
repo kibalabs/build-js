@@ -19,7 +19,7 @@ module.exports = (inputParams = {}) => {
 
   var mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
-    buildJsWebpackConfig(),
+    buildJsWebpackConfig({dev: params.dev}),
     buildServerWebpackConfig(),
   );
 
@@ -30,6 +30,7 @@ module.exports = (inputParams = {}) => {
 
   const compiler = webpackUtil.createCompiler(mergedConfig, params.start);
 
+  // TODO(krishan711): Start doesn't seem to work!
   if (params.start) {
     compiler.watch({
       aggregateTimeout: 1000,

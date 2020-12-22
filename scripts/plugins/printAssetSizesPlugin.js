@@ -10,7 +10,11 @@ function formatBytes(bytes, decimals = 2) {
 class PrintAssetSizesPlugin {
   apply(compiler) {
     compiler.hooks.done.tapAsync('PrintAssetSizesPlugin', (stats, callback) => {
-      console.table(stats.toJson().assets.filter(asset => asset.emitted).map(asset => [asset.name, formatBytes(asset.size)]));
+      const emittedAssets = stats.toJson().assets.filter(asset => asset.emitted);
+      console.table(emittedAssets.map((asset) => {
+        // NOTE(krishan711): console.table does something wierd with colors (its all printing green) and cant use chalk: https://github.com/chalk/chalk/issues/311
+        return [asset.name, formatBytes(asset.size)];
+      }));
       callback();
     });
   }

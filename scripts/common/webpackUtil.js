@@ -22,10 +22,7 @@ const createCompiler = (config, isWatching = false, onBuild = undefined, onPostB
     if (err && !err.message) {
       showAndThrowError(err);
     }
-    let messages = formatWebpackMessages(err ? { errors: [err.message], warnings: []}  : stats.toJson({ all: false, warnings: true, errors: true }));
-    if (messages.errors.length > 0) {
-      showAndThrowError(messages.errors[0]);
-    }
+    const messages = formatWebpackMessages(err ? { errors: [err.message], warnings: []}  : stats.toJson({ all: false, warnings: true, errors: true }));
     return messages;
   };
 
@@ -48,6 +45,9 @@ const createCompiler = (config, isWatching = false, onBuild = undefined, onPostB
   compiler.hooks.done.tap('webpackUtil', (stats) => {
     // TODO(krishan711): why is the first param null here, when does processOutput get used with errors??
     const messages = processOutput(null, stats);
+    if (messages.errors.length > 0) {
+      showAndThrowError(messages.errors[0]);
+    }
     if (onBuild) {
       onBuild();
     }
