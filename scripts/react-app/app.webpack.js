@@ -2,9 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const defaultParams = {
   dev: false,
@@ -14,6 +17,7 @@ const defaultParams = {
   addHtmlOutput: true,
   addRuntimeConfig: true,
   runtimeConfigVars: {},
+  publicDirectory: undefined,
 };
 
 module.exports = (inputParams = {}) => {
@@ -22,10 +26,9 @@ module.exports = (inputParams = {}) => {
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
     entry: [
-      'core-js/stable',
       'regenerator-runtime/runtime',
       'whatwg-fetch',
-      'react-hot-loader/patch',
+      // 'react-hot-loader/patch',
       params.entryFile || path.join(process.cwd(), './src/index.tsx'),
     ],
     target: 'web',
@@ -36,21 +39,29 @@ module.exports = (inputParams = {}) => {
       publicPath: '/',
       pathinfo: false,
     },
-    resolve: {
-      alias: {
-        ...(params.dev ? {
-          'react-dom': '@hot-loader/react-dom',
-        } : {}),
-      }
-    },
+    // resolve: {
+    //   alias: {
+    //     ...(params.dev ? {
+    //       'react-dom': '@hot-loader/react-dom',
+    //     } : {}),
+    //   }
+    // },
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
+        name: 'vendor',
         chunks: 'all',
       },
+      moduleIds: 'deterministic',
+      usedExports: true,
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          extractComments: true,
+        }),
+      ],
     },
     plugins: [
-      new webpack.HashedModuleIdsPlugin(),
       ...(params.addHtmlOutput ? [
         new HtmlWebpackPlugin({
           inject: true,
@@ -62,16 +73,20 @@ module.exports = (inputParams = {}) => {
       ] : []),
       new CopyPlugin({
         patterns: [
-          { from: path.join(process.cwd(), './public'), noErrorOnMissing: true },
+          { from: params.publicDirectory || path.join(process.cwd(), './public'), noErrorOnMissing: true },
         ]
       }),
+      new CreateRobotsTxtPlugin(),
       new webpack.DefinePlugin({
         APP_NAME: JSON.stringify(package.name),
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
-      ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : [])
+      ...(params.dev ? [
+        // new webpack.HotModuleReplacementPlugin(),
+        new ReactRefreshWebpackPlugin(),
+      ] : [])
     ],
   };
 };

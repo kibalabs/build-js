@@ -55,7 +55,7 @@ module.exports = (inputParams = {}) => {
       })
     ],
     externals: [
-      function(context, request, callback) {
+      function({ request }, callback) {
         if (packageUtil.isExternalModuleRequest(externalModules, request)) {
           return callback(null, 'commonjs ' + request);
         }

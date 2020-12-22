@@ -17,12 +17,13 @@ module.exports = (inputParams = {}) => {
   return {
     name: params.name || package.name,
     mode: params.dev ? 'development' : 'production',
-    node: {
-      fs: 'empty',
-      net: 'empty',
-      tls: 'empty',
-    },
     resolve: {
+      fallback: {
+        fs: false,
+        net: false,
+        tls: false,
+        path: require.resolve("path-browserify"),
+      },
       alias: {
         '@src': path.join(process.cwd(), './src'),
       }

@@ -57,7 +57,7 @@ module.exports = (inputParams = {}) => {
       })
     ],
     externals: [
-      function(context, request, callback) {
+      function({ request }, callback) {
         if (packageUtil.isExternalModuleRequest(externalModules, request)) {
           return callback(null, 'commonjs ' + request);
         }
@@ -66,6 +66,6 @@ module.exports = (inputParams = {}) => {
     ],
     // need to set devtool to none otherwise the "require"s for externals
     // don't work when used with an app that is run with start-dev
-    devtool: params.dev ? 'none' : false,
+    devtool: params.dev ? 'source-map' : false,
   };
 }

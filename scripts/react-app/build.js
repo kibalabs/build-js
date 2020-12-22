@@ -24,10 +24,11 @@ module.exports = (inputParams = {}) => {
 
   var mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
-    buildJsWebpackConfig({polyfill: true, react: true}),
+    buildJsWebpackConfig({dev: params.dev, polyfill: true, react: true}),
     buildCssWebpackConfig(),
     buildImagesWebpackConfig(),
     buildAppWebpackConfig({dev: params.dev}),
+    params.start ? {infrastructureLogging: {level: 'warn'}} : {},
   );
 
   if (params.webpackConfigModifier) {
@@ -41,19 +42,21 @@ module.exports = (inputParams = {}) => {
     const host = '0.0.0.0';
     const port = 3000;
     const server = new webpackDevServer(compiler, {
-      host,
-      port,
+      host: host,
+      port: port,
       hot: true,
-      inline: true,
-      quiet: true,
-      publicPath: mergedConfig.output.publicPath,
-      contentBase: './',
       historyApiFallback: true,
-      watchOptions: {
-        aggregateTimeout: 1000,
-        poll: undefined,
-        ignored: ['**/*.d.ts'],
-      },
+      // dev: {
+      //   publicPath: mergedConfig.output.publicPath,
+      // },
+      // static: {
+      //   directory: './',
+      //   watch: {
+      //     aggregateTimeout: 1000,
+      //     poll: undefined,
+      //     ignored: ['**/*.d.ts'],
+      //   },
+      // },
     });
     server.listen(port, host, (err) => {
       if (err) {
