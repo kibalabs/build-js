@@ -25,6 +25,7 @@ module.exports = (inputParams = {}) => {
     plugins: [
       "@babel/plugin-proposal-class-properties",
       "@babel/plugin-proposal-optional-chaining",
+      "@loadable/babel-plugin",
       ...(params.react ? ["react-hot-loader/babel"] : [])
     ],
   };
