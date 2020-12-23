@@ -1,6 +1,6 @@
 {
   "name": "@kibalabs/build",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Utils for building frontend projects at Kiba Labs",
   "license": "MIT",
   "repository": {
