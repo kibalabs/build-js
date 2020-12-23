@@ -14,6 +14,8 @@ module.exports = (inputParams = {}) => {
       rules: [
         {
           test: /\.(j|t)sx?$/,
+          // NOTE(krishan711): node_modules are included so that they are polyfilled by core-js
+          // NOTE(krishan711): if this is un-commented, include core-js as an entry in react-app webpack config
           // exclude: /(node_modules|build|dist)\//,
           use: {
             loader: 'babel-loader',
