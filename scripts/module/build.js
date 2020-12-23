@@ -45,7 +45,7 @@ module.exports = (inputParams = {}) => {
     const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
-  console.log('mergedConfig', mergedConfig);
+  console.log('mergedConfig', JSON.stringify(mergedConfig));
 
   const onBuild = () => {
     if (!params.dev) {
