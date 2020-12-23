@@ -35,9 +35,10 @@ module.exports = (inputParams = {}) => {
     ignore: [
       /\/core-js/,
       /@babel\b/,
+      /webpack/,
     ],
     overrides: [{
-      test: /node_modules\//,
+      test: /(node_modules|build|dist)\//,
       sourceType: 'unambiguous',
     }],
   };
