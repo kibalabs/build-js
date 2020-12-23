@@ -1,6 +1,6 @@
 {
   "name": "@kibalabs/build",
-  "version": "0.5.1",
+  "version": "0.5.0",
   "description": "Utils for building frontend projects at Kiba Labs",
   "license": "MIT",
   "repository": {
@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
-    "@hot-loader/react-dom": "^16.14.0",
+    "@hot-loader/react-dom": "^17.0.1",
     "@loadable/babel-plugin": "^5.13.2",
     "@loadable/webpack-plugin": "^5.13.0",
     "babel-loader": "^8.2.2",
@@ -42,8 +42,8 @@
     "file-loader": "^6.2.0",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^4.5.0",
-    "node-notifier": "^7.0.2",
-    "react-dev-utils": "^10.2.1",
+    "node-notifier": "^9.0.0",
+    "react-dev-utils": "^11.0.1",
     "react-hot-loader": "^4.13.0",
     "rimraf": "^3.0.2",
     "serve": "^11.3.2",
