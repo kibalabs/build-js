@@ -6,9 +6,10 @@ const defaultParams = {
 const polyfillSettings = {
   useBuiltIns: "usage",
   corejs: {
-    version: 3.6,
+    version: 3,
     proposals: true,
   },
+  // TODO(krishan711): support reading this from package.json if its there
   targets: "defaults, >0.2%, not dead, ie 11",
 }
 
@@ -25,8 +26,11 @@ module.exports = (inputParams = {}) => {
     plugins: [
       "@babel/plugin-proposal-class-properties",
       "@babel/plugin-proposal-optional-chaining",
-      "@loadable/babel-plugin",
-      ...(params.react ? ["react-hot-loader/babel"] : [])
+      ...(params.react ? [
+        "react-hot-loader/babel",
+        "babel-plugin-styled-components",
+        "@loadable/babel-plugin",
+      ] : [])
     ],
   };
 }

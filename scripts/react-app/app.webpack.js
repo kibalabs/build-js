@@ -27,7 +27,8 @@ module.exports = (inputParams = {}) => {
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
     entry: [
-      'core-js/stable',
+      // NOTE(krishan711): this is needed because babel doesn't compile the node_modules at the moment
+      // 'core-js/stable',
       'regenerator-runtime/runtime',
       'whatwg-fetch',
       'react-hot-loader/patch',
