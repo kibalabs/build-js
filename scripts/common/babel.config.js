@@ -42,9 +42,9 @@ module.exports = (inputParams = {}) => {
       /^@babel\b/,
       /^webpack/,
     ],
-    overrides: [{
-      test: /node_modules\//,
+    // overrides: [{
+    //   test: /node_modules\//,
       sourceType: 'unambiguous',
-    }],
+    // }],
   };
 }
