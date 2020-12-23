@@ -36,6 +36,7 @@ module.exports = (inputParams = {}) => {
         '@loadable/babel-plugin',
       ] : []),
     ],
+    // NOTE(krishan711): the below is for if node_modules are also compiled (see js.webpack.js)
     ignore: [
       /\/node_modules\/core-js\//,
       /\/node_modules\/@babel\//,
