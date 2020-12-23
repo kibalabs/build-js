@@ -42,7 +42,7 @@ module.exports = (inputParams = {}) => {
     output: {
       filename: 'index.js',
       chunkFilename: '[name].bundle.js',
-      libraryTarget: 'commonjs2',
+      libraryTarget: 'umd',
       umdNamedDefine: true,
       path: params.outputPath || path.join(process.cwd(), './dist'),
       library: name,
@@ -63,5 +63,6 @@ module.exports = (inputParams = {}) => {
         return callback();
       }
     ],
+    devtool: params.dev ? 'source-map' : false,
   };
 }
