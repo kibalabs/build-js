@@ -6,7 +6,6 @@ const defaultParams = {
 module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
   const babelConfig = buildBabelConfig(params);
-  console.log('babelConfig', JSON.stringify(babelConfig));
   return {
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],

@@ -26,7 +26,7 @@ module.exports = (inputParams = {}) => {
         ...(params.preserveModules ? {modules: false} : {}),
       }],
       '@babel/preset-typescript',
-      ...(params.react ? ['@babel/preset-react'] : [])
+      ...(params.react ? ['@babel/preset-react'] : []),
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
@@ -35,16 +35,16 @@ module.exports = (inputParams = {}) => {
         'react-hot-loader/babel',
         'babel-plugin-styled-components',
         '@loadable/babel-plugin',
-      ] : [])
+      ] : []),
     ],
     ignore: [
-      /^core-js\//,
-      /^@babel\//,
-      /^webpack\//,
+      /\/node_modules\/core-js\//,
+      /\/node_modules\/@babel\//,
+      /\/node_modules\/webpack\//,
     ],
-    // overrides: [{
-    //   test: /node_modules\//,
+    overrides: [{
+      test: /node_modules\//,
       sourceType: 'unambiguous',
-    // }],
+    }],
   };
 }
