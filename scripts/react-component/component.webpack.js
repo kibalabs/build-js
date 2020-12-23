@@ -41,12 +41,10 @@ module.exports = (inputParams = {}) => {
     output: {
       filename: 'index.js',
       chunkFilename: '[name].bundle.js',
-      libraryTarget: 'umd',
+      libraryTarget: 'commonjs2',
       umdNamedDefine: true,
       path: params.outputPath || path.join(process.cwd(), './dist'),
       library: package.name,
-      globalObject: 'this',
-      pathinfo: false,
     },
     plugins: [
       new webpack.DefinePlugin({
@@ -64,8 +62,6 @@ module.exports = (inputParams = {}) => {
         return callback();
       }
     ],
-    // need to set devtool to none otherwise the "require"s for externals
-    // don't work when used with an app that is run with start-dev
-    devtool: params.dev ? 'none' : false,
+    devtool: params.dev ? 'source-map' : false,
   };
 }

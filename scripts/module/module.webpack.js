@@ -40,11 +40,10 @@ module.exports = (inputParams = {}) => {
     output: {
       filename: 'index.js',
       chunkFilename: '[name].bundle.js',
-      libraryTarget: 'umd',
+      libraryTarget: 'commonjs2',
       umdNamedDefine: true,
       path: params.outputPath || path.join(process.cwd(), './dist'),
       library: package.name,
-      pathinfo: false,
     },
     plugins: [
       new webpack.DefinePlugin({

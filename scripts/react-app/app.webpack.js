@@ -27,7 +27,7 @@ module.exports = (inputParams = {}) => {
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
     entry: [
-      // 'core-js/stable',
+      'core-js/stable',
       'regenerator-runtime/runtime',
       'whatwg-fetch',
       'react-hot-loader/patch',
@@ -39,7 +39,6 @@ module.exports = (inputParams = {}) => {
       chunkFilename: '[name].[hash:8].bundle.js',
       path: params.outputPath || path.join(process.cwd(), './dist'),
       publicPath: '/',
-      pathinfo: false,
     },
     resolve: {
       alias: {
