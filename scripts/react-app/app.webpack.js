@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
+const LoadablePlugin = require('@loadable/webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
@@ -30,6 +31,8 @@ module.exports = (inputParams = {}) => {
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
     entry: [
+      // NOTE(krishan711): this is needed if babel doesn't transpile the node_modules
+      // 'core-js/stable',
       'regenerator-runtime/runtime',
       'whatwg-fetch',
       // 'react-hot-loader/patch',
@@ -41,7 +44,6 @@ module.exports = (inputParams = {}) => {
       chunkFilename: '[name].[hash:8].bundle.js',
       path: params.outputPath || path.join(process.cwd(), './dist'),
       publicPath: '/',
-      pathinfo: false,
     },
     // resolve: {
     //   alias: {
@@ -87,6 +89,7 @@ module.exports = (inputParams = {}) => {
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
       new CreateRobotsTxtPlugin(),
+      new LoadablePlugin({outputAsset: false, writeToDisk: false}),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
       ...(params.dev ? [
         // new webpack.HotModuleReplacementPlugin(),

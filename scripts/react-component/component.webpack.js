@@ -6,6 +6,7 @@ const packageUtil = require('../common/packageUtil');
 const defaultParams = {
   dev: false,
   packagePath: undefined,
+  name: undefined,
   entryFile: undefined,
   outputPath: undefined,
   excludeAllNodeModules: false,
@@ -19,6 +20,7 @@ module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
   const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const name = params.name || package.name;
   const nodeModulesPaths = params.nodeModulesPaths ? params.nodeModulesPaths : (params.nodeModulesPath ? [params.nodeModulesPath] : [path.join(process.cwd(), './node_modules')]);
   const externalModules = [];
   if (params.excludeAllNodeModules) {
@@ -44,14 +46,12 @@ module.exports = (inputParams = {}) => {
       libraryTarget: 'umd',
       umdNamedDefine: true,
       path: params.outputPath || path.join(process.cwd(), './dist'),
-      library: package.name,
-      globalObject: 'this',
-      pathinfo: false,
+      library: name,
     },
     plugins: [
       new webpack.DefinePlugin({
         'process.env': {
-          PACKAGE_NAME: JSON.stringify(package.name),
+          PACKAGE_NAME: JSON.stringify(name),
           PACKAGE_VERSION: JSON.stringify(package.version),
         }
       })
@@ -64,8 +64,6 @@ module.exports = (inputParams = {}) => {
         return callback();
       }
     ],
-    // need to set devtool to none otherwise the "require"s for externals
-    // don't work when used with an app that is run with start-dev
     devtool: params.dev ? 'source-map' : false,
   };
 }

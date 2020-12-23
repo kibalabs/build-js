@@ -1,11 +1,11 @@
-const makeBabelConfig = require('./babel.config')
+const buildBabelConfig = require('./babel.config')
 
 const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
-  const babelConfig = makeBabelConfig(params);
+  const babelConfig = buildBabelConfig(params);
   return {
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -14,7 +14,9 @@ module.exports = (inputParams = {}) => {
       rules: [
         {
           test: /\.(j|t)sx?$/,
-          exclude: /(node_modules|build|dist)\//,
+          // NOTE(krishan711): node_modules are included so that they are polyfilled by core-js
+          // NOTE(krishan711): if this is un-commented, include core-js as an entry in react-app webpack config
+          // exclude: /(node_modules|build|dist)\//,
           use: {
             loader: 'babel-loader',
             options: babelConfig,
