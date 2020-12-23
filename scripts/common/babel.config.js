@@ -1,6 +1,8 @@
 const defaultParams = {
   polyfill: false,
   react: false,
+  dev: false,
+  preserveModules: false,
 };
 
 const polyfillSettings = {
@@ -8,8 +10,6 @@ const polyfillSettings = {
   corejs: {
     version: 3,
     proposals: true,
-    dev: false,
-    preserveModules: false,
   },
   // TODO(krishan711): support reading this from package.json if its there
   targets: 'defaults, >0.2%, not dead, ie 11',
