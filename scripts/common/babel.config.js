@@ -42,7 +42,7 @@ module.exports = (inputParams = {}) => {
       /\/node_modules\/webpack\//,
     ],
     overrides: [{
-      test: /node_modules\//,
+      test: /(node_modules|build|dist)\//,
       sourceType: 'unambiguous',
     }],
   };
