@@ -32,8 +32,12 @@ module.exports = (inputParams = {}) => {
         "@loadable/babel-plugin",
       ] : [])
     ],
+    ignore: [
+      /\/core-js/,
+      /@babel\b/,
+    ],
     overrides: [{
-      test: './node_modules',
+      test: /node_modules\//,
       sourceType: 'unambiguous',
     }],
   };

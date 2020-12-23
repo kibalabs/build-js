@@ -14,7 +14,7 @@ module.exports = (inputParams = {}) => {
       rules: [
         {
           test: /\.(j|t)sx?$/,
-          exclude: /(node_modules|build|dist)\//,
+          // exclude: /(node_modules|build|dist)\//,
           use: {
             loader: 'babel-loader',
             options: babelConfig,
