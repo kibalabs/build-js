@@ -22,7 +22,7 @@ module.exports = (inputParams = {}) => {
       ['@babel/preset-env', {
         ...(params.polyfill ? polyfillSettings : {}),
         // https://medium.com/@craigmiller160/how-to-fully-optimize-webpack-4-tree-shaking-405e1c76038
-        ...(params.preserveModules ? {modules: false} : {}),
+        // ...(params.preserveModules ? {modules: false} : {}),
       }],
       '@babel/preset-typescript',
       ...(params.react ? ['@babel/preset-react'] : [])
