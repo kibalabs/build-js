@@ -28,7 +28,7 @@ module.exports = (inputParams = {}) => {
   return {
     entry: [
       // NOTE(krishan711): this is needed if babel doesn't transpile the node_modules
-      // 'core-js/stable',
+      'core-js/stable',
       'regenerator-runtime/runtime',
       'whatwg-fetch',
       'react-hot-loader/patch',
