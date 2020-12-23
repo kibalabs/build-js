@@ -8,6 +8,8 @@ const polyfillSettings = {
   corejs: {
     version: 3,
     proposals: true,
+    dev: false,
+    preserveModules: false,
   },
   // TODO(krishan711): support reading this from package.json if its there
   targets: 'defaults, >0.2%, not dead, ie 11',
@@ -19,6 +21,8 @@ module.exports = (inputParams = {}) => {
     presets: [
       ['@babel/preset-env', {
         ...(params.polyfill ? polyfillSettings : {}),
+        // https://medium.com/@craigmiller160/how-to-fully-optimize-webpack-4-tree-shaking-405e1c76038
+        ...(params.preserveModules ? {modules: false} : {}),
       }],
       '@babel/preset-typescript',
       ...(params.react ? ['@babel/preset-react'] : [])
