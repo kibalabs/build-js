@@ -46,7 +46,6 @@ module.exports = (inputParams = {}) => {
       umdNamedDefine: true,
       path: params.outputPath || path.join(process.cwd(), './dist'),
       library: name,
-      pathinfo: false,
     },
     plugins: [
       new webpack.DefinePlugin({
