@@ -7,23 +7,22 @@ const webpack = require('webpack');
 const notifier = require('node-notifier');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 
-const createCompiler = (config, isWatching, onBuild, onPostBuild) => {
-  const showError = (error) => {
+const createCompiler = (config, isWatching = false, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
+  const showAndThrowError = (error) => {
     console.log(chalk.red(error));
     // TODO(krish): get the name from stats and move these functions out
-    notifier.notify({ title: config.name, message: `Error compiling!` });
+    if (showNotifications) {
+      notifier.notify({ title: config.name, message: `Error compiling!` });
+    }
     process.exitCode = 1;
     throw new Error(`Error compiling!`);
   }
 
   const processOutput = (err, stats) => {
     if (err && !err.message) {
-      showError(err);
+      showAndThrowError(err);
     }
-    let messages = formatWebpackMessages(err ? { errors: [err.message], warnings: []}  : stats.toJson({ all: false, warnings: true, errors: true }));
-    if (messages.errors.length > 0) {
-      showError(messages.errors[0]);
-    }
+    const messages = formatWebpackMessages(err ? { errors: [err.message], warnings: []}  : stats.toJson({ all: false, warnings: true, errors: true }));
     return messages;
   };
 
@@ -32,25 +31,38 @@ const createCompiler = (config, isWatching, onBuild, onPostBuild) => {
 
   compiler.hooks.invalid.tap('webpackUtil', () => {
     console.log(`\Building ${config.name}...\n`);
-    notifier.notify({ title: config.name, message: `Building...` });
+    if (showNotifications) {
+      notifier.notify({ title: config.name, message: `Building...` });
+    }
   });
 
   compiler.hooks.failed.tap('webpackUtil', (error) => {
-    console.log(chalk.red(`\Failed to build ${config.name}: ${error}\n`));
+    process.exitCode = 1;
+    console.log(chalk.red(`\Failed to build ${config.name}: ${error}\nFull details:`));
+    console.log(error);
   });
 
   compiler.hooks.done.tap('webpackUtil', (stats) => {
+    // TODO(krishan711): why is the first param null here, when does processOutput get used with errors??
     const messages = processOutput(null, stats);
+    if (messages.errors.length > 0) {
+      showAndThrowError(messages.errors[0]);
+    }
     if (onBuild) {
       onBuild();
     }
     if (messages.warnings.length > 0) {
       console.log(chalk.yellow(messages.warnings.join('\n\n')));
-      notifier.notify({ title: config.name, message: `Built with ${messages.warnings.length} warnings` });
+      if (showNotifications) {
+        notifier.notify({ title: config.name, message: `Built with ${messages.warnings.length} warnings` });
+      }
     } else {
       console.log(chalk.green(`Successfully built ${config.name} 🚀\n`));
-      notifier.notify({ title: config.name, message: `Successfully built 🚀` });
+      if (showNotifications) {
+        notifier.notify({ title: config.name, message: `Successfully built 🚀` });
+      }
     }
+
     if (onPostBuild) {
       onPostBuild();
     }
@@ -59,6 +71,18 @@ const createCompiler = (config, isWatching, onBuild, onPostBuild) => {
   return compiler;
 };
 
+const createAndRunCompiler = (config, isWatching = false, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
+  return new Promise(async (resolve, reject) => {
+    createCompiler(config, isWatching, onBuild, onPostBuild, showNotifications).run((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return reject(err);
+      }
+      return resolve(stats.toJson());
+    });
+  });
+}
+
 module.exports = {
   createCompiler: createCompiler,
+  createAndRunCompiler: createAndRunCompiler,
 };
