@@ -37,9 +37,9 @@ module.exports = (inputParams = {}) => {
       ] : [])
     ],
     ignore: [
-      /core-js/,
-      /@babel\b/,
-      /webpack/,
+      /^core-js/,
+      /^@babel\b/,
+      /^webpack/,
     ],
     overrides: [{
       test: /(node_modules|build|dist)\//,
