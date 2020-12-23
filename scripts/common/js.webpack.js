@@ -19,7 +19,6 @@ module.exports = (inputParams = {}) => {
             loader: 'babel-loader',
             options: babelConfig,
           },
-          sourceType: 'unambiguous',
         },
       ],
     },
