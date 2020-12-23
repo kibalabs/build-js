@@ -16,6 +16,7 @@ const defaultParams = {
   webpackConfigModifier: undefined,
   dev: false,
   analyzeBundle: false,
+  standalone: false,
   start: false,
   multiEntry: null,
   allFiles: false,
@@ -28,7 +29,7 @@ module.exports = (inputParams = {}) => {
 
   var mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
-    buildJsWebpackConfig({dev: params.dev, polyfill: false, react: true, preserveModules: true}),
+    buildJsWebpackConfig({dev: params.dev, polyfill: params.standalone, react: true, preserveModules: true}),
     buildCssWebpackConfig(),
     buildImagesWebpackConfig(),
     buildComponentWebpackConfig({dev: params.dev}),

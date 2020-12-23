@@ -15,7 +15,10 @@ const defaultParams = {
   dev: false,
   analyzeBundle: false,
   standalone: false,
-  start: false
+  start: false,
+  multiEntry: null,
+  allFiles: false,
+  recursive: false,
 };
 
 module.exports = (inputParams = {}) => {
@@ -26,7 +29,7 @@ module.exports = (inputParams = {}) => {
 
   var mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
-    buildJsWebpackConfig({dev: params.dev, polyfill: params.standalone}),
+    buildJsWebpackConfig({dev: params.dev, polyfill: params.standalone, react: false, preserveModules: true}),
     buildModuleWebpackConfig(),
   );
 

@@ -37,7 +37,7 @@ module.exports = (inputParams = {}) => {
       ] : [])
     ],
     ignore: [
-      /\/core-js/,
+      /core-js/,
       /@babel\b/,
       /webpack/,
     ],

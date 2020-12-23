@@ -10,7 +10,6 @@ const defaultParams = {
   entryFile: undefined,
   outputPath: undefined,
   excludeAllNodeModules: false,
-  packagePath: undefined,
   nodeModulesPath: undefined,
   // NOTE(krish): allow multiple node_modules paths to cater for lerna
   nodeModulesPaths: undefined,
