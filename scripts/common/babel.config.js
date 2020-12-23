@@ -11,6 +11,7 @@ const polyfillSettings = {
     version: 3,
     proposals: true,
   },
+  debug: true,
   // TODO(krishan711): support reading this from package.json if its there
   targets: 'defaults, >0.2%, not dead, ie 11',
 }
@@ -42,7 +43,7 @@ module.exports = (inputParams = {}) => {
       /^webpack/,
     ],
     overrides: [{
-      test: /(node_modules|build|dist)\//,
+      test: /node_modules\//,
       sourceType: 'unambiguous',
     }],
   };
