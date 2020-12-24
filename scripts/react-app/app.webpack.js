@@ -27,7 +27,7 @@ module.exports = (inputParams = {}) => {
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
     entry: [
-      // NOTE(krishan711): these two lines are needed when babel is using useBuiltIns: 'entry'
+      // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
       // 'core-js/stable',
       // 'regenerator-runtime/runtime',
       'whatwg-fetch',
