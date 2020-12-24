@@ -6,7 +6,7 @@ const defaultParams = {
 };
 
 const polyfillSettings = {
-  // NOTE(krishan711): this should be usage but isn't because we don't run babel on the node_modules at the moment!
+  // NOTE(krishan711): this should be entry if we aren't processing all the node_modules
   // useBuiltIns: 'entry',
   useBuiltIns: 'usage',
   corejs: {
