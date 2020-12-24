@@ -6,6 +6,8 @@ const defaultParams = {
 };
 
 const polyfillSettings = {
+  // NOTE(krishan711): this should be entry if we aren't processing all the node_modules
+  // useBuiltIns: 'entry',
   useBuiltIns: 'usage',
   corejs: {
     version: 3,
@@ -18,6 +20,7 @@ const polyfillSettings = {
 module.exports = (inputParams = {}) => {
   const params = {...defaultParams, ...inputParams};
   return {
+    sourceType: 'unambiguous',
     presets: [
       ['@babel/preset-env', {
         ...(params.polyfill ? polyfillSettings : {}),
@@ -28,6 +31,7 @@ module.exports = (inputParams = {}) => {
       ...(params.react ? ['@babel/preset-react'] : []),
     ],
     plugins: [
+      '@babel/plugin-transform-runtime',
       '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-optional-chaining',
       ...(params.react ? [
@@ -42,9 +46,5 @@ module.exports = (inputParams = {}) => {
       /\/node_modules\/@babel\//,
       /\/node_modules\/webpack\//,
     ],
-    overrides: [{
-      test: /(node_modules|build|dist)\//,
-      sourceType: 'unambiguous',
-    }],
   };
 }
