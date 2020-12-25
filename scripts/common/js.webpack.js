@@ -20,7 +20,10 @@ module.exports = (inputParams = {}) => {
           // exclude: /(node_modules\/(?!(is-plain-obj))|build|dist)\//,
           use: {
             loader: 'babel-loader',
-            options: babelConfig,
+            options: {
+              ...babelConfig,
+              cacheDirectory: params.dev,
+            },
           },
         },
       ],

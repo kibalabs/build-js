@@ -17,7 +17,7 @@
     "build-react-app": "scripts/react-app/run.js",
     "build-module": "scripts/module/run.js",
     "build-server": "scripts/server/run.js",
-    "kiba-publish": "scripts/publish.js"
+    "kiba-publish": "scripts/publish/run.js"
   },
   "files": [
     "scripts/*"
