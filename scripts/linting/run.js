@@ -2,7 +2,7 @@
 'use strict';
 
 const commander = require('commander');
-const lint = require('lint');
+const lint = require('./lint');
 
 const params = commander
   .option('-d, --directory [path]')

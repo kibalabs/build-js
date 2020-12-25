@@ -18,13 +18,15 @@ module.exports = (inputParams = {}) => {
   try {
     childProcess.execSync(`npm publish ${params.next ? '--tag next' : ''}`);
   } catch (error) {
+    var ignoreError = false;
     if (error.message.includes('You cannot publish over the previously published versions')) {
-      if (!params.ignoreDuplicateError) {
-        throw error;
-      } else {
+      if (params.ignoreDuplicateError) {
         console.log('Skipping already published version!');
+        ignoreError = true;
       }
     }
-    throw error;
+    if (!ignoreError) {
+      throw error;
+    }
   }
 };
