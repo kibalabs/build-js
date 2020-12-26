@@ -38,16 +38,8 @@ jobs:
       run: |
         docker run --name lint $DOCKER_IMAGE:$DOCKER_TAG npm run lint -- --output-file lint-results.json
         docker cp lint:/app/lint-results.json ./lint-results.json
-    - name: Echo results
-      run: cat ./lint-results.json
     - name: Annotate Code Linting Results
       uses: kibalabs/eslint-annotate-action@master
-      # if: failure()
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         report-json: lint-results.json
-    # - name: Upload Lint report
-    #   uses: actions/upload-artifact@v1
-    #   # if: failure()
-    #   with:
-    #     path: lint-results.json

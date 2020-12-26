@@ -1,20 +1,31 @@
 const fs = require('fs');
+const path = require('path');
+
 const { ESLint } = require('eslint');
 
-const buildEslintConfig = require('./eslint.config')
+const buildEslintConfig = require('./eslint.config');
 
 const defaultParams = {
+  configModifier: undefined,
   directory: undefined,
   outputFile: undefined,
   fix: false,
 };
 
 module.exports = async (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
-  // TODO(krishan711): allow use a local config if available
+  const params = { ...defaultParams, ...inputParams };
+  let customConfig = null;
+  if (params.configModifier) {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
+    customConfig = require(path.join(process.cwd(), params.configModifier));
+    if (typeof customConfig === 'function') {
+      customConfig = customConfig(params);
+    }
+  }
   const eslintConfig = buildEslintConfig(params);
   const cli = new ESLint({
     baseConfig: eslintConfig,
+    overrideConfig: customConfig,
     useEslintrc: false,
     reportUnusedDisableDirectives: 'warn',
     errorOnUnmatchedPattern: false,

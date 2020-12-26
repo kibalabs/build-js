@@ -2,7 +2,8 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const params = { ...defaultParams, ...inputParams };
   return {
     env: {
       browser: true,
@@ -62,5 +63,5 @@ module.exports = (inputParams = {}) => {
         'newlines-between': 'always',
       }],
     },
-  }
+  };
 };

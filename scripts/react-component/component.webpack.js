@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+
 const webpack = require('webpack');
+
 const packageUtil = require('../common/packageUtil');
 
 const defaultParams = {
@@ -16,14 +18,14 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  const params = { ...defaultParams, ...inputParams };
   const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   const name = params.name || package.name;
-  const nodeModulesPaths = params.nodeModulesPaths ? params.nodeModulesPaths : (params.nodeModulesPath ? [params.nodeModulesPath] : [path.join(process.cwd(), './node_modules')]);
+  const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
   const externalModules = [];
   if (params.excludeAllNodeModules) {
-    nodeModulesPaths.forEach(nodeModulesPath => {
+    nodeModulesPaths.forEach((nodeModulesPath) => {
       externalModules.push(...packageUtil.getNodeModules(nodeModulesPath));
     });
   } else {
@@ -52,17 +54,17 @@ module.exports = (inputParams = {}) => {
         'process.env': {
           PACKAGE_NAME: JSON.stringify(name),
           PACKAGE_VERSION: JSON.stringify(package.version),
-        }
-      })
+        },
+      }),
     ],
     externals: [
-      function(context, request, callback) {
+      function isExternal(context, request, callback) {
         if (packageUtil.isExternalModuleRequest(externalModules, request)) {
-          return callback(null, 'commonjs ' + request);
+          return callback(null, `commonjs ${request}`);
         }
         return callback();
-      }
+      },
     ],
     devtool: params.dev ? 'source-map' : false,
   };
-}
+};

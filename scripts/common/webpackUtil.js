@@ -1,44 +1,44 @@
 #!/usr/bin/env node
-'use strict';
+
 
 const chalk = require('chalk');
-const rimraf = require('rimraf');
-const webpack = require('webpack');
 const notifier = require('node-notifier');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+const rimraf = require('rimraf');
+const webpack = require('webpack');
 
 const createCompiler = (config, isWatching = false, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
   const showAndThrowError = (error) => {
     console.log(chalk.red(error));
     // TODO(krish): get the name from stats and move these functions out
     if (showNotifications) {
-      notifier.notify({ title: config.name, message: `Error compiling!` });
+      notifier.notify({ title: config.name, message: 'Error compiling!' });
     }
     process.exitCode = 1;
-    throw new Error(`Error compiling!`);
-  }
+    throw new Error('Error compiling!');
+  };
 
   const processOutput = (err, stats) => {
     if (err && !err.message) {
       showAndThrowError(err);
     }
-    const messages = formatWebpackMessages(err ? { errors: [err.message], warnings: []}  : stats.toJson({ all: false, warnings: true, errors: true }));
+    const messages = formatWebpackMessages(err ? { errors: [err.message], warnings: [] } : stats.toJson({ all: false, warnings: true, errors: true }));
     return messages;
   };
 
   rimraf.sync(config.output.path);
-  const compiler = webpack({...config, bail: !isWatching});
+  const compiler = webpack({ ...config, bail: !isWatching });
 
   compiler.hooks.invalid.tap('webpackUtil', () => {
-    console.log(`\Building ${config.name}...\n`);
+    console.log(`Building ${config.name}...\n`);
     if (showNotifications) {
-      notifier.notify({ title: config.name, message: `Building...` });
+      notifier.notify({ title: config.name, message: 'Building...' });
     }
   });
 
   compiler.hooks.failed.tap('webpackUtil', (error) => {
     process.exitCode = 1;
-    console.log(chalk.red(`\Failed to build ${config.name}: ${error}\nFull details:`));
+    console.log(chalk.red(`Failed to build ${config.name}: ${error}\nFull details:`));
     console.log(error);
   });
 
@@ -59,7 +59,7 @@ const createCompiler = (config, isWatching = false, onBuild = undefined, onPostB
     } else {
       console.log(chalk.green(`Successfully built ${config.name} 🚀\n`));
       if (showNotifications) {
-        notifier.notify({ title: config.name, message: `Successfully built 🚀` });
+        notifier.notify({ title: config.name, message: 'Successfully built 🚀' });
       }
     }
 
@@ -72,7 +72,7 @@ const createCompiler = (config, isWatching = false, onBuild = undefined, onPostB
 };
 
 const createAndRunCompiler = (config, isWatching = false, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     createCompiler(config, isWatching, onBuild, onPostBuild, showNotifications).run((err, stats) => {
       if (err || stats.hasErrors()) {
         return reject(err);
@@ -80,9 +80,9 @@ const createAndRunCompiler = (config, isWatching = false, onBuild = undefined, o
       return resolve(stats.toJson());
     });
   });
-}
+};
 
 module.exports = {
-  createCompiler: createCompiler,
-  createAndRunCompiler: createAndRunCompiler,
+  createCompiler,
+  createAndRunCompiler,
 };

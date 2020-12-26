@@ -11,8 +11,8 @@
   "bugs": "https://github.com/kibalabs/build-js/issues",
   "scripts": {
     "clean": "rm -rf ./node_modules ./package-lock.json ./dist",
-    "lint": "scripts/linting/run.js",
-    "lint-fix": "scripts/linting/run.js --fix",
+    "lint": "scripts/linting/run.js --config-modifier ./eslintrc-modifier.js",
+    "lint-fix": "scripts/linting/run.js --config-modifier ./eslintrc-modifier.js --fix",
     "publish-next": "scripts/publish/run.js --next"
   },
   "bin": {

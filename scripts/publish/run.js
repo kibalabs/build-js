@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-'use strict';
+
 
 const commander = require('commander');
+
 const publish = require('./publish');
 
 const params = commander
