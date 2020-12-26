@@ -1,10 +1,10 @@
-const buildBabelConfig = require('./babel.config')
+const buildBabelConfig = require('./babel.config');
 
 const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  const params = { ...defaultParams, ...inputParams };
   const babelConfig = buildBabelConfig(params);
   return {
     resolve: {
@@ -29,4 +29,4 @@ module.exports = (inputParams = {}) => {
       ],
     },
   };
-}
+};

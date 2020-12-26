@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const webpack = require('webpack');
-const CopyPlugin = require('copy-webpack-plugin');
+
 const LoadablePlugin = require('@loadable/webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const webpack = require('webpack');
 
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
@@ -22,7 +23,7 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  const params = { ...defaultParams, ...inputParams };
   const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
@@ -46,7 +47,7 @@ module.exports = (inputParams = {}) => {
         ...(params.dev ? {
           'react-dom': '@hot-loader/react-dom',
         } : {}),
-      }
+      },
     },
     optimization: {
       runtimeChunk: 'single',
@@ -76,7 +77,7 @@ module.exports = (inputParams = {}) => {
       new CopyPlugin({
         patterns: [
           { from: params.publicDirectory || path.join(process.cwd(), './public'), noErrorOnMissing: true },
-        ]
+        ],
       }),
       new webpack.DefinePlugin({
         APP_NAME: JSON.stringify(package.name),
@@ -84,9 +85,9 @@ module.exports = (inputParams = {}) => {
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
       new CreateRobotsTxtPlugin(),
-      new LoadablePlugin({outputAsset: false, writeToDisk: false}),
+      new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
-      ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : [])
+      ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : []),
     ],
   };
 };

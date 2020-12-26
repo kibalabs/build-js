@@ -1,6 +1,5 @@
 
 class CreateRuntimeConfigPlugin {
-
   constructor(vars = {}, filename = 'runtimeConfig.js') {
     this.vars = vars;
     this.filename = filename;
@@ -8,18 +7,19 @@ class CreateRuntimeConfigPlugin {
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync('CreateRuntimeConfigPlugin', (compilation, callback) => {
-      var fileContent = 'const GLOBAL = typeof window !== "undefined" ? window : global;\n';
+      let fileContent = 'const GLOBAL = typeof window !== "undefined" ? window : global;\n';
       Object.keys(this.vars).forEach((key) => {
         fileContent += `GLOBAL.${key} = ${JSON.stringify(this.vars[key])};\n`;
       });
 
+      // eslint-disable-next-line no-param-reassign
       compilation.assets[this.filename] = {
-        source: function() {
+        source() {
           return fileContent;
         },
-        size: function() {
+        size() {
           return fileContent.length;
-        }
+        },
       };
 
       callback();
