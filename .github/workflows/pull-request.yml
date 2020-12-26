@@ -30,8 +30,6 @@ jobs:
       DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/build-js-build
       DOCKER_TAG: ${{ github.sha }}
     steps:
-    - name: Check out the repo
-      uses: actions/checkout@v2
     - name: Login to GitHub Packages Docker Registry
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u ${{ github.repository_owner }} --password-stdin
     - name: Pull docker image
@@ -46,9 +44,4 @@ jobs:
       uses: kibalabs/eslint-annotate-action@master
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        report-json: eslint_report.json
-    - name: Upload ESLint report
-      uses: actions/upload-artifact@v1
-      with:
-        name: eslint_report.json
-        path: eslint_report.json
+        report-json: lint-results.json
