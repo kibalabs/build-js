@@ -10,7 +10,7 @@ jobs:
         working-directory: .
     env:
       DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/build-js-build
-      DOCKER_TAG: ${{ github.ref }}
+      DOCKER_TAG: ${{ github.sha }}
     steps:
     - name: Check out the repo
       uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
         working-directory: .
     env:
       DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/build-js-build
-      DOCKER_TAG: ${{ github.ref }}
+      DOCKER_TAG: ${{ github.sha }}
     steps:
     - name: Check out the repo
       uses: actions/checkout@v2
