@@ -38,8 +38,12 @@ module.exports = (inputParams = {}) => {
       'dist/**',
     ],
     rules: {
+      // NOTE(krishan711): next two lines are weird because of https://stackoverflow.com/questions/63961803/eslint-says-all-enums-in-typescript-app-are-already-declared-in-the-upper-scope
+      'no-shadow': 'off',
+      '@typescript-eslint/no-shadow': ['error'],
       '@typescript-eslint/indent': ['error', 2],
       '@typescript-eslint/no-empty-interface': 'off',
+      'no-console': ['error', { 'allow': ['error', 'warn'] }],
       'max-len': 'off',
       'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
       'lines-between-class-members': 'off',
