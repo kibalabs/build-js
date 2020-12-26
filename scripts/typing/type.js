@@ -41,6 +41,8 @@ module.exports = (inputParams = {}) => {
     ...(customConfig?.compilerOptions || {}),
     noEmit: true,
   });
+
+  // NOTE(krishan711): from https://github.com/microsoft/TypeScript-wiki/blob/master/Using-the-Compiler-API.md
   const emitResult = program.emit();
   const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
   const output = allDiagnostics.reduce((accumulatedValue, diagnostic) => {
@@ -56,4 +58,8 @@ module.exports = (inputParams = {}) => {
   if (params.outputFile) {
     fs.writeFileSync(params.outputFile, output);
   }
+
+  // const exitCode = emitResult.emitSkipped ? 1 : 0;
+  // console.log(`Process exiting with code '${exitCode}'.`);
+  // process.exit(exitCode);
 };
