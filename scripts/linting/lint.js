@@ -34,7 +34,7 @@ module.exports = async (inputParams = {}) => {
   const stylishFormatter = await cli.loadFormatter('stylish');
   console.log(stylishFormatter.format(results));
   if (params.outputFile) {
-    const jsonFormatter = await cli.loadFormatter('json-with-metadata');
+    const jsonFormatter = await cli.loadFormatter('json');
     const resultText = jsonFormatter.format(results);
     fs.writeFileSync(params.outputFile, resultText);
   }
