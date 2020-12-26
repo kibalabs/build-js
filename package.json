@@ -21,6 +21,7 @@
     "build-module": "scripts/module/run.js",
     "build-server": "scripts/server/run.js",
     "lint": "scripts/linting/run.js",
+    "type-check": "scripts/typing/run.js",
     "kiba-publish": "scripts/publish/run.js"
   },
   "files": [
