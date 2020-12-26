@@ -10,7 +10,10 @@
   "homepage": "https://github.com/kibalabs/build-js",
   "bugs": "https://github.com/kibalabs/build-js/issues",
   "scripts": {
-    "publish": "./scripts/publish.js"
+    "clean": "rm -rf ./node_modules ./package-lock.json ./dist",
+    "lint": "scripts/linting/run.js",
+    "lint-fix": "scripts/linting/run.js --fix",
+    "publish-next": "scripts/publish/run.js --next"
   },
   "bin": {
     "build-react-component": "scripts/react-component/run.js",
