@@ -4,7 +4,8 @@ function formatBytes(bytes, decimals = 2) {
   }
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   const bucketIndex = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${parseFloat((bytes / (1024 ** bucketIndex)).toFixed(decimals < 0 ? 0 : decimals))} ${sizes[bucketIndex]}`;
+  const size = parseFloat((bytes / (1024 ** bucketIndex)).toFixed(decimals < 0 ? 0 : decimals));
+  return `${size} ${sizes[bucketIndex]}`;
 }
 
 class PrintAssetSizesPlugin {
