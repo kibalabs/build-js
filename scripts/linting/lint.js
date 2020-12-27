@@ -60,7 +60,7 @@ class AnnotationsFormatter {
       console.log(result);
       result.messages.filter((message) => message.severity > 0).forEach((message) => {
         const annotation = {
-          path: result.filePath,
+          path: path.relative(process.cwd(), result.filePath),
           start_line: message.line,
           end_line: message.endLine,
           message: `[${message.ruleId}] ${message.message}`,
