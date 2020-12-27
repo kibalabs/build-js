@@ -64,7 +64,7 @@ class AnnotationsFormatter {
           start_line: message.line,
           end_line: message.endLine,
           message: `[${message.ruleId}] ${message.message}`,
-          annotation_level: message.severity === 1 ? 'warning' : 'failure',
+          annotation_level: message.severity === 2 ? 'failure' : 'warning',
         };
         if (annotation.start_line === annotation.end_line) {
           annotation.start_column = message.column;
