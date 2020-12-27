@@ -63,8 +63,8 @@ class AnnotationsFormatter {
           file: result.filePath,
           start_line: message.line,
           end_line: message.endLine,
-          start_column: message.column,
-          end_column: message.endColumn,
+          start_column: message.line === message.endLine ? message.column : undefined,
+          end_column: message.line === message.endLine ? message.endColumn : undefined,
           message: `[${message.ruleId}] ${message.message}`,
           annotation_level: message.severity === 1 ? 'warning' : 'failure',
         });

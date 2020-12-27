@@ -36,7 +36,7 @@ jobs:
         docker run --name lint $DOCKER_IMAGE:$DOCKER_TAG npm run lint -- --output-file lint-results.json --output-file-format annotations
         docker cp lint:/app/lint-results.json ./lint-results.json
     - name: Upload linting results
-      uses: kibalabs/github-action-create-annotations@master
+      uses: kibalabs/github-action-create-annotations@main
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         json-file-path: ./lint-results.json
