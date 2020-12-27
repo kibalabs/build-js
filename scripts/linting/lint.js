@@ -54,9 +54,7 @@ module.exports = async (inputParams = {}) => {
 };
 
 class GitHubAnnotationsFormatter {
-  // eslint-disable-next-line class-methods-use-this
   format(eslintResults) {
-    const a = 1;
     const annotations = [];
     eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
       console.log(result);
