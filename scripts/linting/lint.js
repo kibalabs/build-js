@@ -49,6 +49,7 @@ module.exports = async (inputParams = {}) => {
     const fileFormat = params.outputFileFormat || 'json';
     const formatter = fileFormat === 'annotations' ? new GitHubAnnotationsFormatter() : await cli.loadFormatter(fileFormat);
     const resultText = formatter.format(results);
+    console.log(`Saving lint results to ${params.outputFile}`);
     fs.writeFileSync(params.outputFile, resultText);
   }
 };
@@ -58,13 +59,12 @@ class GitHubAnnotationsFormatter {
   format(eslintResults) {
     const annotations = [];
     eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
-      console.log(result);
       result.messages.filter((message) => message.severity > 0).forEach((message) => {
         const annotation = {
           path: path.relative(process.cwd(), result.filePath),
           start_line: message.line,
-          end_line: message.endLine,
-          message: `[${message.ruleId}] ${message.message}`,
+          end_line: message.endLine || message.line,
+          message: `[${message.ruleId || 'global'}] ${message.message}`,
           annotation_level: message.severity === 2 ? 'failure' : 'warning',
         };
         if (annotation.start_line === annotation.end_line) {
