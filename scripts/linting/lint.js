@@ -9,6 +9,7 @@ const defaultParams = {
   configModifier: undefined,
   directory: undefined,
   outputFile: undefined,
+  outputFileFormat: undefined,
   fix: false,
 };
 
@@ -45,8 +46,31 @@ module.exports = async (inputParams = {}) => {
   const stylishFormatter = await cli.loadFormatter('stylish');
   console.log(stylishFormatter.format(results));
   if (params.outputFile) {
-    const jsonFormatter = await cli.loadFormatter('json');
-    const resultText = jsonFormatter.format(results);
+    const fileFormat = params.outputFileFormat || 'json';
+    const formatter = fileFormat === 'annotations' ? new AnnotationsFormatter() : await cli.loadFormatter(fileFormat);
+    const resultText = formatter.format(results);
     fs.writeFileSync(params.outputFile, resultText);
   }
 };
+
+class AnnotationsFormatter {
+  format(eslintResults) {
+    const annotations = []
+    eslintResults.filter(result => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
+      console.log(result);
+      result.messages.filter(message => message.severity > 0).forEach((message) => {
+        annotations.push({
+          file: result.filePath,
+          start_line: message.line,
+          end_line?: message.endLine,
+          start_column?: message.column,
+          end_column?: message.endColumn,
+          title?: string,
+          message: `[${message.ruleId}] ${message.message}`,
+          annotation_level: message.severity === 1 ? 'warning' : 'failure',
+        });
+      });
+    });
+    return JSON.stringify(annotations);
+  }
+}
