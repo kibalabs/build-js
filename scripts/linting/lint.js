@@ -47,13 +47,14 @@ module.exports = async (inputParams = {}) => {
   console.log(stylishFormatter.format(results));
   if (params.outputFile) {
     const fileFormat = params.outputFileFormat || 'json';
-    const formatter = fileFormat === 'annotations' ? new AnnotationsFormatter() : await cli.loadFormatter(fileFormat);
+    const formatter = fileFormat === 'annotations' ? new GitHubAnnotationsFormatter() : await cli.loadFormatter(fileFormat);
     const resultText = formatter.format(results);
     fs.writeFileSync(params.outputFile, resultText);
   }
 };
 
-class AnnotationsFormatter {
+class GitHubAnnotationsFormatter {
+  // eslint-disable-next-line class-methods-use-this
   format(eslintResults) {
     const annotations = [];
     eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
