@@ -55,19 +55,22 @@ module.exports = async (inputParams = {}) => {
 
 class AnnotationsFormatter {
   format(eslintResults) {
-    const annotations = []
-    eslintResults.filter(result => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
+    const annotations = [];
+    eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
       console.log(result);
-      result.messages.filter(message => message.severity > 0).forEach((message) => {
-        annotations.push({
-          file: result.filePath,
+      result.messages.filter((message) => message.severity > 0).forEach((message) => {
+        const annotation = {
+          path: result.filePath,
           start_line: message.line,
           end_line: message.endLine,
-          start_column: message.line === message.endLine ? message.column : undefined,
-          end_column: message.line === message.endLine ? message.endColumn : undefined,
           message: `[${message.ruleId}] ${message.message}`,
           annotation_level: message.severity === 1 ? 'warning' : 'failure',
-        });
+        };
+        if (annotation.start_line !== annotation.end_line) {
+          annotation.start_column = message.column;
+          annotation.end_column = message.endColumn;
+        }
+        annotations.push(annotation);
       });
     });
     return JSON.stringify(annotations);
