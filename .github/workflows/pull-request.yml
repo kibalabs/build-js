@@ -39,4 +39,4 @@ jobs:
       uses: kibalabs/github-action-create-annotations@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        json-file-path: ./examples/simple.json
+        json-file-path: ./lint-results.json
