@@ -43,6 +43,7 @@ module.exports = (inputParams = {}) => {
       '@typescript-eslint/no-shadow': ['error'],
       '@typescript-eslint/indent': ['error', 2],
       '@typescript-eslint/no-empty-interface': 'off',
+      '@typescript-eslint/no-unused-vars': 'error',
       'no-console': ['error', { allow: ['error', 'warn'] }],
       'max-len': 'off',
       'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
