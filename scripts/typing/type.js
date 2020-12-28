@@ -1,22 +1,10 @@
 const fs = require('fs');
 const path = require('path');
+const glob = require('glob');
 
 const ts = require('typescript');
 
 const buildTsConfig = require('./ts.config');
-
-function findInDirectory(directory, filter) {
-  let output = [];
-  fs.readdirSync(directory).forEach((file) => {
-    const filename = path.join(directory, file);
-    if (fs.lstatSync(filename).isDirectory()) {
-      output = output.concat(findInDirectory(filename, filter));
-    } else if (filename.indexOf(filter) >= 0) {
-      output.push(filename);
-    }
-  });
-  return output;
-}
 
 const defaultParams = {
   configModifier: undefined,
@@ -36,7 +24,7 @@ module.exports = (inputParams = {}) => {
     }
   }
   const tsConfig = buildTsConfig(params);
-  const files = findInDirectory(params.directory || './src', '.ts');
+  const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts, tsx}'));
   const program = ts.createProgram(files, {
     ...tsConfig.compilerOptions,
     ...(customConfig?.compilerOptions || {}),
@@ -46,7 +34,6 @@ module.exports = (inputParams = {}) => {
   // NOTE(krishan711): from https://github.com/microsoft/TypeScript-wiki/blob/master/Using-the-Compiler-API.md
   const emitResult = program.emit();
   const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
-
   console.log(new PrettyFormatter().format(allDiagnostics));
   if (params.outputFile) {
     var formatter = null;
@@ -68,16 +55,6 @@ module.exports = (inputParams = {}) => {
 };
 
 class GitHubAnnotationsFormatter {
-  getLine(position, lineMap) {
-    const row = lineMap.filter((lineEndPosition) => position > lineEndPosition).length;
-    return row;
-  }
-
-  getColumn(position, lineMap) {
-    const row = this.getLine(position, lineMap);
-    return position - lineMap[row - 1] + 1;
-  }
-
   format(typingDiagnostics) {
     const annotations = [];
     typingDiagnostics.forEach((diagnostic) => {
@@ -104,10 +81,10 @@ class GitHubAnnotationsFormatter {
 class PrettyFormatter {
   format(typingDiagnostics) {
     const output = typingDiagnostics.reduce((accumulatedValue, diagnostic) => {
-      const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+      var message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
       if (diagnostic.file) {
-        const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-        return `${accumulatedValue}${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}\n`;
+        const start = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+        message = `${diagnostic.file.fileName}:${start.line + 1}:${start.character + 1}: ${message}`;
       }
       return `${accumulatedValue}${message}\n`;
     }, '');
