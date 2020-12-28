@@ -9,6 +9,7 @@ module.exports = (inputParams = {}) => {
       target: 'ES2020',
       module: 'none',
       jsx: 'react',
+      skipLibCheck: true,
       declaration: true,
       declarationMap: true,
       sourceMap: true,
