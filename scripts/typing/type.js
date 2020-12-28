@@ -1,7 +1,8 @@
+/* eslint-disable max-classes-per-file */
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
 
+const glob = require('glob');
 const ts = require('typescript');
 
 const buildTsConfig = require('./ts.config');
@@ -36,14 +37,14 @@ module.exports = (inputParams = {}) => {
   const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
   console.log(new PrettyFormatter().format(allDiagnostics));
   if (params.outputFile) {
-    var formatter = null;
+    let formatter = null;
     const fileFormat = params.outputFileFormat || 'pretty';
     if (fileFormat === 'annotations') {
       formatter = new GitHubAnnotationsFormatter();
     } else if (fileFormat === 'pretty') {
       formatter = new PrettyFormatter();
     } else {
-      throw Error(`Unknown typescript output format option: ${fileFormat}. Must be one of ${['annotations', 'pretty']}`)
+      throw Error(`Unknown typescript output format option: ${fileFormat}. Must be one of ${['annotations', 'pretty']}`);
     }
     console.log(`Saving lint results to ${params.outputFile}`);
     fs.writeFileSync(params.outputFile, formatter.format(allDiagnostics));
@@ -55,6 +56,7 @@ module.exports = (inputParams = {}) => {
 };
 
 class GitHubAnnotationsFormatter {
+  // eslint-disable-next-line class-methods-use-this
   format(typingDiagnostics) {
     const annotations = [];
     typingDiagnostics.forEach((diagnostic) => {
@@ -73,15 +75,16 @@ class GitHubAnnotationsFormatter {
         annotation.end_column = end.character + 1;
       }
       annotations.push(annotation);
-    })
+    });
     return JSON.stringify(annotations);
   }
 }
 
 class PrettyFormatter {
+  // eslint-disable-next-line class-methods-use-this
   format(typingDiagnostics) {
     const output = typingDiagnostics.reduce((accumulatedValue, diagnostic) => {
-      var message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+      let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
       if (diagnostic.file) {
         const start = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
         message = `${diagnostic.file.fileName}:${start.line + 1}:${start.character + 1}: ${message}`;
