@@ -86,7 +86,8 @@ class PrettyFormatter {
       let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
       if (diagnostic.file) {
         const start = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-        message = `${diagnostic.file.fileName}:${start.line + 1}:${start.character + 1}: ${message}`;
+        const fileName = path.relative(process.cwd(), diagnostic.file.fileName);
+        message = `${fileName}:${start.line + 1}:${start.character + 1}: ${message}`;
       }
       return `${accumulatedValue}${message}\n`;
     }, '');
