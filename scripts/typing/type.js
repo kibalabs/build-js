@@ -28,7 +28,7 @@ module.exports = (inputParams = {}) => {
   const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts, tsx}'));
   const program = ts.createProgram(files, {
     ...tsConfig.compilerOptions,
-    ...(customConfig?.compilerOptions || {}),
+    ...(customConfig.compilerOptions || {}),
     noEmit: true,
   });
 
