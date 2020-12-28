@@ -11,7 +11,7 @@ const buildImagesWebpackConfig = require('../common/images.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
 const webpackUtil = require('../common/webpackUtil');
 const generateDeclarations = require('../typing/generateDeclarations');
-const tsConfig = require('../typing/ts.config');
+const buildTsConfig = require('../typing/ts.config');
 const buildComponentWebpackConfig = require('./component.webpack');
 
 const defaultParams = {
@@ -53,6 +53,8 @@ module.exports = (inputParams = {}) => {
     const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
+
+  const tsConfig = buildTsConfig({});
 
   const onBuild = () => {
     if (!params.dev) {
