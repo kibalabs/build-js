@@ -20,6 +20,7 @@ module.exports = (inputParams = {}) => {
       strictPropertyInitialization: true,
       noImplicitThis: true,
       alwaysStrict: true,
+      skipLibCheck: true,
       noUnusedLocals: false,
       noUnusedParameters: false,
       noImplicitReturns: false,
