@@ -60,7 +60,6 @@ class GitHubAnnotationsFormatter {
   format(typingDiagnostics) {
     const annotations = [];
     typingDiagnostics.forEach((diagnostic) => {
-      // console.log('diagnostic', diagnostic);
       const start = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
       const end = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start + diagnostic.length);
       const annotation = {
