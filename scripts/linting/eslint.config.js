@@ -62,12 +62,20 @@ module.exports = (inputParams = {}) => {
         groups: ['builtin', 'external', 'internal'],
         alphabetize: { order: 'asc', caseInsensitive: true },
         pathGroups: [
+          // TODO(krishan711): find out how to prevent these causing newlines
           { pattern: 'react', group: 'external', position: 'before' },
+          { pattern: 'react-dom', group: 'external', position: 'before' },
           { pattern: '@src/**', group: 'internal' },
         ],
         pathGroupsExcludedImportTypes: ['builtin'],
         'newlines-between': 'always',
       }],
     },
+    overrides: [{
+      files: ['**/*.tsx'],
+      rules: {
+        'react/prop-types': 'off'
+      }
+    }]
   };
 };
