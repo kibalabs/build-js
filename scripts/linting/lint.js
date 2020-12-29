@@ -68,8 +68,9 @@ class GitHubAnnotationsFormatter {
           annotation_level: message.severity === 2 ? 'failure' : 'warning',
         };
         if (annotation.start_line === annotation.end_line) {
+          console.log('message', message);
           annotation.start_column = message.column;
-          annotation.end_column = message.endColumn;
+          annotation.end_column = message.endColumn || message.column;
         }
         annotations.push(annotation);
       });
