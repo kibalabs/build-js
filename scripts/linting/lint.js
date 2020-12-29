@@ -69,7 +69,7 @@ class GitHubAnnotationsFormatter {
         };
         if (annotation.start_line === annotation.end_line) {
           annotation.start_column = message.column;
-          annotation.end_column = message.endColumn;
+          annotation.end_column = message.endColumn || message.column;
         }
         annotations.push(annotation);
       });
