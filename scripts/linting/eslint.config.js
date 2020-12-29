@@ -74,8 +74,8 @@ module.exports = (inputParams = {}) => {
     overrides: [{
       files: ['**/*.tsx'],
       rules: {
-        'react/prop-types': 'off'
-      }
-    }]
+        'react/prop-types': 'off',
+      },
+    }],
   };
 };
