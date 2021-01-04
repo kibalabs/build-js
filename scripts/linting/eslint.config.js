@@ -53,6 +53,7 @@ module.exports = (inputParams = {}) => {
       'no-use-before-define': 'off',
       'import/extensions': 'off',
       'no-unused-vars': 'off',
+      'no-nested-ternary': 'off',
       'prefer-destructuring': 'off',
       'arrow-body-style': 'off',
       'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
