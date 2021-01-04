@@ -34,8 +34,8 @@ module.exports = (inputParams = {}) => {
     },
     ignorePatterns: [
       '**/node_modules/**',
-      'build/**',
-      'dist/**',
+      '**/build/**',
+      '**/dist/**',
     ],
     rules: {
       // NOTE(krishan711): next two lines are weird because of https://stackoverflow.com/questions/63961803/eslint-says-all-enums-in-typescript-app-are-already-declared-in-the-upper-scope
