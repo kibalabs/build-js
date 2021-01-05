@@ -30,7 +30,6 @@ module.exports = (inputParams = {}) => {
       react: {
         version: 'detect',
       },
-      'import/ignore': 'react',
     },
     ignorePatterns: [
       '**/node_modules/**',
