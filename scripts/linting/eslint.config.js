@@ -56,6 +56,8 @@ module.exports = (inputParams = {}) => {
       'prefer-destructuring': 'off',
       'arrow-body-style': 'off',
       'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
+      'jsx-quotes': ['error', 'prefer-single'],
+      'react/self-closing-comp': ['error', { component: true, html: true }],
       'react/jsx-first-prop-new-line': ['error', 'multiline'],
       // NOTE(krishan711): the below doesn't work. keep an eye on https://github.com/yannickcr/eslint-plugin-react/issues/2735
       // 'react/jsx-max-props-per-line': ['error', { maximum: 2, when: 'always' }],
@@ -73,7 +75,6 @@ module.exports = (inputParams = {}) => {
         logical: 'parens-new-line',
         prop: 'parens-new-line',
       }],
-      'react/self-closing-comp': ['error', { component: true, html: true }],
       'import/prefer-default-export': 'off',
       'import/no-unresolved': 'off',
       'import/order': ['error', {
