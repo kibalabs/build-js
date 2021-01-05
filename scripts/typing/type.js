@@ -25,7 +25,8 @@ module.exports = (inputParams = {}) => {
     }
   }
   const tsConfig = buildTsConfig(params);
-  const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts, tsx}'));
+  const searchPath = path.join(params.directory || './src', '**', '*.{ts, tsx}');
+  const files = glob.sync(searchPath);
   const program = ts.createProgram(files, {
     ...tsConfig.compilerOptions,
     ...(customConfig.compilerOptions || {}),
