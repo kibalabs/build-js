@@ -60,8 +60,8 @@ module.exports = (inputParams = {}) => {
       // NOTE(krishan711): the below doesn't work. keep an eye on https://github.com/yannickcr/eslint-plugin-react/issues/2735
       // 'react/jsx-max-props-per-line': ['error', { maximum: 2, when: 'always' }],
       // 'react/jsx-max-props-per-line': ['error', { maximum: 1, when: 'multiline' }],
-      'react/jsx-closing-tag-location': 'error',
       'react/jsx-tag-spacing': ['error', { beforeClosing: 'never' }],
+      'react/jsx-closing-tag-location': 'error',
       'react/jsx-closing-bracket-location': ['error', 'line-aligned'],
       'react/jsx-one-expression-per-line': ['error', { allow: 'single-child' }],
       'react/jsx-wrap-multilines': ['error', {
