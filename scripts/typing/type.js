@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const glob = require('glob');
-const ts = require('typescript');
+const chalk = require('chalk');
+const typescript = require('typescript');
 
 const buildTsConfig = require('./ts.config');
 
@@ -28,7 +29,7 @@ module.exports = (inputParams = {}) => {
   // NOTE(krishan711): I couldn't find a way to filter node_modules in the glob (filtering needed for lerna repos)
   const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts, tsx}'));
   const filteredFiles = files.filter((file) => !file.includes('/node_modules/'));
-  const program = ts.createProgram(filteredFiles, {
+  const program = typescript.createProgram(filteredFiles, {
     ...tsConfig.compilerOptions,
     ...(customConfig.compilerOptions || {}),
     noEmit: true,
@@ -36,7 +37,7 @@ module.exports = (inputParams = {}) => {
 
   // NOTE(krishan711): from https://github.com/microsoft/TypeScript-wiki/blob/master/Using-the-Compiler-API.md
   const emitResult = program.emit();
-  const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
+  const allDiagnostics = typescript.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
   console.log(new PrettyFormatter().format(allDiagnostics));
   if (params.outputFile) {
     let formatter = null;
@@ -84,15 +85,38 @@ class GitHubAnnotationsFormatter {
 class PrettyFormatter {
   // eslint-disable-next-line class-methods-use-this
   format(typingDiagnostics) {
-    const output = typingDiagnostics.reduce((accumulatedValue, diagnostic) => {
-      let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+    const messages = typingDiagnostics.reduce((accumulatedValue, diagnostic) => {
+      let message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+      let filePath = '(unknown)';
+      let line = 0;
+      let column = 0;
       if (diagnostic.file) {
+        filePath = path.relative(process.cwd(), diagnostic.file.fileName);
         const start = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-        const fileName = path.relative(process.cwd(), diagnostic.file.fileName);
-        message = `${fileName}:${start.line + 1}:${start.character + 1}: ${message}`;
+        line = start.line + 1;
+        column = start.character + 1;
       }
-      return `${accumulatedValue}${message}\n`;
+      accumulatedValue.push({ filePath, message, line, column, });
+      return accumulatedValue;
+    }, []);
+    const groupedMessages = messages.reduce((accumulatedValue, message) => {
+      if (!(message.filePath in accumulatedValue)) {
+        accumulatedValue[message.filePath] = [];
+      }
+      const group = accumulatedValue[message.filePath];
+      group.push(message);
+      return accumulatedValue;
+    }, {});
+    const output = Object.keys(groupedMessages).reduce((accumulatedValue, groupFilename) => {
+      const groupMessages = groupedMessages[groupFilename].reduce((accumulatedValue, message) => {
+        accumulatedValue.push(`${chalk.grey(message.filePath)}:${message.line}:${message.column} ${message.message}`);
+        return accumulatedValue;
+      }, []);
+      const errorMessage = `${groupMessages.length} errors`;
+      return `${accumulatedValue}\n${chalk.red(errorMessage)} in ${groupFilename}\n${groupMessages.join('\n')}\n`
     }, '');
-    return output;
+    const totalErrorMessage = messages.length ? `Failed due to ${chalk.red(`${messages.length} errors`)}.` : 'Succeeded.';
+    const finalOutput = `${output}\n${totalErrorMessage}`
+    return finalOutput;
   }
 }

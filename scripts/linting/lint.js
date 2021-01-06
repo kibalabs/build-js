@@ -43,8 +43,7 @@ module.exports = async (inputParams = {}) => {
     await ESLint.outputFixes(results);
   }
 
-  const stylishFormatter = await cli.loadFormatter('stylish');
-  console.log(stylishFormatter.format(results));
+  console.log(new PrettyFormatter().format(results));
   if (params.outputFile) {
     const fileFormat = params.outputFileFormat || 'json';
     const formatter = fileFormat === 'annotations' ? new GitHubAnnotationsFormatter() : await cli.loadFormatter(fileFormat);
@@ -75,5 +74,26 @@ class GitHubAnnotationsFormatter {
       });
     });
     return JSON.stringify(annotations);
+  }
+}
+
+class PrettyFormatter {
+  // eslint-disable-next-line class-methods-use-this
+  format(eslintResults) {
+    const messages = [];
+    eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
+      result.messages.filter((message) => message.severity > 0).forEach((message) => {
+        messages.push({
+          filePath: path.relative(process.cwd(), result.filePath),
+          start_line: message.line,
+          start_column: message.column,
+          message: `[${message.ruleId || 'global'}] ${message.message}`,
+          severity: message.severity,
+        });
+      });
+    });
+    console.log(messages);
+    // return JSON.stringify(annotations);
+    return '';
   }
 }
