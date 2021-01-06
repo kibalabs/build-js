@@ -27,6 +27,7 @@ module.exports = (inputParams = {}) => {
       noFallthroughCasesInSwitch: false,
       allowSyntheticDefaultImports: true,
       esModuleInterop: true,
+      resolveJsonModule: true,
     },
   };
 };
