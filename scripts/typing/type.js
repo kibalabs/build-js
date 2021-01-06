@@ -25,9 +25,10 @@ module.exports = (inputParams = {}) => {
     }
   }
   const tsConfig = buildTsConfig(params);
-  const searchPath = path.join(params.directory || './src', '**', '*.{ts, tsx}');
-  const files = glob.sync(searchPath);
-  const program = ts.createProgram(files, {
+  // NOTE(krishan711): I couldn't find a way to filter node_modules in the glob (filtering needed for lerna repos)
+  const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts, tsx}'));
+  const filteredFiles = files.filter((file) => !file.includes('/node_modules/'));
+  const program = ts.createProgram(filteredFiles, {
     ...tsConfig.compilerOptions,
     ...(customConfig.compilerOptions || {}),
     noEmit: true,
