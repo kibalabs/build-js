@@ -13,7 +13,6 @@ const buildJsWebpackConfig = require('../common/js.webpack');
 const { open } = require('../common/platformUtil');
 const webpackUtil = require('../common/webpackUtil');
 const buildAppWebpackConfig = require('./app.webpack');
-const opener = require('./opener');
 
 const defaultParams = {
   webpackConfigModifier: undefined,
