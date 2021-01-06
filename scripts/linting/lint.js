@@ -80,19 +80,23 @@ class GitHubAnnotationsFormatter {
 class PrettyFormatter {
   // eslint-disable-next-line class-methods-use-this
   format(eslintResults) {
-    const messages = [];
+    const messageGroups = {};
     eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
+      const messages = [];
+      const filePath = path.relative(process.cwd(), result.filePath);
       result.messages.filter((message) => message.severity > 0).forEach((message) => {
         messages.push({
-          filePath: path.relative(process.cwd(), result.filePath),
-          start_line: message.line,
-          start_column: message.column,
-          message: `[${message.ruleId || 'global'}] ${message.message}`,
+          filePath: filePath,
+          line: message.line,
+          column: message.column,
+          rule: message.ruleId || 'global',
+          message: message.message,
           severity: message.severity,
         });
       });
+      messageGroups[filePath] = messages;
     });
-    console.log(messages);
+    console.log(messageGroups);
     // return JSON.stringify(annotations);
     return '';
   }

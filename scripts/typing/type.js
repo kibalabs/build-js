@@ -103,8 +103,8 @@ class PrettyFormatter {
       if (!(message.filePath in accumulatedValue)) {
         accumulatedValue[message.filePath] = [];
       }
-      const group = accumulatedValue[message.filePath];
-      group.push(message);
+      const messageGroup = accumulatedValue[message.filePath];
+      messageGroup.push(message);
       return accumulatedValue;
     }, {});
     const output = Object.keys(groupedMessages).reduce((accumulatedValue, groupFilename) => {
