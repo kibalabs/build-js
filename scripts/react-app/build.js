@@ -1,4 +1,3 @@
-const childProcess = require('child_process');
 const dns = require('dns');
 const os = require('os');
 const path = require('path');
@@ -13,6 +12,7 @@ const buildImagesWebpackConfig = require('../common/images.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
 const webpackUtil = require('../common/webpackUtil');
 const buildAppWebpackConfig = require('./app.webpack');
+const opener = require('./opener');
 
 const defaultParams = {
   webpackConfigModifier: undefined,
@@ -67,10 +67,12 @@ module.exports = (inputParams = {}) => {
       if (host === '0.0.0.0') {
         dns.lookup(os.hostname(), (dnsError, address) => {
           console.log(`Use ${mergedConfig.name} at: http://${address}:${port}`);
-          childProcess.execSync(`open http://localhost:${port}`, { stdio: 'inherit' });
+          // childProcess.execSync(`open http://localhost:${port}`, { stdio: 'inherit' });
+          opener(`http://localhost:${port}`, { stdio: 'inherit' });
         });
       } else {
-        childProcess.execSync(`open http://${host}:${port}`, { stdio: 'inherit' });
+        // childProcess.execSync(`open http://${host}:${port}`, { stdio: 'inherit' });
+        opener(`http://localhost:${port}`, { stdio: 'inherit' });
       }
     });
   } else {
