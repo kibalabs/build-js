@@ -1,9 +1,8 @@
-/* eslint-disable max-classes-per-file */
 const fs = require('fs');
 const path = require('path');
 
-const glob = require('glob');
 const chalk = require('chalk');
+const glob = require('glob');
 const typescript = require('typescript');
 
 const buildTsConfig = require('./ts.config');
@@ -69,7 +68,7 @@ class GitHubAnnotationsFormatter {
         path: path.relative(process.cwd(), diagnostic.file.fileName),
         start_line: start.line + 1,
         end_line: end.line + 1,
-        message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
+        message: typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
         annotation_level: diagnostic.category === 1 ? 'failure' : 'warning',
       };
       if (annotation.start_line === annotation.end_line) {
@@ -84,9 +83,23 @@ class GitHubAnnotationsFormatter {
 
 class PrettyFormatter {
   // eslint-disable-next-line class-methods-use-this
+  getSummary(errorCount, warningCount) {
+    let summary = '';
+    if (errorCount) {
+      summary += chalk.red(`${errorCount} errors`);
+    }
+    if (warningCount) {
+      summary = summary ? `${summary} and ` : '';
+      summary += chalk.yellow(`${warningCount} warnings`);
+    }
+    return summary;
+  }
+
   format(typingDiagnostics) {
-    const messages = typingDiagnostics.reduce((accumulatedValue, diagnostic) => {
-      let message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+    const fileMessageMap = [];
+    typingDiagnostics.forEach((diagnostic) => {
+      const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+      const severity = diagnostic.category === 1 ? 'failure' : 'warning';
       let filePath = '(unknown)';
       let line = 0;
       let column = 0;
@@ -96,27 +109,27 @@ class PrettyFormatter {
         line = start.line + 1;
         column = start.character + 1;
       }
-      accumulatedValue.push({ filePath, message, line, column, });
-      return accumulatedValue;
-    }, []);
-    const groupedMessages = messages.reduce((accumulatedValue, message) => {
-      if (!(message.filePath in accumulatedValue)) {
-        accumulatedValue[message.filePath] = [];
+      if (!(filePath in fileMessageMap)) {
+        fileMessageMap[filePath] = [];
       }
-      const messageGroup = accumulatedValue[message.filePath];
-      messageGroup.push(message);
-      return accumulatedValue;
-    }, {});
-    const output = Object.keys(groupedMessages).reduce((accumulatedValue, groupFilename) => {
-      const groupMessages = groupedMessages[groupFilename].reduce((accumulatedValue, message) => {
-        accumulatedValue.push(`${chalk.grey(message.filePath)}:${message.line}:${message.column} ${message.message}`);
-        return accumulatedValue;
+      fileMessageMap[filePath].push({ message, severity, filePath, line, column });
+    });
+    let totalErrorCount = 0;
+    let totalWarningCount = 0;
+    const output = Object.keys(fileMessageMap).reduce((accumulatedValue, filePath) => {
+      const fileMessages = fileMessageMap[filePath].reduce((innerAccumulatedValue, message) => {
+        // const color = message.severity === 'error' ? chalk.red : chalk.yellow;
+        const location = chalk.grey(`${message.filePath}:${message.line}:${message.column}`);
+        innerAccumulatedValue.push(`${location} ${message.message}`);
+        return innerAccumulatedValue;
       }, []);
-      const errorMessage = `${groupMessages.length} errors`;
-      return `${accumulatedValue}\n${chalk.red(errorMessage)} in ${groupFilename}\n${groupMessages.join('\n')}\n`
+      const errorCount = fileMessageMap[filePath].filter((message) => message.severity === 'error').length;
+      totalErrorCount += errorCount;
+      const warningCount = fileMessageMap[filePath].filter((message) => message.severity !== 'error').length;
+      totalWarningCount += warningCount;
+      return `${accumulatedValue}\n${this.getSummary(errorCount, warningCount)} in ${filePath}\n${fileMessages.join('\n')}\n`;
     }, '');
-    const totalErrorMessage = messages.length ? `Failed due to ${chalk.red(`${messages.length} errors`)}.` : 'Succeeded.';
-    const finalOutput = `${output}\n${totalErrorMessage}`
-    return finalOutput;
+    const outcome = totalErrorCount || totalWarningCount ? `Failed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : 'Succeeded.';
+    return `${output}\n${outcome}`;
   }
 }

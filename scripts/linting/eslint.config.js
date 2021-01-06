@@ -55,6 +55,7 @@ module.exports = (inputParams = {}) => {
       'no-nested-ternary': 'off',
       'prefer-destructuring': 'off',
       'arrow-body-style': 'off',
+      'max-classes-per-file': 'off',
       'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
       'jsx-quotes': ['error', 'prefer-single'],
       'react/self-closing-comp': ['error', { component: true, html: true }],

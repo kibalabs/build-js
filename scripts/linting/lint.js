@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const chalk = require('chalk');
 const { ESLint } = require('eslint');
 
 const buildEslintConfig = require('./eslint.config');
@@ -63,7 +64,7 @@ class GitHubAnnotationsFormatter {
           path: path.relative(process.cwd(), result.filePath),
           start_line: message.line,
           end_line: message.endLine || message.line,
-          message: `[${message.ruleId || 'global'}] ${message.message}`,
+          message: `[${message.ruleId || 'general'}] ${message.message}`,
           annotation_level: message.severity === 2 ? 'failure' : 'warning',
         };
         if (annotation.start_line === annotation.end_line) {
@@ -79,25 +80,51 @@ class GitHubAnnotationsFormatter {
 
 class PrettyFormatter {
   // eslint-disable-next-line class-methods-use-this
+  getSummary(errorCount, warningCount) {
+    let summary = '';
+    if (errorCount) {
+      summary += chalk.red(`${errorCount} errors`);
+    }
+    if (warningCount) {
+      summary = summary ? `${summary} and ` : '';
+      summary += chalk.yellow(`${warningCount} warnings`);
+    }
+    return summary;
+  }
+
   format(eslintResults) {
-    const messageGroups = {};
+    const fileMessageMap = {};
     eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
       const messages = [];
       const filePath = path.relative(process.cwd(), result.filePath);
       result.messages.filter((message) => message.severity > 0).forEach((message) => {
         messages.push({
-          filePath: filePath,
-          line: message.line,
-          column: message.column,
-          rule: message.ruleId || 'global',
+          filePath,
+          line: message.line || 0,
+          column: message.column || 0,
+          rule: message.ruleId || 'general',
           message: message.message,
-          severity: message.severity,
+          severity: message.severity === 2 ? 'error' : 'warning',
         });
       });
-      messageGroups[filePath] = messages;
+      fileMessageMap[filePath] = messages;
     });
-    console.log(messageGroups);
-    // return JSON.stringify(annotations);
-    return '';
+    let totalErrorCount = 0;
+    let totalWarningCount = 0;
+    const output = Object.keys(fileMessageMap).reduce((accumulatedValue, filePath) => {
+      const fileMessages = fileMessageMap[filePath].reduce((innerAccumulatedValue, message) => {
+        const color = message.severity === 'error' ? chalk.red : chalk.yellow;
+        const location = chalk.grey(`${message.filePath}:${message.line}:${message.column}`);
+        innerAccumulatedValue.push(`${location} [${color(message.rule)}] ${message.message}`);
+        return innerAccumulatedValue;
+      }, []);
+      const errorCount = fileMessageMap[filePath].filter((message) => message.severity === 'error').length;
+      totalErrorCount += errorCount;
+      const warningCount = fileMessageMap[filePath].filter((message) => message.severity !== 'error').length;
+      totalWarningCount += warningCount;
+      return `${accumulatedValue}\n${this.getSummary(errorCount, warningCount)} in ${filePath}\n${fileMessages.join('\n')}\n`;
+    }, '');
+    const outcome = totalErrorCount || totalWarningCount ? `Failed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : 'Succeeded.';
+    return `${output}\n${outcome}`;
   }
 }
