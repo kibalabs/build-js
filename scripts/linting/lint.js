@@ -25,7 +25,7 @@ module.exports = async (inputParams = {}) => {
     }
   }
   const eslintConfig = buildEslintConfig(params);
-  const cli = new ESLint({
+  const eslint = new ESLint({
     baseConfig: eslintConfig,
     overrideConfig: customConfig,
     useEslintrc: false,
@@ -33,7 +33,7 @@ module.exports = async (inputParams = {}) => {
     errorOnUnmatchedPattern: false,
     fix: !!params.fix,
   });
-  const results = await cli.lintFiles([
+  const results = await eslint.lintFiles([
     `${params.directory || process.cwd()}/**/*.js`,
     `${params.directory || process.cwd()}/**/*.jsx`,
     `${params.directory || process.cwd()}/**/*.ts`,
@@ -47,7 +47,7 @@ module.exports = async (inputParams = {}) => {
   console.log(new PrettyFormatter().format(results));
   if (params.outputFile) {
     const fileFormat = params.outputFileFormat || 'json';
-    const formatter = fileFormat === 'annotations' ? new GitHubAnnotationsFormatter() : await cli.loadFormatter(fileFormat);
+    const formatter = fileFormat === 'annotations' ? new GitHubAnnotationsFormatter() : await eslint.loadFormatter(fileFormat);
     const resultText = formatter.format(results);
     console.log(`Saving lint results to ${params.outputFile}`);
     fs.writeFileSync(params.outputFile, resultText);
@@ -94,6 +94,8 @@ class PrettyFormatter {
 
   format(eslintResults) {
     const fileMessageMap = {};
+    let totalFixableErrorCount = 0;
+    let totalFixableWarningCount = 0;
     eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
       const messages = [];
       const filePath = path.relative(process.cwd(), result.filePath);
@@ -108,10 +110,12 @@ class PrettyFormatter {
         });
       });
       fileMessageMap[filePath] = messages;
+      totalFixableErrorCount += result.fixableErrorCount;
+      totalFixableWarningCount += result.fixableWarningCount;
     });
     let totalErrorCount = 0;
     let totalWarningCount = 0;
-    const output = Object.keys(fileMessageMap).reduce((accumulatedValue, filePath) => {
+    let output = Object.keys(fileMessageMap).reduce((accumulatedValue, filePath) => {
       const fileMessages = fileMessageMap[filePath].reduce((innerAccumulatedValue, message) => {
         const color = message.severity === 'error' ? chalk.red : chalk.yellow;
         const location = chalk.grey(`${message.filePath}:${message.line}:${message.column}`);
@@ -124,7 +128,11 @@ class PrettyFormatter {
       totalWarningCount += warningCount;
       return `${accumulatedValue}\n${this.getSummary(errorCount, warningCount)} in ${filePath}\n${fileMessages.join('\n')}\n`;
     }, '');
-    const outcome = totalErrorCount || totalWarningCount ? `Failed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : 'Succeeded.';
-    return `${output}\n${outcome}`;
+    output += (totalErrorCount || totalWarningCount) ? `\nFailed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : chalk.green('Passed.');
+    const fixableSummary = this.getSummary(totalFixableErrorCount, totalFixableWarningCount);
+    if (fixableSummary) {
+      output += `\n\n${fixableSummary} are fixable with --fix ("npm run lint-fix" if in a @kibalabs formatted repo).`;
+    }
+    return output;
   }
 }

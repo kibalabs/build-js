@@ -116,7 +116,7 @@ class PrettyFormatter {
     });
     let totalErrorCount = 0;
     let totalWarningCount = 0;
-    const output = Object.keys(fileMessageMap).reduce((accumulatedValue, filePath) => {
+    let output = Object.keys(fileMessageMap).reduce((accumulatedValue, filePath) => {
       const fileMessages = fileMessageMap[filePath].reduce((innerAccumulatedValue, message) => {
         // const color = message.severity === 'error' ? chalk.red : chalk.yellow;
         const location = chalk.grey(`${message.filePath}:${message.line}:${message.column}`);
@@ -129,7 +129,7 @@ class PrettyFormatter {
       totalWarningCount += warningCount;
       return `${accumulatedValue}\n${this.getSummary(errorCount, warningCount)} in ${filePath}\n${fileMessages.join('\n')}\n`;
     }, '');
-    const outcome = totalErrorCount || totalWarningCount ? `Failed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : 'Succeeded.';
-    return `${output}\n${outcome}`;
+    output += (totalErrorCount || totalWarningCount) ? `\nFailed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : chalk.green('Passed.');
+    return output;
   }
 }
