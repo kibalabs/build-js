@@ -99,7 +99,7 @@ class PrettyFormatter {
     const fileMessageMap = [];
     typingDiagnostics.forEach((diagnostic) => {
       const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
-      const severity = diagnostic.category === 1 ? 'failure' : 'warning';
+      const severity = diagnostic.category === 1 ? 'error' : 'warning';
       let filePath = '(unknown)';
       let line = 0;
       let column = 0;
