@@ -1,14 +1,14 @@
 {
-  "name": "@kibalabs/build",
+  "name": "@hook-tech/build",
   "version": "0.6.4",
-  "description": "Utils for building frontend projects at Kiba Labs",
+  "description": "Utils for building frontend projects at Hook",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kibalabs/build-js.git"
+    "url": "https://github.com/hook-tech/build-js.git"
   },
-  "homepage": "https://github.com/kibalabs/build-js",
-  "bugs": "https://github.com/kibalabs/build-js/issues",
+  "homepage": "https://github.com/hook-tech/build-js",
+  "bugs": "https://github.com/hook-tech/build-js/issues",
   "scripts": {
     "clean": "rm -rf ./node_modules ./package-lock.json ./dist",
     "lint": "scripts/linting/run.js --config-modifier ./eslintrc-modifier.js",
