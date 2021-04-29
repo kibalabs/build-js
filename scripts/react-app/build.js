@@ -58,6 +58,7 @@ module.exports = (inputParams = {}) => {
         poll: undefined,
         ignored: ['**/*.d.ts'],
       },
+      ...(mergedConfig.devServer || {}),
     });
     server.listen(port, host, (error) => {
       if (error) {
