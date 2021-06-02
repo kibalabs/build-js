@@ -20,6 +20,7 @@ const polyfillSettings = {
 module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
   return {
+    sourceType: 'unambiguous',
     presets: [
       ['@babel/preset-env', {
         ...(params.polyfill ? polyfillSettings : {}),
@@ -34,9 +35,11 @@ module.exports = (inputParams = {}) => {
       '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-optional-chaining',
       ...(params.react ? [
-        'react-hot-loader/babel',
         'babel-plugin-styled-components',
         '@loadable/babel-plugin',
+      ] : []),
+      ...(params.react && params.dev ? [
+        'react-refresh/babel',
       ] : []),
     ],
     // NOTE(krishan711): the below is for if node_modules are also compiled (see js.webpack.js)
@@ -47,7 +50,7 @@ module.exports = (inputParams = {}) => {
     ],
     overrides: [{
       test: /(node_modules|build|dist)\//,
-      sourceType: 'unambiguous',
+      compact: true,
     }],
   };
 };

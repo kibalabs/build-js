@@ -5,20 +5,21 @@ class CreateRobotsTxtPlugin {
   }
 
   apply(compiler) {
-    compiler.hooks.emit.tapAsync('CreateRobotsTxtPlugin', (compilation, callback) => {
-      const fileContent = 'User-agent: *\nDisallow:\n';
-      // eslint-disable-next-line no-param-reassign
-      compilation.assets[this.filename] = {
-        source() {
-          return fileContent;
-        },
-        size() {
-          return fileContent.length;
-        },
-      };
-
-      callback();
-    });
+    // compiler.hooks.compilation.tapAsync('CreateRobotsTxtPlugin', (compilation) => {
+    //   compilation.hooks.additionalAssets.tapAsync('CreateRobotsTxtPlugin', (callback) => {
+    //     const fileContent = 'User-agent: *\nDisallow:\n';
+    //     // eslint-disable-next-line no-param-reassign
+    //     compilation.assets[this.filename] = {
+    //       source() {
+    //         return fileContent;
+    //       },
+    //       size() {
+    //         return fileContent.length;
+    //       },
+    //     };
+    //     callback();
+    //   });
+    // });
   }
 }
 

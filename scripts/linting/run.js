@@ -11,6 +11,7 @@ const params = commander
   .option('-o, --output-file [path]')
   .option('-of, --output-file-format [format]')
   .option('-f, --fix')
-  .parse(process.argv);
+  .parse(process.argv)
+  .opts();
 
 lint(params);

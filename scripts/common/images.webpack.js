@@ -13,7 +13,7 @@ module.exports = (inputParams = {}) => {
             loader: 'url-loader',
             options: {
               fallback: 'file-loader',
-              name: '[name]__[local]___[hash:base64:5].[ext]',
+              name: '[name].[contenthash].[ext]',
               outputPath: 'assets/',
               publicPath: '/assets/',
             },

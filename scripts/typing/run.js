@@ -9,6 +9,7 @@ const params = commander
   .option('-d, --directory [path]')
   .option('-o, --output-file [path]')
   .option('-of, --output-file-format [format]')
-  .parse(process.argv);
+  .parse(process.argv)
+  .opts();
 
 type(params);

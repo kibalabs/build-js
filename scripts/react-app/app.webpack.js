@@ -33,23 +33,15 @@ module.exports = (inputParams = {}) => {
       // 'core-js/stable',
       // 'regenerator-runtime/runtime',
       'whatwg-fetch',
-      'react-hot-loader/patch',
       params.entryFile || path.join(process.cwd(), './src/index.tsx'),
     ],
     target: 'web',
     output: {
-      filename: '[name].[hash:8].js',
-      chunkFilename: '[name].[hash:8].bundle.js',
+      filename: '[name].[contenthash].js',
+      chunkFilename: '[name].[contenthash].bundle.js',
       path: params.outputPath || path.join(process.cwd(), './dist'),
       publicPath: '/',
     },
-    // resolve: {
-    //   alias: {
-    //     ...(params.dev ? {
-    //       'react-dom': '@hot-loader/react-dom',
-    //     } : {}),
-    //   },
-    // },
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
@@ -66,7 +58,6 @@ module.exports = (inputParams = {}) => {
       ],
     },
     plugins: [
-      // new webpack.HashedModuleIdsPlugin(),
       ...(params.addHtmlOutput ? [
         new HtmlWebpackPlugin({
           inject: true,
@@ -90,7 +81,7 @@ module.exports = (inputParams = {}) => {
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
       ...(params.dev ? [
-        // new webpack.HotModuleReplacementPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
         new ReactRefreshWebpackPlugin(),
       ] : []),
     ],

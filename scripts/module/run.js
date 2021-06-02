@@ -12,6 +12,7 @@ const params = commander
   .option('-s, --start')
   .option('-e, --standalone') // TODO(krish): think of a better name - this implies the dependencies are added but they aren't (it just polyfills)
   .option('-a, --analyze-bundle')
-  .parse(process.argv);
+  .parse(process.argv)
+  .opts();
 
 build(params);

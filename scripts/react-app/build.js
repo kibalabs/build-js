@@ -40,6 +40,9 @@ module.exports = (inputParams = {}) => {
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
 
+  mergedConfig.infrastructureLogging = {
+    level: 'warn',
+  };
   const compiler = webpackUtil.createCompiler(mergedConfig, params.start);
 
   if (params.start) {
@@ -49,8 +52,19 @@ module.exports = (inputParams = {}) => {
       host,
       port,
       hot: true,
+      inline: true,
+      quiet: true,
+      publicPath: mergedConfig.output.publicPath,
+      contentBase: './',
       historyApiFallback: true,
-      // dev: {
+      watchOptions: {
+        aggregateTimeout: 1000,
+        poll: undefined,
+        ignored: ['**/*.d.ts'],
+      },
+      // Below is for webpack 4
+      // historyApiFallback: true,
+      // devMiddleware: {
       //   publicPath: mergedConfig.output.publicPath,
       // },
       // static: {
