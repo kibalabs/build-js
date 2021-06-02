@@ -29,7 +29,7 @@ module.exports = (inputParams = {}) => {
         '@src': path.join(process.cwd(), './src'),
       },
     },
-    infrastructureLogging = {
+    infrastructureLogging: {
       level: 'warn',
     },
     plugins: [

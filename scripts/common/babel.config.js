@@ -31,11 +31,11 @@ module.exports = (inputParams = {}) => {
       ...(params.react ? ['@babel/preset-react'] : []),
     ],
     plugins: [
-      'react-hot-loader/babel',
       '@babel/plugin-transform-runtime',
       '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-optional-chaining',
       ...(params.react ? [
+        'react-hot-loader/babel',
         'babel-plugin-styled-components',
         '@loadable/babel-plugin',
       ] : []),
