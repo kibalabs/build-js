@@ -22,18 +22,18 @@ class CreateRuntimeConfigPlugin {
     });
   }
 
-    // compiler.hooks.processAssets.tapAsync('CreateRuntimeConfigPlugin', (compilation, callback) => {
-    //   // compilation.assets[this.filename] = {
-    //   //   source() {
-    //   //     return fileContent;
-    //   //   },
-    //   //   size() {
-    //   //     return fileContent.length;
-    //   //   },
-    //   // };
+  // compiler.hooks.processAssets.tapAsync('CreateRuntimeConfigPlugin', (compilation, callback) => {
+  //   // compilation.assets[this.filename] = {
+  //   //   source() {
+  //   //     return fileContent;
+  //   //   },
+  //   //   size() {
+  //   //     return fileContent.length;
+  //   //   },
+  //   // };
 
-    //   callback();
-    // });
+  //   callback();
+  // });
 }
 
 module.exports = CreateRuntimeConfigPlugin;
