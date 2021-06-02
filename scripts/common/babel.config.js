@@ -1,4 +1,3 @@
-
 const defaultParams = {
   polyfill: false,
   react: false,

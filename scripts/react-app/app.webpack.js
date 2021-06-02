@@ -12,7 +12,6 @@ const webpack = require('webpack');
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
 
-
 const defaultParams = {
   dev: false,
   packagePath: undefined,
