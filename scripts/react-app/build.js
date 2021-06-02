@@ -31,7 +31,6 @@ module.exports = (inputParams = {}) => {
     buildCssWebpackConfig(),
     buildImagesWebpackConfig(),
     buildAppWebpackConfig({ dev: params.dev }),
-    params.start ? { infrastructureLogging: { level: 'warn' } } : {},
   );
 
   if (params.webpackConfigModifier) {
@@ -40,9 +39,6 @@ module.exports = (inputParams = {}) => {
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
 
-  mergedConfig.infrastructureLogging = {
-    level: 'warn',
-  };
   const compiler = webpackUtil.createCompiler(mergedConfig, params.start);
 
   if (params.start) {
@@ -62,7 +58,7 @@ module.exports = (inputParams = {}) => {
         poll: undefined,
         ignored: ['**/*.d.ts'],
       },
-      // Below is for webpack 4
+      // Below is for webpack-dev-server 4
       // historyApiFallback: true,
       // devMiddleware: {
       //   publicPath: mergedConfig.output.publicPath,

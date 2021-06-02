@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 const LoadablePlugin = require('@loadable/webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
@@ -33,6 +32,7 @@ module.exports = (inputParams = {}) => {
       // 'core-js/stable',
       // 'regenerator-runtime/runtime',
       'whatwg-fetch',
+      'react-hot-loader/patch',
       params.entryFile || path.join(process.cwd(), './src/index.tsx'),
     ],
     target: 'web',
@@ -41,6 +41,13 @@ module.exports = (inputParams = {}) => {
       chunkFilename: '[name].[contenthash].bundle.js',
       path: params.outputPath || path.join(process.cwd(), './dist'),
       publicPath: '/',
+    },
+    resolve: {
+      alias: {
+        ...(params.dev ? {
+          'react-dom': '@hot-loader/react-dom',
+        } : {}),
+      },
     },
     optimization: {
       runtimeChunk: 'single',
@@ -82,7 +89,6 @@ module.exports = (inputParams = {}) => {
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
       ...(params.dev ? [
         new webpack.HotModuleReplacementPlugin(),
-        new ReactRefreshWebpackPlugin(),
       ] : []),
     ],
   };

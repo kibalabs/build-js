@@ -31,15 +31,13 @@ module.exports = (inputParams = {}) => {
       ...(params.react ? ['@babel/preset-react'] : []),
     ],
     plugins: [
+      'react-hot-loader/babel',
       '@babel/plugin-transform-runtime',
       '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-optional-chaining',
       ...(params.react ? [
         'babel-plugin-styled-components',
         '@loadable/babel-plugin',
-      ] : []),
-      ...(params.react && params.dev ? [
-        'react-refresh/babel',
       ] : []),
     ],
     // NOTE(krishan711): the below is for if node_modules are also compiled (see js.webpack.js)

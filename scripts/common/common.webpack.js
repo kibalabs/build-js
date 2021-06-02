@@ -29,6 +29,9 @@ module.exports = (inputParams = {}) => {
         '@src': path.join(process.cwd(), './src'),
       },
     },
+    infrastructureLogging = {
+      level: 'warn',
+    },
     plugins: [
       ...(!params.dev ? [new PrintAssetSizesPlugin()] : []),
       ...(params.analyze ? [
