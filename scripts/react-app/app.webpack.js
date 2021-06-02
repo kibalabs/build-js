@@ -1,18 +1,17 @@
 const fs = require('fs');
 const path = require('path');
-const webpack = require('webpack');
-const CopyPlugin = require('copy-webpack-plugin');
+
 const LoadablePlugin = require('@loadable/webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-<<<<<<< HEAD
-=======
+const TerserPlugin = require('terser-webpack-plugin');
+const webpack = require('webpack');
 
->>>>>>> new
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
 
 const defaultParams = {
   dev: false,
@@ -26,16 +25,16 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  const params = { ...defaultParams, ...inputParams };
   const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   return {
     entry: [
-      // NOTE(krishan711): this is needed if babel doesn't transpile the node_modules
+      // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
       // 'core-js/stable',
-      'regenerator-runtime/runtime',
+      // 'regenerator-runtime/runtime',
       'whatwg-fetch',
-      // 'react-hot-loader/patch',
+      'react-hot-loader/patch',
       params.entryFile || path.join(process.cwd(), './src/index.tsx'),
     ],
     target: 'web',
@@ -50,7 +49,7 @@ module.exports = (inputParams = {}) => {
     //     ...(params.dev ? {
     //       'react-dom': '@hot-loader/react-dom',
     //     } : {}),
-    //   }
+    //   },
     // },
     optimization: {
       runtimeChunk: 'single',
@@ -68,6 +67,7 @@ module.exports = (inputParams = {}) => {
       ],
     },
     plugins: [
+      // new webpack.HashedModuleIdsPlugin(),
       ...(params.addHtmlOutput ? [
         new HtmlWebpackPlugin({
           inject: true,
@@ -80,21 +80,20 @@ module.exports = (inputParams = {}) => {
       new CopyPlugin({
         patterns: [
           { from: params.publicDirectory || path.join(process.cwd(), './public'), noErrorOnMissing: true },
-        ]
+        ],
       }),
-      new CreateRobotsTxtPlugin(),
       new webpack.DefinePlugin({
         APP_NAME: JSON.stringify(package.name),
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
       }),
       new CreateRobotsTxtPlugin(),
-      new LoadablePlugin({outputAsset: false, writeToDisk: false}),
+      new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
       ...(params.dev ? [
         // new webpack.HotModuleReplacementPlugin(),
         new ReactRefreshWebpackPlugin(),
-      ] : [])
+      ] : []),
     ],
   };
 };

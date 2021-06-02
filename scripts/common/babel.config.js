@@ -1,4 +1,3 @@
-const { collapseTextChangeRangesAcrossMultipleVersions } = require("typescript");
 
 const defaultParams = {
   polyfill: false,
@@ -8,6 +7,8 @@ const defaultParams = {
 };
 
 const polyfillSettings = {
+  // NOTE(krishan711): this should be entry if we aren't processing all the node_modules
+  // useBuiltIns: 'entry',
   useBuiltIns: 'usage',
   corejs: {
     version: 3,
@@ -15,39 +16,39 @@ const polyfillSettings = {
   },
   // TODO(krishan711): support reading this from package.json if its there
   targets: 'defaults, >0.2%, not dead, ie 11',
-}
+};
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
-  console.log('params', params);
+  const params = { ...defaultParams, ...inputParams };
   return {
     presets: [
       ['@babel/preset-env', {
         ...(params.polyfill ? polyfillSettings : {}),
         // https://medium.com/@craigmiller160/how-to-fully-optimize-webpack-4-tree-shaking-405e1c76038
-        ...(params.preserveModules ? {modules: false} : {}),
+        ...(params.preserveModules ? { modules: false } : {}),
       }],
       '@babel/preset-typescript',
-      ...(params.react ? ['@babel/preset-react'] : [])
+      ...(params.react ? ['@babel/preset-react'] : []),
     ],
     plugins: [
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-proposal-optional-chaining",
+      '@babel/plugin-transform-runtime',
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-proposal-optional-chaining',
       ...(params.react ? [
-        // 'react-hot-loader/babel',
+        'react-hot-loader/babel',
         'babel-plugin-styled-components',
         '@loadable/babel-plugin',
       ] : []),
-      ...(params.react && params.dev ? ["react-refresh/babel"] : []),
     ],
+    // NOTE(krishan711): the below is for if node_modules are also compiled (see js.webpack.js)
     ignore: [
-      /\/core-js/,
-      /@babel\b/,
-      /webpack/,
+      /\/node_modules\/core-js\//,
+      /\/node_modules\/@babel\//,
+      /\/node_modules\/webpack\//,
     ],
     overrides: [{
       test: /(node_modules|build|dist)\//,
       sourceType: 'unambiguous',
     }],
   };
-}
+};

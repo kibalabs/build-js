@@ -1,16 +1,20 @@
 
 class CreateRobotsTxtPlugin {
+  constructor(filename = 'robots.txt') {
+    this.filename = filename;
+  }
+
   apply(compiler) {
-    compiler.hooks.emit.tapAsync('CreateRuntimeConfigPlugin', (compilation, callback) => {
-      const filename = 'robots.txt';
+    compiler.hooks.emit.tapAsync('CreateRobotsTxtPlugin', (compilation, callback) => {
       const fileContent = 'User-agent: *\nDisallow:\n';
-      compilation.assets[filename] = {
-        source: function() {
+      // eslint-disable-next-line no-param-reassign
+      compilation.assets[this.filename] = {
+        source() {
           return fileContent;
         },
-        size: function() {
+        size() {
           return fileContent.length;
-        }
+        },
       };
 
       callback();

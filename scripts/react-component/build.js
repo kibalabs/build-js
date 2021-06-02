@@ -1,21 +1,24 @@
 const path = require('path');
+
 const chalk = require('chalk');
 const glob = require('glob');
 const webpackMerge = require('webpack-merge');
-const generateDeclarations = require('../typing/generateDeclarations');
-const tsConfig = require('../typing/tsconfig');
-const webpackUtil = require('../common/webpackUtil');
+
 
 const buildCommonWebpackConfig = require('../common/common.webpack');
-const buildJsWebpackConfig = require('../common/js.webpack');
 const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
+const buildJsWebpackConfig = require('../common/js.webpack');
+const webpackUtil = require('../common/webpackUtil');
+const generateDeclarations = require('../typing/generateDeclarations');
+const buildTsConfig = require('../typing/ts.config');
 const buildComponentWebpackConfig = require('./component.webpack');
 
 const defaultParams = {
   webpackConfigModifier: undefined,
   dev: false,
   analyzeBundle: false,
+  standalone: false,
   start: false,
   multiEntry: null,
   allFiles: false,
@@ -23,15 +26,15 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  const params = { ...defaultParams, ...inputParams };
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
-  var mergedConfig = webpackMerge.merge(
-    buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
-    buildJsWebpackConfig({dev: params.dev, polyfill: false, react: true, preserveModules: true}),
+  let mergedConfig = webpackMerge.merge(
+    buildCommonWebpackConfig({ dev: params.dev, analyze: params.analyzeBundle }),
+    buildJsWebpackConfig({ dev: params.dev, polyfill: params.standalone, react: true, preserveModules: true }),
     buildCssWebpackConfig(),
     buildImagesWebpackConfig(),
-    buildComponentWebpackConfig({dev: params.dev}),
+    buildComponentWebpackConfig({ dev: params.dev }),
   );
 
   if (params.multiEntry) {
@@ -40,15 +43,18 @@ module.exports = (inputParams = {}) => {
     const topDirectoryOnly = !params.recursive;
     const directoryPattern = topDirectoryOnly ? '*' : '**';
     mergedConfig.entry = glob.sync(`./${params.multiEntry}/${directoryPattern}/${fileNamePattern}.{js,jsx,ts,tsx}`).reduce((accumulator, file) => {
-      accumulator[file.replace(new RegExp(`^\.\/${params.multiEntry}\/`), '').replace(/\.(j|t)sx?$/, '')] = file;
+      accumulator[file.replace(new RegExp(`^./${params.multiEntry}/`), '').replace(/\.(j|t)sx?$/, '')] = file;
       return accumulator;
     }, {});
   }
 
   if (params.webpackConfigModifier) {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
+
+  const tsConfig = buildTsConfig({});
 
   const onBuild = () => {
     if (!params.dev) {
@@ -73,6 +79,7 @@ module.exports = (inputParams = {}) => {
       poll: true,
       ignored: ['**/*.d.ts'],
     // }, (e, s) => {console.log('here', e, s.toJson({ all: false, warnings: true, errors: true }))});
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     }, () => {});
   } else {
     compiler.run();

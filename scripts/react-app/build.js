@@ -1,37 +1,41 @@
+const dns = require('dns');
+const os = require('os');
 const path = require('path');
+
 const chalk = require('chalk');
+const WebpackDevServer = require('webpack-dev-server');
 const webpackMerge = require('webpack-merge');
-const webpackDevServer = require('webpack-dev-server');
-const childProcess = require('child_process');
-const webpackUtil = require('../common/webpackUtil');
 
 const buildCommonWebpackConfig = require('../common/common.webpack');
-const buildJsWebpackConfig = require('../common/js.webpack');
 const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
+const buildJsWebpackConfig = require('../common/js.webpack');
+const { open } = require('../common/platformUtil');
+const webpackUtil = require('../common/webpackUtil');
 const buildAppWebpackConfig = require('./app.webpack');
 
 const defaultParams = {
   webpackConfigModifier: undefined,
   dev: false,
   analyzeBundle: false,
-  start: false
+  start: false,
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  const params = { ...defaultParams, ...inputParams };
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
-  var mergedConfig = webpackMerge.merge(
-    buildCommonWebpackConfig({dev: params.dev, analyze: params.analyzeBundle}),
-    buildJsWebpackConfig({dev: params.dev, polyfill: true, react: true}),
+  let mergedConfig = webpackMerge.merge(
+    buildCommonWebpackConfig({ dev: params.dev, analyze: params.analyzeBundle }),
+    buildJsWebpackConfig({ dev: params.dev, polyfill: true, react: true }),
     buildCssWebpackConfig(),
     buildImagesWebpackConfig(),
-    buildAppWebpackConfig({dev: params.dev}),
-    params.start ? {infrastructureLogging: {level: 'warn'}} : {},
+    buildAppWebpackConfig({ dev: params.dev }),
+    params.start ? { infrastructureLogging: { level: 'warn' } } : {},
   );
 
   if (params.webpackConfigModifier) {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
@@ -41,9 +45,9 @@ module.exports = (inputParams = {}) => {
   if (params.start) {
     const host = '0.0.0.0';
     const port = 3000;
-    const server = new webpackDevServer(compiler, {
-      host: host,
-      port: port,
+    const server = new WebpackDevServer(compiler, {
+      host,
+      port,
       hot: true,
       historyApiFallback: true,
       // dev: {
@@ -57,19 +61,20 @@ module.exports = (inputParams = {}) => {
       //     ignored: ['**/*.d.ts'],
       //   },
       // },
+      ...(mergedConfig.devServer || {}),
     });
-    server.listen(port, host, (err) => {
-      if (err) {
-        console.log(err);
+    server.listen(port, host, (error) => {
+      if (error) {
+        console.log(error);
       }
       console.log(chalk.cyan('Starting the development server...\n'));
-      if (host == '0.0.0.0') {
-        require('dns').lookup(require('os').hostname(), function (err, address, fam) {
+      if (host === '0.0.0.0') {
+        dns.lookup(os.hostname(), (dnsError, address) => {
           console.log(`Use ${mergedConfig.name} at: http://${address}:${port}`);
-          childProcess.execSync(`open http://localhost:${port}`, { stdio: 'inherit' });
-        })
+          open(`http://localhost:${port}`, { stdio: 'inherit' });
+        });
       } else {
-        childProcess.execSync(`open http://${host}:${port}`, { stdio: 'inherit' });
+        open(`http://${host}:${port}`, { stdio: 'inherit' });
       }
     });
   } else {

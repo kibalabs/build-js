@@ -10,7 +10,7 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = {...defaultParams, ...inputParams};
+  const params = { ...defaultParams, ...inputParams };
   const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   const name = params.name || package.name;
@@ -28,6 +28,6 @@ module.exports = (inputParams = {}) => {
       umdNamedDefine: true,
       path: params.outputPath || path.join(process.cwd(), './dist'),
       library: name,
-    }
+    },
   };
-}
+};
