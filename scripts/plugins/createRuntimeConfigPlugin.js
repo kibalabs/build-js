@@ -7,33 +7,20 @@ class CreateRuntimeConfigPlugin {
   }
 
   apply(compiler) {
-    compiler.hooks.compilation.tap('CreateRuntimeConfigPlugin', (compilation) => {
-      compilation.hooks.additionalAssets.tap('CreateRuntimeConfigPlugin', (callback) => {
-        // let fileContent = 'const GLOBAL = typeof window !== "undefined" ? window : global;\n';
-        // Object.keys(this.vars).forEach((key) => {
-        //   fileContent += `GLOBAL.${key} = ${JSON.stringify(this.vars[key])};\n`;
-        // });
+    compiler.hooks.thisCompilation.tap('CreateRuntimeConfigPlugin', (compilation) => {
+      compilation.hooks.additionalAssets.tap('CreateRuntimeConfigPlugin', () => {
+        let fileContent = 'const GLOBAL = typeof window !== "undefined" ? window : global;\n';
+        Object.keys(this.vars).forEach((key) => {
+          fileContent += `GLOBAL.${key} = ${JSON.stringify(this.vars[key])};\n`;
+        });
 
-        // compilation.emitAsset(
-        //   this.filename,
-        //   new RawSource(fileContent)
-        // );
+        compilation.emitAsset(
+          this.filename,
+          new RawSource(fileContent),
+        );
       });
     });
   }
-
-    // compiler.hooks.processAssets.tapAsync('CreateRuntimeConfigPlugin', (compilation, callback) => {
-    //   // compilation.assets[this.filename] = {
-    //   //   source() {
-    //   //     return fileContent;
-    //   //   },
-    //   //   size() {
-    //   //     return fileContent.length;
-    //   //   },
-    //   // };
-
-    //   callback();
-    // });
 }
 
 module.exports = CreateRuntimeConfigPlugin;

@@ -62,7 +62,7 @@ module.exports = (inputParams = {}) => {
         poll: undefined,
         ignored: ['**/*.d.ts'],
       },
-      // Below is for webpack 4
+      // Below is for webpack-dev-server 4
       // historyApiFallback: true,
       // devMiddleware: {
       //   publicPath: mergedConfig.output.publicPath,
