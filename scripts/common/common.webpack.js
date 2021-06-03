@@ -29,6 +29,9 @@ module.exports = (inputParams = {}) => {
         '@src': path.join(process.cwd(), './src'),
       },
     },
+    performance: {
+      hints: false,
+    },
     infrastructureLogging: {
       level: 'warn',
     },

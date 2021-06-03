@@ -45,6 +45,7 @@
     "babel-plugin-styled-components": "^1.12.0",
     "chalk": "^4.1.1",
     "commander": "^7.2.0",
+    "console-table-printer": "^2.9.0",
     "copy-webpack-plugin": "^9.0.0",
     "core-js": "^3.13.1",
     "css-loader": "^5.0.1",
