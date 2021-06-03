@@ -1,23 +1,21 @@
+const { RawSource } = require('webpack-sources');
+
+const DEFAULT_FILE_CONTENT = 'User-agent: *\nDisallow:\n';
 
 class CreateRobotsTxtPlugin {
-  constructor(filename = 'robots.txt') {
-    this.filename = filename;
+  constructor(fileContent = DEFAULT_FILE_CONTENT) {
+    this.filename = 'robots.txt';
+    this.fileContent = fileContent;
   }
 
   apply(compiler) {
-    compiler.hooks.emit.tapAsync('CreateRobotsTxtPlugin', (compilation, callback) => {
-      const fileContent = 'User-agent: *\nDisallow:\n';
-      // eslint-disable-next-line no-param-reassign
-      compilation.assets[this.filename] = {
-        source() {
-          return fileContent;
-        },
-        size() {
-          return fileContent.length;
-        },
-      };
-
-      callback();
+    compiler.hooks.thisCompilation.tap('CreateRobotsTxtPlugin', (compilation) => {
+      compilation.hooks.additionalAssets.tap('CreateRobotsTxtPlugin', () => {
+        compilation.emitAsset(
+          this.filename,
+          new RawSource(this.fileContent),
+        );
+      });
     });
   }
 }

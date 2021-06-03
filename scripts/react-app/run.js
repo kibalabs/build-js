@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-
-
 const commander = require('commander');
 
 const build = require('./build');
@@ -10,6 +8,7 @@ const params = commander
   .option('-d, --dev')
   .option('-s, --start')
   .option('-a, --analyze-bundle')
-  .parse(process.argv);
+  .parse(process.argv)
+  .opts();
 
 build(params);

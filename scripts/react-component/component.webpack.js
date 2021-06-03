@@ -51,12 +51,14 @@ module.exports = (inputParams = {}) => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.PACKAGE_NAME': JSON.stringify(name),
-        'process.env.PACKAGE_VERSION': JSON.stringify(package.version),
+        'process.env': {
+          PACKAGE_NAME: JSON.stringify(name),
+          PACKAGE_VERSION: JSON.stringify(package.version),
+        },
       }),
     ],
     externals: [
-      function isExternal(context, request, callback) {
+      ({ request }, callback) => {
         if (packageUtil.isExternalModuleRequest(externalModules, request)) {
           return callback(null, `commonjs ${request}`);
         }

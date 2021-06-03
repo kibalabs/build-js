@@ -22,7 +22,10 @@ const createCompiler = (config, isWatching = false, onBuild = undefined, onPostB
     if (err && !err.message) {
       showAndThrowError(err);
     }
-    const messages = formatWebpackMessages(err ? { errors: [err.message], warnings: [] } : stats.toJson({ all: false, warnings: true, errors: true }));
+    const statsJson = stats.toJson({ moduleTrace: false }, true);
+    // NOTE(krishan711): temporary fix for webpack 5: https://github.com/facebook/create-react-app/issues/9880
+    const errors = err ? { errors: [err.message], warnings: [] } : { errors: statsJson.errors.map((e) => e.message), warnings: statsJson.warnings.map((e) => e.message) };
+    const messages = formatWebpackMessages(errors);
     return messages;
   };
 

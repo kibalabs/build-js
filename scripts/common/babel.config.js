@@ -46,5 +46,9 @@ module.exports = (inputParams = {}) => {
       /\/node_modules\/@babel\//,
       /\/node_modules\/webpack\//,
     ],
+    overrides: [{
+      test: /(node_modules|build|dist)\//,
+      compact: true,
+    }],
   };
 };

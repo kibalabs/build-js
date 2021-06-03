@@ -1,3 +1,5 @@
+const { Table } = require('console-table-printer');
+
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) {
     return '0 B';
@@ -11,13 +13,19 @@ function formatBytes(bytes, decimals = 2) {
 class PrintAssetSizesPlugin {
   // eslint-disable-next-line class-methods-use-this
   apply(compiler) {
-    compiler.hooks.done.tapAsync('PrintAssetSizesPlugin', (stats, callback) => {
+    compiler.hooks.done.tap('PrintAssetSizesPlugin', (stats) => {
       const emittedAssets = stats.toJson().assets.filter((asset) => asset.emitted);
-      console.table(emittedAssets.map((asset) => {
-        // NOTE(krishan711): console.table does something wierd with colors (its all printing green) and cant use chalk: https://github.com/chalk/chalk/issues/311
-        return [asset.name, formatBytes(asset.size)];
-      }));
-      callback();
+      const sortedAssets = emittedAssets.sort((asset1, asset2) => asset1.size < asset2.size);
+      const table = new Table({
+        columns: [
+          { name: 'name', alignment: 'left', maxLen: 80 },
+          { name: 'size', alignment: 'left' },
+        ],
+      });
+      sortedAssets.forEach((asset) => {
+        table.addRow({ name: asset.name, size: formatBytes(asset.size) }, { color: asset.size > 100 * 1024 ? 'red' : 'white' });
+      });
+      table.printTable();
     });
   }
 }

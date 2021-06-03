@@ -37,8 +37,8 @@ module.exports = (inputParams = {}) => {
     ],
     target: 'web',
     output: {
-      filename: '[name].[hash:8].js',
-      chunkFilename: '[name].[hash:8].bundle.js',
+      filename: '[name].[contenthash].js',
+      chunkFilename: '[name].[contenthash].bundle.js',
       path: params.outputPath || path.join(process.cwd(), './dist'),
       publicPath: '/',
     },
@@ -55,6 +55,7 @@ module.exports = (inputParams = {}) => {
         name: 'vendor',
         chunks: 'all',
       },
+      moduleIds: 'deterministic',
       usedExports: true,
       minimize: true,
       minimizer: [
@@ -64,7 +65,6 @@ module.exports = (inputParams = {}) => {
       ],
     },
     plugins: [
-      new webpack.HashedModuleIdsPlugin(),
       ...(params.addHtmlOutput ? [
         new HtmlWebpackPlugin({
           inject: true,
@@ -87,7 +87,9 @@ module.exports = (inputParams = {}) => {
       new CreateRobotsTxtPlugin(),
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
-      ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : []),
+      ...(params.dev ? [
+        new webpack.HotModuleReplacementPlugin(),
+      ] : []),
     ],
   };
 };

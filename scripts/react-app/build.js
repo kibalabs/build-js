@@ -58,6 +58,19 @@ module.exports = (inputParams = {}) => {
         poll: undefined,
         ignored: ['**/*.d.ts'],
       },
+      // Below is for webpack-dev-server 4
+      // historyApiFallback: true,
+      // devMiddleware: {
+      //   publicPath: mergedConfig.output.publicPath,
+      // },
+      // static: {
+      //   directory: './',
+      //   watch: {
+      //     aggregateTimeout: 1000,
+      //     poll: undefined,
+      //     ignored: ['**/*.d.ts'],
+      //   },
+      // },
       ...(mergedConfig.devServer || {}),
     });
     server.listen(port, host, (error) => {
