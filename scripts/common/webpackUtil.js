@@ -31,7 +31,6 @@ const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, sh
     console.log('Details:');
     console.log(error);
     process.exitCode = 1;
-    return;
   });
 
   compiler.hooks.done.tap('webpackUtil', (stats) => {
