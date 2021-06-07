@@ -38,7 +38,6 @@ const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, sh
     const messages = processOutput(stats);
     if (messages.errors.length > 0) {
       console.log(chalk.red(messages.errors[0]));
-      // TODO(krish): get the name from stats and move these functions out
       if (showNotifications) {
         notifier.notify({ title: config.name, message: 'Error compiling!' });
       }
