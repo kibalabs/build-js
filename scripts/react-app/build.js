@@ -39,7 +39,7 @@ module.exports = (inputParams = {}) => {
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = webpackUtil.createCompiler(mergedConfig, params.start);
+  const compiler = webpackUtil.createCompiler(mergedConfig);
 
   if (params.start) {
     const host = '0.0.0.0';
@@ -55,7 +55,7 @@ module.exports = (inputParams = {}) => {
       historyApiFallback: true,
       watchOptions: {
         aggregateTimeout: 1000,
-        poll: undefined,
+        poll: true,
         ignored: ['**/*.d.ts'],
       },
       // Below is for webpack-dev-server 4

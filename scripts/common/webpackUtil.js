@@ -7,30 +7,17 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const rimraf = require('rimraf');
 const webpack = require('webpack');
 
-const createCompiler = (config, isWatching = false, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
-  const showAndThrowError = (error) => {
-    console.log(chalk.red(error));
-    // TODO(krish): get the name from stats and move these functions out
-    if (showNotifications) {
-      notifier.notify({ title: config.name, message: 'Error compiling!' });
-    }
-    process.exitCode = 1;
-    throw new Error('Error compiling!');
-  };
-
-  const processOutput = (err, stats) => {
-    if (err && !err.message) {
-      showAndThrowError(err);
-    }
+const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
+  const processOutput = (stats) => {
     const statsJson = stats.toJson({ moduleTrace: false }, true);
     // NOTE(krishan711): temporary fix for webpack 5: https://github.com/facebook/create-react-app/issues/9880
-    const errors = err ? { errors: [err.message], warnings: [] } : { errors: statsJson.errors.map((e) => e.message), warnings: statsJson.warnings.map((e) => e.message) };
+    const errors = { errors: statsJson.errors.map((e) => e.message), warnings: statsJson.warnings.map((e) => e.message) };
     const messages = formatWebpackMessages(errors);
     return messages;
   };
 
   rimraf.sync(config.output.path);
-  const compiler = webpack({ ...config, bail: !isWatching });
+  const compiler = webpack(config);
 
   compiler.hooks.invalid.tap('webpackUtil', () => {
     console.log(`Building ${config.name}...\n`);
@@ -40,16 +27,23 @@ const createCompiler = (config, isWatching = false, onBuild = undefined, onPostB
   });
 
   compiler.hooks.failed.tap('webpackUtil', (error) => {
-    process.exitCode = 1;
-    console.log(chalk.red(`Failed to build ${config.name}: ${error}\nFull details:`));
+    console.log(chalk.red(`Failed to build ${config.name}`));
+    console.log('Details:');
     console.log(error);
+    process.exitCode = 1;
+    return;
   });
 
   compiler.hooks.done.tap('webpackUtil', (stats) => {
-    // TODO(krishan711): why is the first param null here, when does processOutput get used with errors??
-    const messages = processOutput(null, stats);
+    const messages = processOutput(stats);
     if (messages.errors.length > 0) {
-      showAndThrowError(messages.errors[0]);
+      console.log(chalk.red(messages.errors[0]));
+      // TODO(krish): get the name from stats and move these functions out
+      if (showNotifications) {
+        notifier.notify({ title: config.name, message: 'Error compiling!' });
+      }
+      process.exitCode = 1;
+      return;
     }
     if (onBuild) {
       onBuild();
@@ -74,9 +68,9 @@ const createCompiler = (config, isWatching = false, onBuild = undefined, onPostB
   return compiler;
 };
 
-const createAndRunCompiler = (config, isWatching = false, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
+const createAndRunCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
   return new Promise((resolve, reject) => {
-    createCompiler(config, isWatching, onBuild, onPostBuild, showNotifications).run((err, stats) => {
+    createCompiler(config, onBuild, onPostBuild, showNotifications).run((err, stats) => {
       if (err || stats.hasErrors()) {
         return reject(err);
       }
