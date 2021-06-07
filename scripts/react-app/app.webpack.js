@@ -83,6 +83,7 @@ module.exports = (inputParams = {}) => {
         APP_NAME: JSON.stringify(package.name),
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
+        'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG),
       }),
       new CreateRobotsTxtPlugin(),
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),

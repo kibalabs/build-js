@@ -71,7 +71,7 @@ module.exports = (inputParams = {}) => {
       console.log('Run', chalk.cyan(`npm install --no-save --force ${process.cwd()}`), `to use ${mergedConfig.name} live 🖥\n`);
     }
   };
-  const compiler = webpackUtil.createCompiler(mergedConfig, params.start, onBuild, onPostBuild);
+  const compiler = webpackUtil.createCompiler(mergedConfig, onBuild, onPostBuild);
 
   if (params.start) {
     compiler.watch({
