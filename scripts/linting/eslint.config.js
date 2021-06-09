@@ -2,7 +2,7 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...inputParams };
   return {
     env: {
@@ -25,7 +25,7 @@ module.exports = (inputParams = {}) => {
       },
     },
     plugins: [
-      "unused-imports",
+      'unused-imports',
     ],
     settings: {
       react: {
@@ -43,12 +43,12 @@ module.exports = (inputParams = {}) => {
       '@typescript-eslint/no-shadow': ['error'],
       '@typescript-eslint/indent': ['error', 2],
       '@typescript-eslint/no-empty-interface': 'off',
-      "@typescript-eslint/no-unused-vars": "off",
+      '@typescript-eslint/no-unused-vars': 'off',
       // NOTE(krishan711): we use https://github.com/sweepline/eslint-plugin-unused-imports so it can automatically remove unused imports
-      "unused-imports/no-unused-imports": "error",
-      "unused-imports/no-unused-vars": [
-        "error",
-        { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'error',
+        { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/ban-ts-comment': 'off',
       'no-console': ['error', { allow: ['error', 'warn'] }],
