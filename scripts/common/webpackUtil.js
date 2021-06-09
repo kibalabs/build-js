@@ -7,26 +7,26 @@ const webpack = require('webpack');
 const friendlySyntaxErrorLabel = 'Syntax error:';
 
 // NOTE(krishan711): copied from https://github.com/facebook/create-react-app/blob/master/packages/react-dev-utils/formatWebpackMessages.js
-function formatMessage(message) {
+function formatMessage(webpackMessage) {
   let lines = [];
-  if (typeof message === 'string') {
-    lines = message.split('\n');
-  } else if ('message' in message) {
-    lines = message['message'].split('\n');
-  } else if (Array.isArray(message)) {
-    message.forEach(message => {
+  if (typeof webpackMessage === 'string') {
+    lines = webpackMessage.split('\n');
+  } else if ('message' in webpackMessage) {
+    lines = webpackMessage.message.split('\n');
+  } else if (Array.isArray(webpackMessage)) {
+    webpackMessage.forEach((message) => {
       if ('message' in message) {
-        lines = message['message'].split('\n');
+        lines = message.message.split('\n');
       }
     });
   }
 
   // Strip webpack-added headers off errors/warnings
   // https://github.com/webpack/webpack/blob/master/lib/ModuleError.js
-  lines = lines.filter(line => !/Module [A-z ]+\(from/.test(line));
+  lines = lines.filter((line) => !/Module [A-z ]+\(from/.test(line));
 
   // Transform parsing error into syntax error
-  lines = lines.map(line => {
+  lines = lines.map((line) => {
     const parsingError = /Line (\d+):(?:(\d+):)?\s*Parsing error: (.+)$/.exec(line);
     if (!parsingError) {
       return line;
@@ -35,13 +35,13 @@ function formatMessage(message) {
     return `${friendlySyntaxErrorLabel} ${errorMessage} (${errorLine}:${errorColumn})`;
   });
 
-  message = lines.join('\n');
+  let message = lines.join('\n');
   // Smoosh syntax errors (commonly found in CSS)
   message = message.replace(/SyntaxError\s+\((\d+):(\d+)\)\s*(.+?)\n/g, `${friendlySyntaxErrorLabel} $3 ($1:$2)\n`);
   // Clean up export errors
-  message = message.replace(/^.*export '(.+?)' was not found in '(.+?)'.*$/gm, `Attempted import error: '$1' is not exported from '$2'.`);
-  message = message.replace(/^.*export 'default' \(imported as '(.+?)'\) was not found in '(.+?)'.*$/gm, `Attempted import error: '$2' does not contain a default export (imported as '$1').`);
-  message = message.replace(/^.*export '(.+?)' \(imported as '(.+?)'\) was not found in '(.+?)'.*$/gm, `Attempted import error: '$1' is not exported from '$3' (imported as '$2').`);
+  message = message.replace(/^.*export '(.+?)' was not found in '(.+?)'.*$/gm, 'Attempted import error: \'$1\' is not exported from \'$2\'.');
+  message = message.replace(/^.*export 'default' \(imported as '(.+?)'\) was not found in '(.+?)'.*$/gm, 'Attempted import error: \'$2\' does not contain a default export (imported as \'$1\').');
+  message = message.replace(/^.*export '(.+?)' \(imported as '(.+?)'\) was not found in '(.+?)'.*$/gm, 'Attempted import error: \'$1\' is not exported from \'$3\' (imported as \'$2\').');
   lines = message.split('\n');
 
   // Remove leading newline
