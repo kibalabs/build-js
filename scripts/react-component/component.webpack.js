@@ -21,7 +21,7 @@ module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
   const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
-  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.tsx');
+  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.ts');
   const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
   const name = params.name || package.name;
   const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
