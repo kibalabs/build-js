@@ -4,17 +4,25 @@ const path = require('path');
 const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
 
 const PrintAssetSizesPlugin = require('../plugins/printAssetSizesPlugin');
+const packageUtil = require('./packageUtil');
 
-const defaultParams = {
-  dev: false,
-  packageFilePath: undefined,
-  name: undefined,
-};
 
 module.exports = (inputParams = {}) => {
+  const defaultParams = {
+    dev: false,
+    packageFilePath: path.join(process.cwd(), './package.json'),
+    shouldAliasModules: true,
+    name: undefined,
+  };
   const params = { ...defaultParams, ...inputParams };
-  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
+  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const modules = packageUtil.getExternalModules(package);
+  // NOTE(krishan711): this aliases all the modules declared in package.json to the one installed in node_modules
+  // which makes it much simpler to use locally installed packages with common dependencies (e.g. react, react-dom)
+  const localModules = params.shouldAliasModules ? (modules.reduce((accumulator, moduleName) => {
+    accumulator[moduleName] = path.resolve(path.join(process.cwd(), './node_modules'), moduleName);
+    return accumulator;
+  }, {})) : {};
   return {
     name: params.name || package.name,
     mode: params.dev ? 'development' : 'production',
@@ -23,10 +31,11 @@ module.exports = (inputParams = {}) => {
         fs: false,
         net: false,
         tls: false,
-        path: require.resolve('path-browserify'),
+        path: 'path-browserify',
       },
       alias: {
         '@src': path.join(process.cwd(), './src'),
+        ...localModules,
       },
     },
     output: {
