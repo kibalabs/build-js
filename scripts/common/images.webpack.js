@@ -2,7 +2,7 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...inputParams };
   return {
     module: {
