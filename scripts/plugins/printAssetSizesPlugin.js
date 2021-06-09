@@ -14,6 +14,10 @@ class PrintAssetSizesPlugin {
   // eslint-disable-next-line class-methods-use-this
   apply(compiler) {
     compiler.hooks.done.tap('PrintAssetSizesPlugin', (stats) => {
+      const statsJson = stats.toJson({ moduleTrace: false }, true);
+      if (statsJson.errors.length > 0) {
+        return;
+      }
       const emittedAssets = stats.toJson().assets.filter((asset) => asset.emitted);
       const sortedAssets = emittedAssets.sort((asset1, asset2) => asset1.size < asset2.size);
       const table = new Table({
@@ -23,7 +27,7 @@ class PrintAssetSizesPlugin {
         ],
       });
       sortedAssets.forEach((asset) => {
-        table.addRow({ name: asset.name, size: formatBytes(asset.size) }, { color: asset.size > 100 * 1024 ? 'red' : 'white' });
+        table.addRow({ name: asset.name, size: formatBytes(asset.size) }, { color: asset.size > 100 * 1024 ? 'yellow' : 'white' });
       });
       table.printTable();
     });

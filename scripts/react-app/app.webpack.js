@@ -4,7 +4,6 @@ const path = require('path');
 const LoadablePlugin = require('@loadable/webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 
@@ -13,9 +12,9 @@ const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin'
 
 const defaultParams = {
   dev: false,
-  packagePath: undefined,
-  entryFile: undefined,
-  outputPath: undefined,
+  packageFilePath: undefined,
+  entryFilePath: undefined,
+  outputDirectory: undefined,
   addHtmlOutput: true,
   addRuntimeConfig: true,
   runtimeConfigVars: {},
@@ -24,8 +23,11 @@ const defaultParams = {
 
 module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
-  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
+  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.tsx');
+  const publicDirectory = params.publicDirectory || path.join(process.cwd(), './public');
+  const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
   return {
     entry: [
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
@@ -33,13 +35,13 @@ module.exports = (inputParams = {}) => {
       // 'regenerator-runtime/runtime',
       'whatwg-fetch',
       'react-hot-loader/patch',
-      params.entryFile || path.join(process.cwd(), './src/index.tsx'),
+      entryFilePath,
     ],
     target: 'web',
     output: {
       filename: '[name].[contenthash].js',
       chunkFilename: '[name].[contenthash].bundle.js',
-      path: params.outputPath || path.join(process.cwd(), './dist'),
+      path: outputDirectory,
       publicPath: '/',
     },
     resolve: {
@@ -70,13 +72,10 @@ module.exports = (inputParams = {}) => {
           inject: true,
           template: path.join(__dirname, './index.html'),
         }),
-        new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
-          PUBLIC_URL: '',
-        }),
       ] : []),
       new CopyPlugin({
         patterns: [
-          { from: params.publicDirectory || path.join(process.cwd(), './public'), noErrorOnMissing: true },
+          { from: publicDirectory, noErrorOnMissing: true },
         ],
       }),
       new webpack.DefinePlugin({

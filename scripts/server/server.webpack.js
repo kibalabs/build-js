@@ -3,19 +3,23 @@ const path = require('path');
 
 const defaultParams = {
   dev: false,
-  packagePath: undefined,
+  packageFilePath: undefined,
   name: undefined,
-  entryFile: undefined,
-  outputPath: undefined,
+  entryFilePath: undefined,
+  outputDirectory: undefined,
 };
 
 module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
-  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
+  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.ts');
+  const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
   const name = params.name || package.name;
   return {
-    entry: params.entryFile || path.join(process.cwd(), './src/index.ts'),
+    entry: [
+      entryFilePath,
+    ],
     target: 'node',
     node: {
       __dirname: false,
@@ -26,7 +30,7 @@ module.exports = (inputParams = {}) => {
       chunkFilename: '[name].bundle.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,
-      path: params.outputPath || path.join(process.cwd(), './dist'),
+      path: outputDirectory,
       library: name,
     },
   };

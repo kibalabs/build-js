@@ -7,10 +7,10 @@ const packageUtil = require('../common/packageUtil');
 
 const defaultParams = {
   dev: false,
-  packagePath: undefined,
+  packageFilePath: undefined,
   name: undefined,
-  entryFile: undefined,
-  outputPath: undefined,
+  entryFilePath: undefined,
+  outputDirectory: undefined,
   excludeAllNodeModules: false,
   nodeModulesPath: undefined,
   // NOTE(krish): allow multiple node_modules paths to cater for lerna
@@ -19,8 +19,10 @@ const defaultParams = {
 
 module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
-  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
+  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.tsx');
+  const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
   const name = params.name || package.name;
   const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
   const externalModules = [];
@@ -33,7 +35,7 @@ module.exports = (inputParams = {}) => {
   }
   return {
     entry: [
-      params.entryFile || path.join(process.cwd(), './src/index.ts'),
+      entryFilePath,
     ],
     target: 'node',
     // NOTE(krishan711): apparently this is not needed in webpack5: https://github.com/webpack/webpack/issues/1599
@@ -46,7 +48,7 @@ module.exports = (inputParams = {}) => {
       chunkFilename: '[name].bundle.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,
-      path: params.outputPath || path.join(process.cwd(), './dist'),
+      path: outputDirectory,
       library: name,
     },
     plugins: [
