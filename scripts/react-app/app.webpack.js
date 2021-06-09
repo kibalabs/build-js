@@ -13,6 +13,7 @@ const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin'
 const defaultParams = {
   dev: false,
   packageFilePath: undefined,
+  name: undefined,
   entryFilePath: undefined,
   outputDirectory: undefined,
   addHtmlOutput: true,
@@ -28,6 +29,7 @@ module.exports = (inputParams = {}) => {
   const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.tsx');
   const publicDirectory = params.publicDirectory || path.join(process.cwd(), './public');
   const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
+  const name = params.name || package.name;
   return {
     entry: [
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
@@ -70,6 +72,7 @@ module.exports = (inputParams = {}) => {
       ...(params.addHtmlOutput ? [
         new HtmlWebpackPlugin({
           inject: true,
+          title: name,
           template: path.join(__dirname, './index.html'),
         }),
       ] : []),
