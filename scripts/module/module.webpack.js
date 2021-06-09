@@ -7,10 +7,10 @@ const packageUtil = require('../common/packageUtil');
 
 const defaultParams = {
   dev: false,
-  packagePath: undefined,
+  packageFilePath: undefined,
   name: undefined,
   entryFile: undefined,
-  outputPath: undefined,
+  outputDirectory: undefined,
   excludeAllNodeModules: false,
   nodeModulesPath: undefined,
   // NOTE(krish): allow multiple node_modules paths to cater for lerna
@@ -19,9 +19,10 @@ const defaultParams = {
 
 module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
-  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
   const name = params.name || package.name;
+  const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
   const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
   const externalModules = [];
   if (params.excludeAllNodeModules) {
@@ -46,7 +47,7 @@ module.exports = (inputParams = {}) => {
       chunkFilename: '[name].bundle.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,
-      path: params.outputPath || path.join(process.cwd(), './dist'),
+      path: outputDirectory,
       library: name,
     },
     plugins: [

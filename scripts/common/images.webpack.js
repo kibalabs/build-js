@@ -9,15 +9,7 @@ module.exports = (inputParams = {}) => {
       rules: [
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/,
-          use: {
-            loader: 'url-loader',
-            options: {
-              fallback: 'file-loader',
-              name: '[name].[contenthash].[ext]',
-              outputPath: 'assets/',
-              publicPath: '/assets/',
-            },
-          },
+          type: 'asset/resource',
         },
       ],
     },
