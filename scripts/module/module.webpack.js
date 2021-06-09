@@ -9,7 +9,7 @@ const defaultParams = {
   dev: false,
   packageFilePath: undefined,
   name: undefined,
-  entryFile: undefined,
+  entryFilePath: undefined,
   outputDirectory: undefined,
   excludeAllNodeModules: false,
   nodeModulesPath: undefined,
@@ -21,8 +21,9 @@ module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
   const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
   const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.ts');
   const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
+  const name = params.name || package.name;
   const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
   const externalModules = [];
   if (params.excludeAllNodeModules) {
@@ -34,7 +35,7 @@ module.exports = (inputParams = {}) => {
   }
   return {
     entry: [
-      params.entryFile || path.join(process.cwd(), './src/index.ts'),
+      entryFilePath,
     ],
     target: 'node',
     // NOTE(krishan711): apparently this is not needed in webpack5: https://github.com/webpack/webpack/issues/1599

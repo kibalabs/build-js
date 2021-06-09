@@ -4,7 +4,6 @@ const path = require('path');
 const LoadablePlugin = require('@loadable/webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 
@@ -73,9 +72,6 @@ module.exports = (inputParams = {}) => {
           inject: true,
           template: path.join(__dirname, './index.html'),
         }),
-        // new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
-        //   PUBLIC_URL: '',
-        // }),
       ] : []),
       new CopyPlugin({
         patterns: [

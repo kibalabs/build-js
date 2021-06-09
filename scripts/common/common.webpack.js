@@ -31,7 +31,6 @@ module.exports = (inputParams = {}) => {
     },
     output: {
       assetModuleFilename: 'assets/[hash][ext][query]',
-      path: outputDirectory,
     },
     performance: {
       hints: false,
