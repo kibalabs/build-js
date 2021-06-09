@@ -25,6 +25,7 @@ module.exports = (inputParams = {}) => {
       },
     },
     plugins: [
+      "unused-imports",
     ],
     settings: {
       react: {
@@ -42,7 +43,13 @@ module.exports = (inputParams = {}) => {
       '@typescript-eslint/no-shadow': ['error'],
       '@typescript-eslint/indent': ['error', 2],
       '@typescript-eslint/no-empty-interface': 'off',
-      '@typescript-eslint/no-unused-vars': 'error',
+      "@typescript-eslint/no-unused-vars": "off",
+      // NOTE(krishan711): we use https://github.com/sweepline/eslint-plugin-unused-imports so it can automatically remove unused imports
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "error",
+        { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+      ],
       '@typescript-eslint/ban-ts-comment': 'off',
       'no-console': ['error', { allow: ['error', 'warn'] }],
       'max-len': 'off',
