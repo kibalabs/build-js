@@ -3,8 +3,8 @@ const path = require('path');
 
 const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
 
-const packageUtil = require('./packageUtil');
 const PrintAssetSizesPlugin = require('../plugins/printAssetSizesPlugin');
+const packageUtil = require('./packageUtil');
 
 
 module.exports = (inputParams = {}) => {
@@ -19,7 +19,7 @@ module.exports = (inputParams = {}) => {
   const modules = packageUtil.getExternalModules(package);
   // NOTE(krishan711): this aliases all the modules declared in package.json to the one installed in node_modules
   // which makes it much simpler to use locally installed packages with common dependencies (e.g. react, react-dom)
-  const localModules = shouldAliasModules ? (modules.reduce((accumulator, moduleName) => {
+  const localModules = params.shouldAliasModules ? (modules.reduce((accumulator, moduleName) => {
     accumulator[moduleName] = path.resolve(path.join(process.cwd(), './node_modules'), moduleName);
     return accumulator;
   }, {})) : {};
