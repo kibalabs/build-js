@@ -31,7 +31,7 @@ module.exports = (inputParams = {}) => {
     mergedConfig = webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = webpackUtil.createCompiler(mergedConfig, params.start);
+  const compiler = webpackUtil.createCompiler(mergedConfig);
 
   // TODO(krishan711): Start doesn't seem to work!
   if (params.start) {

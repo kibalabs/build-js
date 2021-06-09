@@ -7,14 +7,14 @@ const PrintAssetSizesPlugin = require('../plugins/printAssetSizesPlugin');
 
 const defaultParams = {
   dev: false,
-  packagePath: undefined,
+  packageFilePath: undefined,
   name: undefined,
 };
 
 module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...inputParams };
-  const packagePath = params.packagePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
+  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
   return {
     name: params.name || package.name,
     mode: params.dev ? 'development' : 'production',
@@ -28,6 +28,9 @@ module.exports = (inputParams = {}) => {
       alias: {
         '@src': path.join(process.cwd(), './src'),
       },
+    },
+    output: {
+      assetModuleFilename: 'assets/[hash][ext][query]',
     },
     performance: {
       hints: false,
