@@ -26,9 +26,6 @@ module.exports = (inputParams = {}) => {
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
 
-  const runtimeConfigVars = params.runtimeConfigVars;
-
-
   return {
     entry: [
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
@@ -89,7 +86,7 @@ module.exports = (inputParams = {}) => {
       }),
       new CreateRobotsTxtPlugin(),
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
-      ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
+      ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
       ...(params.dev ? [
         new webpack.HotModuleReplacementPlugin(),
       ] : []),
