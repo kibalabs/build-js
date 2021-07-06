@@ -1,24 +1,24 @@
-const defaultParams = {
-  polyfill: false,
-  react: false,
-  dev: false,
-  preserveModules: false,
-};
-
-const polyfillSettings = {
-  // NOTE(krishan711): this should be entry if we aren't processing all the node_modules
-  // useBuiltIns: 'entry',
-  useBuiltIns: 'usage',
-  corejs: {
-    version: 3,
-    proposals: true,
-  },
-  // TODO(krishan711): support reading this from package.json if its there
-  targets: 'defaults, >0.2%, not dead, ie 11',
-};
-
 module.exports = (inputParams = {}) => {
+  const defaultParams = {
+    polyfill: false,
+    react: false,
+    dev: false,
+    preserveModules: false,
+  };
   const params = { ...defaultParams, ...inputParams };
+
+  const polyfillSettings = {
+    // NOTE(krishan711): this should be entry if we aren't processing all the node_modules
+    // useBuiltIns: 'entry',
+    useBuiltIns: 'usage',
+    corejs: {
+      version: 3,
+      proposals: true,
+    },
+    // TODO(krishan711): support reading this from package.json if its there
+    targets: 'defaults, >0.2%, not dead, ie 11',
+  };
+
   return {
     sourceType: 'unambiguous',
     presets: [

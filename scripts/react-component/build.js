@@ -4,7 +4,6 @@ const chalk = require('chalk');
 const glob = require('glob');
 const webpackMerge = require('webpack-merge');
 
-
 const buildCommonWebpackConfig = require('../common/common.webpack');
 const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
@@ -14,27 +13,34 @@ const generateDeclarations = require('../typing/generateDeclarations');
 const buildTsConfig = require('../typing/ts.config');
 const buildComponentWebpackConfig = require('./component.webpack');
 
-const defaultParams = {
-  webpackConfigModifier: undefined,
-  dev: false,
-  analyzeBundle: false,
-  standalone: false,
-  start: false,
-  multiEntry: null,
-  allFiles: false,
-  recursive: false,
-};
 
 module.exports = (inputParams = {}) => {
-  const params = { ...defaultParams, ...inputParams };
+  const defaultParams = {
+    configModifier: undefined,
+    dev: false,
+    start: false,
+    webpackConfigModifier: undefined,
+    analyzeBundle: false,
+    polyfill: false,
+    multiEntry: null,
+    allFiles: false,
+    recursive: false,
+    shouldAliasModules: true,
+  };
+  let params = { ...defaultParams, ...inputParams };
+  if (params.configModifier) {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
+    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    params = configModifier(params);
+  }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
   let mergedConfig = webpackMerge.merge(
-    buildCommonWebpackConfig({ dev: params.dev, analyze: params.analyzeBundle }),
-    buildJsWebpackConfig({ dev: params.dev, polyfill: params.standalone, react: true, preserveModules: true }),
-    buildCssWebpackConfig(),
-    buildImagesWebpackConfig(),
-    buildComponentWebpackConfig({ dev: params.dev }),
+    buildCommonWebpackConfig(params),
+    buildJsWebpackConfig({ ...params, react: true, preserveModules: true }),
+    buildCssWebpackConfig(params),
+    buildImagesWebpackConfig(params),
+    buildComponentWebpackConfig(params),
   );
 
   if (params.multiEntry) {
@@ -47,11 +53,8 @@ module.exports = (inputParams = {}) => {
       return accumulator;
     }, {});
   }
-
   if (params.webpackConfigModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
-    mergedConfig = webpackConfigModifier(mergedConfig);
+    mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
   const tsConfig = buildTsConfig({});

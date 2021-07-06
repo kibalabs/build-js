@@ -12,26 +12,32 @@ const buildTsConfig = require('../typing/ts.config');
 const buildModuleWebpackConfig = require('./module.webpack');
 
 const defaultParams = {
-  webpackConfigModifier: undefined,
+  configModifier: undefined,
   dev: false,
-  analyzeBundle: false,
-  standalone: false,
   start: false,
+  webpackConfigModifier: undefined,
+  analyzeBundle: false,
+  polyfill: false,
   multiEntry: null,
   allFiles: false,
   recursive: false,
 };
 
 module.exports = (inputParams = {}) => {
-  const params = { ...defaultParams, ...inputParams };
+  let params = { ...defaultParams, ...inputParams };
+  if (params.configModifier) {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
+    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    params = configModifier(params);
+  }
   // NOTE(krishan711): starting modules in dev mode doesn't work yet. Test in everyview console before re-enabling
   params.dev = false;
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
   let mergedConfig = webpackMerge.merge(
-    buildCommonWebpackConfig({ dev: params.dev, analyze: params.analyzeBundle }),
-    buildJsWebpackConfig({ dev: params.dev, polyfill: params.standalone, react: false, preserveModules: true }),
-    buildModuleWebpackConfig(),
+    buildCommonWebpackConfig(params),
+    buildJsWebpackConfig({ ...params, react: true, preserveModules: true }),
+    buildModuleWebpackConfig(params),
   );
 
   if (params.multiEntry) {
@@ -44,11 +50,8 @@ module.exports = (inputParams = {}) => {
       return accumulator;
     }, {});
   }
-
   if (params.webpackConfigModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
-    mergedConfig = webpackConfigModifier(mergedConfig);
+    mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
   const tsConfig = buildTsConfig({});

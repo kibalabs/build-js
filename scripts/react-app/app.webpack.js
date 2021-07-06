@@ -10,26 +10,22 @@ const webpack = require('webpack');
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
 
-const defaultParams = {
-  dev: false,
-  packageFilePath: undefined,
-  name: undefined,
-  entryFilePath: undefined,
-  outputDirectory: undefined,
-  addHtmlOutput: true,
-  addRuntimeConfig: true,
-  runtimeConfigVars: {},
-  publicDirectory: undefined,
-};
-
 module.exports = (inputParams = {}) => {
+  const defaultParams = {
+    dev: false,
+    packageFilePath: path.join(process.cwd(), './package.json'),
+    name: undefined,
+    entryFilePath: path.join(process.cwd(), './src/index.tsx'),
+    outputDirectory: path.join(process.cwd(), './dist'),
+    addHtmlOutput: true,
+    addRuntimeConfig: true,
+    runtimeConfigVars: {},
+    publicDirectory: path.join(process.cwd(), './public'),
+  };
   const params = { ...defaultParams, ...inputParams };
-  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
-  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.tsx');
-  const publicDirectory = params.publicDirectory || path.join(process.cwd(), './public');
-  const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
+  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
+
   return {
     entry: [
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
@@ -37,13 +33,13 @@ module.exports = (inputParams = {}) => {
       // 'regenerator-runtime/runtime',
       'whatwg-fetch',
       'react-hot-loader/patch',
-      entryFilePath,
+      params.entryFilePath,
     ],
     target: 'web',
     output: {
       filename: '[name].[contenthash].js',
       chunkFilename: '[name].[contenthash].bundle.js',
-      path: outputDirectory,
+      path: params.outputDirectory,
       publicPath: '/',
     },
     resolve: {
@@ -78,7 +74,7 @@ module.exports = (inputParams = {}) => {
       ] : []),
       new CopyPlugin({
         patterns: [
-          { from: publicDirectory, noErrorOnMissing: true },
+          { from: params.publicDirectory, noErrorOnMissing: true },
         ],
       }),
       new webpack.DefinePlugin({
@@ -86,6 +82,7 @@ module.exports = (inputParams = {}) => {
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
         'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG),
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       }),
       new CreateRobotsTxtPlugin(),
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
