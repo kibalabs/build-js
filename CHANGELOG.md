@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Removed
+
+## [0.7.0] - 2021-07-06
+
+### Added
 - [MAJOR] Added `--config-modifier` param to specify all config (including `webpackConfigModifier`)
 - [MAJOR] Added ability to remove unused imports (breaks existing eslint-ignores)
 - [MINOR] Added support for npm 7
