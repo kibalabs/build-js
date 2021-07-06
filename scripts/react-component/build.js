@@ -14,27 +14,33 @@ const generateDeclarations = require('../typing/generateDeclarations');
 const buildTsConfig = require('../typing/ts.config');
 const buildComponentWebpackConfig = require('./component.webpack');
 
-const defaultParams = {
-  webpackConfigModifier: undefined,
-  dev: false,
-  analyzeBundle: false,
-  standalone: false,
-  start: false,
-  multiEntry: null,
-  allFiles: false,
-  recursive: false,
-};
 
 module.exports = (inputParams = {}) => {
-  const params = { ...defaultParams, ...inputParams };
+  const defaultParams = {
+    configModifier: undefined,
+    dev: false,
+    start: false,
+    webpackConfigModifier: undefined,
+    analyzeBundle: false,
+    polyfill: false,
+    multiEntry: null,
+    allFiles: false,
+    recursive: false,
+    shouldAliasModules: true,
+  };
+  let params = { ...defaultParams, ...inputParams };
+  if (params.configModifier) {
+    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    params = configModifier(params);
+  }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
   let mergedConfig = webpackMerge.merge(
-    buildCommonWebpackConfig({ dev: params.dev, analyze: params.analyzeBundle }),
-    buildJsWebpackConfig({ dev: params.dev, polyfill: params.standalone, react: true, preserveModules: true }),
-    buildCssWebpackConfig(),
-    buildImagesWebpackConfig(),
-    buildComponentWebpackConfig({ dev: params.dev }),
+    buildCommonWebpackConfig(params),
+    buildJsWebpackConfig({ ...params, react: true, preserveModules: true }),
+    buildCssWebpackConfig(params),
+    buildImagesWebpackConfig(params),
+    buildComponentWebpackConfig(params),
   );
 
   if (params.multiEntry) {
@@ -49,9 +55,13 @@ module.exports = (inputParams = {}) => {
   }
 
   if (params.webpackConfigModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
-    mergedConfig = webpackConfigModifier(mergedConfig);
+    if (typeof params.webpackConfigModifier === 'function') {
+      mergedConfig = params.webpackConfigModifier(mergedConfig);
+    } else {
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
+      mergedConfig = webpackConfigModifier(mergedConfig);
+    }
   }
 
   const tsConfig = buildTsConfig({});

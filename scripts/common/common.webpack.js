@@ -6,15 +6,16 @@ const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
 const PrintAssetSizesPlugin = require('../plugins/printAssetSizesPlugin');
 const packageUtil = require('./packageUtil');
 
-
 module.exports = (inputParams = {}) => {
   const defaultParams = {
     dev: false,
+    analyzeBundle: false,
     packageFilePath: path.join(process.cwd(), './package.json'),
     shouldAliasModules: true,
     name: undefined,
   };
   const params = { ...defaultParams, ...inputParams };
+
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const modules = packageUtil.getExternalModules(package);
   // NOTE(krishan711): this aliases all the modules declared in package.json to the one installed in node_modules
@@ -49,7 +50,7 @@ module.exports = (inputParams = {}) => {
     },
     plugins: [
       ...(!params.dev ? [new PrintAssetSizesPlugin()] : []),
-      ...(params.analyze ? [
+      ...(params.analyzeBundle ? [
         new webpackBundleAnalyzer.BundleAnalyzerPlugin({ analyzerMode: 'json', reportFilename: './bundle-size.json' }),
         new webpackBundleAnalyzer.BundleAnalyzerPlugin({ analyzerMode: 'static', reportFilename: './bundle-size.html' }),
       ] : []),
