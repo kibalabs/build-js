@@ -26,6 +26,7 @@ module.exports = (inputParams = {}) => {
 
   let params = { ...defaultParams, ...inputParams };
   if (params.configModifier) {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
     const configModifier = require(path.join(process.cwd(), params.configModifier));
     params = configModifier(params);
   }
@@ -38,15 +39,8 @@ module.exports = (inputParams = {}) => {
     buildImagesWebpackConfig(params),
     buildAppWebpackConfig(params),
   );
-
   if (params.webpackConfigModifier) {
-    if (typeof params.webpackConfigModifier === 'function') {
-      mergedConfig = params.webpackConfigModifier(mergedConfig);
-    } else {
-      // eslint-disable-next-line import/no-dynamic-require, global-require
-      const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
-      mergedConfig = webpackConfigModifier(mergedConfig);
-    }
+    mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
   const compiler = webpackUtil.createCompiler(mergedConfig);

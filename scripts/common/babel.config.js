@@ -18,7 +18,7 @@ module.exports = (inputParams = {}) => {
     // TODO(krishan711): support reading this from package.json if its there
     targets: 'defaults, >0.2%, not dead, ie 11',
   };
-  
+
   return {
     sourceType: 'unambiguous',
     presets: [

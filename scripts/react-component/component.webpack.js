@@ -30,6 +30,7 @@ module.exports = (inputParams = {}) => {
   } else {
     externalModules.push(...packageUtil.getExternalModules(package));
   }
+
   return {
     entry: [
       params.entryFilePath,

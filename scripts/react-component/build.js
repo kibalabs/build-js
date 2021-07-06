@@ -4,7 +4,6 @@ const chalk = require('chalk');
 const glob = require('glob');
 const webpackMerge = require('webpack-merge');
 
-
 const buildCommonWebpackConfig = require('../common/common.webpack');
 const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
@@ -30,6 +29,7 @@ module.exports = (inputParams = {}) => {
   };
   let params = { ...defaultParams, ...inputParams };
   if (params.configModifier) {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
     const configModifier = require(path.join(process.cwd(), params.configModifier));
     params = configModifier(params);
   }
@@ -53,15 +53,8 @@ module.exports = (inputParams = {}) => {
       return accumulator;
     }, {});
   }
-
   if (params.webpackConfigModifier) {
-    if (typeof params.webpackConfigModifier === 'function') {
-      mergedConfig = params.webpackConfigModifier(mergedConfig);
-    } else {
-      // eslint-disable-next-line import/no-dynamic-require, global-require
-      const webpackConfigModifier = require(path.join(process.cwd(), params.webpackConfigModifier));
-      mergedConfig = webpackConfigModifier(mergedConfig);
-    }
+    mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
   const tsConfig = buildTsConfig({});

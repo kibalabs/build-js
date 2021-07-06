@@ -8,18 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
-- [MAJOR] Added configModifier param to specify all config (including webpackConfigModifier)
+- [MAJOR] Added `--config-modifier` param to specify all config (including `webpackConfigModifier`)
 - [MAJOR] Added ability to remove unused imports (breaks existing eslint-ignores)
 - [MINOR] Added support for npm 7
 
 ### Changed
 - [MAJOR] Upgraded to webpack@5
 - [MINOR] Updated PR title format to `[Feature | Fix | Task]: <desc>`
-- [MINOR] Updated react app to use title from package.name
-- [MINOR] Updated dev server to use devServer config settings if provided
+- [MINOR] Updated react app to use title from `package.name`
+- [MINOR] Updated dev server to use `devServer` config settings if provided
 
 ### Removed
-- [MAJOR] Removed webpackConfigModifier in favour of configModifier
+- [MAJOR] Removed `--webpack-config-modifier` in favour of `--config-modifier`
 
 ## [0.6.4] - 2021-01-07
 
@@ -36,8 +36,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [0.6.3] - 2020-12-30
 
 ### Added
-- [MINOR] Added lint command
-- [MINOR] Added type-check command
+- [MINOR] Added `lint` command
+- [MINOR] Added `type-check` command
 
 ### Changed
 - [MINOR] Update module and component to replace process.env correctly
@@ -45,7 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [0.6.2] - 2020-12-25
 
 ### Changed
-- [MINOR] Updated publish to support publishing to next
+- [MINOR] Updated `publish` to support publishing to next
 
 ## [0.6.1] - 2020-12-24
 
