@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Changed
 - [MAJOR] Upgraded to webpack@5
+- [MINOR] Updated PR title format to `[Feature | Fix | Task]: <desc>`
 - [MINOR] Updated react app to use title from package.name
 - [MINOR] Updated dev server to use devServer config settings if provided
 
