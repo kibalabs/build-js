@@ -10,9 +10,9 @@ class Tag {
 class MetaTag extends Tag {
   constructor(name, content) {
     super('meta', {
-      'name': name,
-      'content': content,
-    })
+      name,
+      content,
+    });
   }
 }
 
@@ -23,8 +23,9 @@ class InjectSeoPlugin {
   }
 
   apply(compiler) {
-    compiler.hooks.compilation.tap('InjectSeoPlugin', compilation => {
+    compiler.hooks.compilation.tap('InjectSeoPlugin', (compilation) => {
       HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync('InjectSeoPlugin.beforeEmit', (htmlPluginData, callback) => {
+        // eslint-disable-next-line no-param-reassign
         htmlPluginData.html = htmlPluginData.html.replace(/<title>.*<\/title>/i, `<title>${this.title}</title>`);
         callback(null, htmlPluginData);
       });
@@ -38,6 +39,6 @@ class InjectSeoPlugin {
   }
 }
 
-const myModule = module.exports = InjectSeoPlugin;
-myModule.Tag = Tag;
-myModule.MetaTag = MetaTag;
+InjectSeoPlugin.Tag = Tag;
+InjectSeoPlugin.MetaTag = MetaTag;
+module.exports = InjectSeoPlugin;
