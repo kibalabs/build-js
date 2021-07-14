@@ -38,11 +38,6 @@ class InjectSeoPlugin {
   }
 }
 
-// module.exports = {
-//   default: InjectSeoPlugin,
-//   Tag,
-//   MetaTag,
-// }
 const myModule = module.exports = InjectSeoPlugin;
 myModule.Tag = Tag;
 myModule.MetaTag = MetaTag;
