@@ -9,6 +9,7 @@ const webpack = require('webpack');
 
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
+const InjectSeoPlugin = require('../plugins/injectSeoPlugin');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
@@ -20,6 +21,8 @@ module.exports = (inputParams = {}) => {
     addHtmlOutput: true,
     addRuntimeConfig: true,
     runtimeConfigVars: {},
+    seoTags: [],
+    title: undefined,
     publicDirectory: path.join(process.cwd(), './public'),
   };
   const params = { ...defaultParams, ...inputParams };
@@ -93,6 +96,7 @@ module.exports = (inputParams = {}) => {
       }),
       new CreateRobotsTxtPlugin(),
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
+      ...(params.seoTags || params.title ? [new InjectSeoPlugin(params.title || name, params.seoTags)] : []),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
       ...(params.dev ? [
         new webpack.HotModuleReplacementPlugin(),
