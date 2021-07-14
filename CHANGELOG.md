@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
+- [MINOR] Added `InjectSeoPlugin`
 
 ### Changed
 - [MINOR] Add all `KRT_` envvars to `CreateRuntimeConfigPlugin` for react-apps by default
