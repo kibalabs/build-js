@@ -10,38 +10,46 @@ const webpack = require('webpack');
 
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
-
-const defaultParams = {
-  dev: false,
-  packageFilePath: undefined,
-  entryFilePath: undefined,
-  outputDirectory: undefined,
-  addHtmlOutput: true,
-  addRuntimeConfig: true,
-  runtimeConfigVars: {},
-  publicDirectory: undefined,
-};
+const InjectSeoPlugin = require('../plugins/injectSeoPlugin');
 
 module.exports = (inputParams = {}) => {
+  const defaultParams = {
+    dev: false,
+    packageFilePath: path.join(process.cwd(), './package.json'),
+    name: undefined,
+    entryFilePath: path.join(process.cwd(), './src/index.tsx'),
+    outputDirectory: path.join(process.cwd(), './dist'),
+    addHtmlOutput: true,
+    addRuntimeConfig: true,
+    runtimeConfigVars: {},
+    seoTags: [],
+    title: undefined,
+    publicDirectory: path.join(process.cwd(), './public'),
+  };
   const params = { ...defaultParams, ...inputParams };
-  const packageFilePath = params.packageFilePath || path.join(process.cwd(), './package.json');
-  const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
-  const entryFilePath = params.entryFilePath || path.join(process.cwd(), './src/index.tsx');
-  const publicDirectory = params.publicDirectory || path.join(process.cwd(), './public');
-  const outputDirectory = params.outputDirectory || path.join(process.cwd(), './dist');
+  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || package.name;
+
+  const runtimeConfigVars = params.runtimeConfigVars;
+  Object.keys(process.env).forEach((key) => {
+    if (key.startsWith('KRT_')) {
+      runtimeConfigVars[key] = process.env[key];
+    }
+  });
+
   return {
     entry: [
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
       // 'core-js/stable',
       // 'regenerator-runtime/runtime',
       'whatwg-fetch',
-      entryFilePath,
+      params.entryFilePath,
     ],
     target: 'web',
     output: {
       filename: '[name].[contenthash].js',
       chunkFilename: '[name].[contenthash].bundle.js',
-      path: outputDirectory,
+      path: params.outputDirectory,
       publicPath: '/',
     },
     optimization: {
@@ -52,7 +60,7 @@ module.exports = (inputParams = {}) => {
       },
       moduleIds: 'deterministic',
       usedExports: true,
-      minimize: true,
+      minimize: !params.dev,
       minimizer: [
         new TerserPlugin({
           extractComments: true,
@@ -63,12 +71,13 @@ module.exports = (inputParams = {}) => {
       ...(params.addHtmlOutput ? [
         new HtmlWebpackPlugin({
           inject: true,
+          title: name,
           template: path.join(__dirname, './index.html'),
         }),
       ] : []),
       new CopyPlugin({
         patterns: [
-          { from: publicDirectory, noErrorOnMissing: true },
+          { from: params.publicDirectory, noErrorOnMissing: true },
         ],
       }),
       new webpack.DefinePlugin({
@@ -76,10 +85,12 @@ module.exports = (inputParams = {}) => {
         APP_VERSION: JSON.stringify(package.version),
         APP_DESCRIPTION: JSON.stringify(package.description),
         'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG),
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       }),
       new CreateRobotsTxtPlugin(),
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
-      ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(params.runtimeConfigVars)] : []),
+      ...(params.seoTags || params.title ? [new InjectSeoPlugin(params.title || name, params.seoTags)] : []),
+      ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
       ...(params.dev ? [
         new webpack.HotModuleReplacementPlugin(),
         new ReactRefreshWebpackPlugin(),

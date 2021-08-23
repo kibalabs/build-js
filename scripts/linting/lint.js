@@ -131,7 +131,7 @@ class PrettyFormatter {
     output += (totalErrorCount || totalWarningCount) ? `\nFailed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : chalk.green('Passed.');
     const fixableSummary = this.getSummary(totalFixableErrorCount, totalFixableWarningCount);
     if (fixableSummary) {
-      output += `\n\n${fixableSummary} are fixable with --fix ("npm run lint-fix" if in a @kibalabs formatted repo).`;
+      output += `\n\n${fixableSummary} are fixable with --fix (${chalk.bold('npm run lint-fix')} if in a @kibalabs formatted repo).`;
     }
     return output;
   }
