@@ -14,12 +14,14 @@ module.exports = (inputParams = {}) => {
             {
               loader: 'css-loader',
               options: {
-                url: (url) => {
-                  // NOTE(krishan711): ignore absolute urls - put them in a public folder yourself!
-                  if (url.startsWith('/')) {
-                    return false;
-                  }
-                  return true;
+                url: {
+                  filter: (url) => {
+                    // NOTE(krishan711): ignore absolute urls - put them in a public folder yourself!
+                    if (url.startsWith('/')) {
+                      return false;
+                    }
+                    return true;
+                  },
                 },
               },
             },

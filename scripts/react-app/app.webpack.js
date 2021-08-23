@@ -67,7 +67,7 @@ module.exports = (inputParams = {}) => {
       },
       moduleIds: 'deterministic',
       usedExports: true,
-      minimize: true,
+      minimize: !params.dev,
       minimizer: [
         new TerserPlugin({
           extractComments: true,

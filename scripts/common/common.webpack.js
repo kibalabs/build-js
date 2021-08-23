@@ -46,8 +46,10 @@ module.exports = (inputParams = {}) => {
       hints: false,
     },
     infrastructureLogging: {
+      appendOnly: true,
       level: 'warn',
     },
+    stats: 'none',
     plugins: [
       ...(!params.dev ? [new PrintAssetSizesPlugin()] : []),
       ...(params.analyzeBundle ? [
