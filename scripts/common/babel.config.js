@@ -28,7 +28,7 @@ module.exports = (inputParams = {}) => {
         ...(params.preserveModules ? { modules: false } : {}),
       }],
       '@babel/preset-typescript',
-      ...(params.react ? ['@babel/preset-react'] : []),
+      ...(params.react ? [['@babel/preset-react', { development: params.dev, runtime: 'automatic' }]] : []),
     ],
     plugins: [
       '@babel/plugin-transform-runtime',
@@ -38,9 +38,7 @@ module.exports = (inputParams = {}) => {
         'babel-plugin-styled-components',
         '@loadable/babel-plugin',
       ] : []),
-      ...(params.react && params.dev ? [
-        'react-refresh/babel',
-      ] : []),
+      ...(params.react && params.dev ? ['react-refresh/babel'] : []),
     ],
     // NOTE(krishan711): the below is for if node_modules are also compiled (see js.webpack.js)
     ignore: [
