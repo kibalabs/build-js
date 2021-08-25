@@ -10,6 +10,7 @@ const buildCommonWebpackConfig = require('../common/common.webpack');
 const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
+const { open } = require('../common/platformUtil');
 const webpackUtil = require('../common/webpackUtil');
 const buildAppWebpackConfig = require('./app.webpack');
 
