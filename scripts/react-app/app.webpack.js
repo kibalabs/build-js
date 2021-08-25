@@ -38,11 +38,11 @@ module.exports = (inputParams = {}) => {
 
   return {
     entry: [
+      'react-hot-loader/patch',
+      'whatwg-fetch',
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
       // 'core-js/stable',
       // 'regenerator-runtime/runtime',
-      'whatwg-fetch',
-      'react-hot-loader/patch',
       params.entryFilePath,
     ],
     target: 'web',
@@ -98,9 +98,7 @@ module.exports = (inputParams = {}) => {
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
       ...(params.seoTags || params.title ? [new InjectSeoPlugin(params.title || name, params.seoTags)] : []),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
-      ...(params.dev ? [
-        new webpack.HotModuleReplacementPlugin(),
-      ] : []),
+      ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : []),
     ],
   };
 };
