@@ -65,6 +65,6 @@ module.exports = (inputParams = {}) => {
         return callback();
       },
     ],
-    // devtool: params.dev ? 'source-map' : false,
+    devtool: params.dev ? 'source-map' : false,
   };
 };
