@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const LoadablePlugin = require('@loadable/webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -38,7 +39,6 @@ module.exports = (inputParams = {}) => {
 
   return {
     entry: [
-      'react-hot-loader/patch',
       'whatwg-fetch',
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
       // 'core-js/stable',
@@ -51,13 +51,6 @@ module.exports = (inputParams = {}) => {
       chunkFilename: '[name].[contenthash].bundle.js',
       path: params.outputDirectory,
       publicPath: '/',
-    },
-    resolve: {
-      alias: {
-        ...(params.dev ? {
-          'react-dom': '@hot-loader/react-dom',
-        } : {}),
-      },
     },
     optimization: {
       runtimeChunk: 'single',
@@ -98,7 +91,10 @@ module.exports = (inputParams = {}) => {
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
       ...(params.seoTags || params.title ? [new InjectSeoPlugin(params.title || name, params.seoTags)] : []),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
-      ...(params.dev ? [new webpack.HotModuleReplacementPlugin()] : []),
+      ...(params.dev ? [
+        new webpack.HotModuleReplacementPlugin(),
+        new ReactRefreshWebpackPlugin(),
+      ] : []),
     ],
   };
 };
