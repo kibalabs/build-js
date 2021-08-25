@@ -57,7 +57,7 @@ module.exports = (inputParams = {}) => {
       client: {
         logging: 'info',
       },
-      open: true,
+      open: false,
       static: {
         directory: mergedConfig.output.publicPath,
         watch: {
@@ -73,9 +73,11 @@ module.exports = (inputParams = {}) => {
       if (host === '0.0.0.0') {
         dns.lookup(os.hostname(), (dnsError, address) => {
           console.log(`Use ${mergedConfig.name} at: http://${address}:${port}`);
+          open(`http://localhost:${port}`, { stdio: 'inherit' });
         });
       } else {
         console.log(`Use ${mergedConfig.name} at: http://${host}:${port}`);
+        open(`http://${host}:${port}`, { stdio: 'inherit' });
       }
     });
   } else {
