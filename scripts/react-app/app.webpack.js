@@ -39,10 +39,10 @@ module.exports = (inputParams = {}) => {
 
   return {
     entry: [
+      'whatwg-fetch',
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
       // 'core-js/stable',
       // 'regenerator-runtime/runtime',
-      'whatwg-fetch',
       params.entryFilePath,
     ],
     target: 'web',
