@@ -57,9 +57,9 @@ module.exports = (inputParams = {}) => {
       },
       client: {
         logging: 'info',
+        overlay: false,
       },
       open: false,
-      overlay: false,
       static: {
         directory: mergedConfig.output.publicPath,
         watch: {
