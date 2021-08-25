@@ -47,39 +47,29 @@ module.exports = (inputParams = {}) => {
   if (params.start) {
     const host = '0.0.0.0';
     const port = 3000;
-    const server = new WebpackDevServer(compiler, {
+    const server = new WebpackDevServer({
       host,
       port,
       hot: true,
-      inline: true,
-      quiet: true,
-      publicPath: mergedConfig.output.publicPath,
-      contentBase: './',
       historyApiFallback: true,
-      watchOptions: {
-        aggregateTimeout: 1000,
-        poll: true,
-        ignored: ['**/*.d.ts'],
+      devMiddleware: {
+        publicPath: mergedConfig.output.publicPath,
       },
-      // Below is for webpack-dev-server 4
-      // historyApiFallback: true,
-      // devMiddleware: {
-      //   publicPath: mergedConfig.output.publicPath,
-      // },
-      // static: {
-      //   directory: './',
-      //   watch: {
-      //     aggregateTimeout: 1000,
-      //     poll: undefined,
-      //     ignored: ['**/*.d.ts'],
-      //   },
-      // },
+      client: {
+        logging: 'info',
+      },
+      open: false,
+      static: {
+        directory: mergedConfig.output.publicPath,
+        watch: {
+          aggregateTimeout: 1000,
+          poll: undefined,
+          ignored: ['**/*.d.ts'],
+        },
+      },
       ...(mergedConfig.devServer || {}),
-    });
-    server.listen(port, host, (error) => {
-      if (error) {
-        console.log(error);
-      }
+    }, compiler);
+    server.startCallback(() => {
       console.log(chalk.cyan('Starting the development server...\n'));
       if (host === '0.0.0.0') {
         dns.lookup(os.hostname(), (dnsError, address) => {
@@ -87,6 +77,7 @@ module.exports = (inputParams = {}) => {
           open(`http://localhost:${port}`, { stdio: 'inherit' });
         });
       } else {
+        console.log(`Use ${mergedConfig.name} at: http://${host}:${port}`);
         open(`http://${host}:${port}`, { stdio: 'inherit' });
       }
     });

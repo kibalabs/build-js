@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const LoadablePlugin = require('@loadable/webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -38,11 +39,10 @@ module.exports = (inputParams = {}) => {
 
   return {
     entry: [
+      'whatwg-fetch',
       // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
       // 'core-js/stable',
       // 'regenerator-runtime/runtime',
-      'whatwg-fetch',
-      'react-hot-loader/patch',
       params.entryFilePath,
     ],
     target: 'web',
@@ -52,13 +52,6 @@ module.exports = (inputParams = {}) => {
       path: params.outputDirectory,
       publicPath: '/',
     },
-    resolve: {
-      alias: {
-        ...(params.dev ? {
-          'react-dom': '@hot-loader/react-dom',
-        } : {}),
-      },
-    },
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
@@ -67,7 +60,7 @@ module.exports = (inputParams = {}) => {
       },
       moduleIds: 'deterministic',
       usedExports: true,
-      minimize: true,
+      minimize: !params.dev,
       minimizer: [
         new TerserPlugin({
           extractComments: true,
@@ -100,6 +93,7 @@ module.exports = (inputParams = {}) => {
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
       ...(params.dev ? [
         new webpack.HotModuleReplacementPlugin(),
+        new ReactRefreshWebpackPlugin(),
       ] : []),
     ],
   };
