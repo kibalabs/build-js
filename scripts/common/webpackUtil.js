@@ -104,8 +104,8 @@ const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, sh
   rimraf.sync(config.output.path);
   const compiler = webpack(config);
 
-  compiler.hooks.invalid.tap('webpackUtil', () => {
-    console.log(`Building ${config.name}...\n`);
+  compiler.hooks.compile.tap('webpackUtil', () => {
+    console.log(`Building ${config.name}...`);
     if (showNotifications) {
       notifier.notify({ title: config.name, message: 'Building...' });
     }

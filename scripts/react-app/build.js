@@ -10,7 +10,6 @@ const buildCommonWebpackConfig = require('../common/common.webpack');
 const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
-const { open } = require('../common/platformUtil');
 const webpackUtil = require('../common/webpackUtil');
 const buildAppWebpackConfig = require('./app.webpack');
 
@@ -55,8 +54,12 @@ module.exports = (inputParams = {}) => {
       devMiddleware: {
         publicPath: mergedConfig.output.publicPath,
       },
+      client: {
+        logging: 'info',
+      },
+      open: true,
       static: {
-        directory: './',
+        directory: mergedConfig.output.publicPath,
         watch: {
           aggregateTimeout: 1000,
           poll: undefined,
@@ -70,10 +73,9 @@ module.exports = (inputParams = {}) => {
       if (host === '0.0.0.0') {
         dns.lookup(os.hostname(), (dnsError, address) => {
           console.log(`Use ${mergedConfig.name} at: http://${address}:${port}`);
-          open(`http://localhost:${port}`, { stdio: 'inherit' });
         });
       } else {
-        open(`http://${host}:${port}`, { stdio: 'inherit' });
+        console.log(`Use ${mergedConfig.name} at: http://${host}:${port}`);
       }
     });
   } else {
