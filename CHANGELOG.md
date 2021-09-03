@@ -8,10 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
-- [MINOR] Added `InjectSeoPlugin`
 
 ### Changed
-- [MINOR] Add all `KRT_` envvars to `CreateRuntimeConfigPlugin` for react-apps by default
+- [MINOR] Updated to webpack-dev-server 4
+- [MINOR] Updated to use react-refresh instead of hot-loader
 
 ### Removed
 
