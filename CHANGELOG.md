@@ -10,10 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Added
 
 ### Changed
-- [MINOR] Updated to webpack-dev-server 4
-- [MINOR] Updated to use react-refresh instead of hot-loader
 
 ### Removed
+
+## [0.8.0] - 2021-10-11
+
+### Changed
+- [MINOR] Updated to webpack-dev-server 4
+- [MINOR] Updated to use react-refresh instead of hot-loader
 
 ## [0.7.1] - 2021-07-14
 
