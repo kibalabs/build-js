@@ -91,7 +91,7 @@ module.exports = (inputParams = {}) => {
       new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
       ...(params.seoTags || params.title ? [new InjectSeoPlugin(params.title || name, params.seoTags)] : []),
       ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
-      ...(params.dev ? [new ReactRefreshWebpackPlugin()] : []),
+      ...(params.dev ? [new ReactRefreshWebpackPlugin({ overlay: false })] : []),
     ],
   };
 };
