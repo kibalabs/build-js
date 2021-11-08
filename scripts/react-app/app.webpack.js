@@ -5,7 +5,6 @@ const LoadablePlugin = require('@loadable/webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
@@ -61,7 +60,7 @@ module.exports = (inputParams = {}) => {
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
-            chunks: "all",
+            chunks: 'all',
             minSize: 50 * 1024,
             name: (module, _, cacheGroupKey) => {
               const moduleContextParts = module.context.match(/[\\/]node_modules[\\/](.*)/);
@@ -72,10 +71,10 @@ module.exports = (inputParams = {}) => {
           },
           vendorSmall: {
             test: /[\\/]node_modules[\\/]/,
-            chunks: "all",
+            chunks: 'all',
             name: 'vendor-small',
           },
-        }
+        },
       },
       moduleIds: 'deterministic',
       usedExports: true,
