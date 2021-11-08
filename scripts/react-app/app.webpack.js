@@ -5,7 +5,6 @@ const LoadablePlugin = require('@loadable/webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
@@ -55,17 +54,31 @@ module.exports = (inputParams = {}) => {
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
-        name: 'vendor',
         chunks: 'all',
+        maxInitialRequests: Infinity,
+        minSize: 0,
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            chunks: 'all',
+            minSize: 50 * 1024,
+            name: (module, _, cacheGroupKey) => {
+              const moduleContextParts = module.context.match(/[\\/]node_modules[\\/](.*)/);
+              const modulePathParts = moduleContextParts[1].split('/');
+              const packageName = modulePathParts.length > 1 && modulePathParts[0].startsWith('@') ? `${modulePathParts[0]}-${modulePathParts[1]}` : modulePathParts[0];
+              return `${cacheGroupKey}-${packageName.replace('@', '')}`;
+            },
+          },
+          vendorSmall: {
+            test: /[\\/]node_modules[\\/]/,
+            chunks: 'all',
+            name: 'vendor-small',
+          },
+        },
       },
       moduleIds: 'deterministic',
       usedExports: true,
       minimize: !params.dev,
-      minimizer: [
-        new TerserPlugin({
-          extractComments: true,
-        }),
-      ],
     },
     plugins: [
       ...(params.addHtmlOutput ? [
