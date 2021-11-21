@@ -13,6 +13,9 @@ const isExternalPackageRequest = (package, request) => {
 };
 
 const isExternalModuleRequest = (externalModules, request) => {
+  if (request.endsWith('.css')) {
+    return false;
+  }
   return externalModules.includes(request) || externalModules.some((packageName) => request.indexOf(`${packageName}/`) === 0);
 };
 
