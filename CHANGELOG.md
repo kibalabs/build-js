@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - [MINOR] Stop showing full screen error overlay for react-apps
 - [MINOR] Split vendor chunks for react-apps
+- [MINOR] Switch css-loader for isomorphic-css-loader
 
 ### Removed
 
