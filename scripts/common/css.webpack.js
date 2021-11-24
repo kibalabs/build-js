@@ -1,3 +1,5 @@
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 const defaultParams = {
 };
 
@@ -5,12 +7,15 @@ module.exports = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...inputParams };
   return {
+    plugins: [
+      new MiniCssExtractPlugin(),
+    ],
     module: {
       rules: [
         {
           test: /\.css$/i,
           use: [
-            'isomorphic-style-loader',
+            MiniCssExtractPlugin.loader,
             {
               loader: 'css-loader',
               options: {
