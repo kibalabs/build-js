@@ -64,6 +64,11 @@ module.exports = (inputParams = {}) => {
             minSize: 50 * 1024,
             name: (module, _, cacheGroupKey) => {
               const moduleContextParts = module.context.match(/[\\/]node_modules[\\/](.*)/);
+              // TODO(krishan711): not sure why but when running in everypage a file with
+              // type:css/mini-extract is being sent here and doesnt have node_modules in the context.
+              if (!moduleContextParts) {
+                return module.type;
+              }
               const modulePathParts = moduleContextParts[1].split('/');
               const packageName = modulePathParts.length > 1 && modulePathParts[0].startsWith('@') ? `${modulePathParts[0]}-${modulePathParts[1]}` : modulePathParts[0];
               return `${cacheGroupKey}-${packageName.replace('@', '')}`;
