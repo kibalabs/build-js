@@ -10,9 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Added
 
 ### Changed
-- [MINOR] Switch isomorphic-css-loader for MiniCssExtractPlugin
 
 ### Removed
+
+## [0.8.2] - 2021-12-26
+
+### Changed
+- [MINOR] Switch isomorphic-css-loader for MiniCssExtractPlugin
 
 ## [0.8.1] - 2021-11-21
 
