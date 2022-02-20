@@ -1,9 +1,14 @@
+// NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
 const fs = require('fs');
 const path = require('path');
 
-const { ChunkExtractor, ChunkExtractorManager } = require('@loadable/server');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const React = require('react');
+
+const { ChunkExtractor, ChunkExtractorManager } = require('@loadable/server');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const ReactDOMServer = require('react-dom/server');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { ServerStyleSheet, StyleSheetManager } = require('styled-components');
 const webpackMerge = require('webpack-merge');
 
@@ -65,6 +70,7 @@ module.exports = (inputParams = {}) => {
   return createAndRunCompiler(nodeWebpackConfig).then(() => {
     return createAndRunCompiler(webWebpackConfig);
   }).then((webpackBuildStats) => {
+    // eslint-disable-next-line import/no-dynamic-require, global-require
     const { App } = require(path.resolve(buildDirectoryPath, 'index.js'));
     params.pages.forEach((page) => {
       console.log(`Rendering page ${page.path} to ${page.filename}`);
@@ -73,9 +79,13 @@ module.exports = (inputParams = {}) => {
       const styledComponentsSheet = new ServerStyleSheet();
       const extractor = new ChunkExtractor({ stats: webpackBuildStats });
       const bodyString = ReactDOMServer.renderToString(
-        React.createElement(ChunkExtractorManager, { extractor: extractor },
-          React.createElement(StyleSheetManager, { sheet: styledComponentsSheet.instance},
-            React.createElement(App, { staticPath: page.path, setHead: setHead }),
+        React.createElement(
+          ChunkExtractorManager,
+          { extractor },
+          React.createElement(
+            StyleSheetManager,
+            { sheet: styledComponentsSheet.instance },
+            React.createElement(App, { staticPath: page.path, setHead }),
           ),
         ),
       );
@@ -88,7 +98,9 @@ module.exports = (inputParams = {}) => {
         ...pageHead.scripts,
       ];
       const headString = ReactDOMServer.renderToStaticMarkup(
-        React.createElement('head', null,
+        React.createElement(
+          'head',
+          null,
           ...tags.map((tag, index) => (
             React.createElement(tag.type, { ...tag.attributes, key: index, 'ui-react-head': tag.headId }, tag.content)
           )),
@@ -99,7 +111,9 @@ module.exports = (inputParams = {}) => {
         ),
       );
       const bodyAssetsString = ReactDOMServer.renderToStaticMarkup(
-        React.createElement(React.Fragment, null,
+        React.createElement(
+          React.Fragment,
+          null,
           ...extractor.getMainAssets().map((asset) => (
             React.createElement(asset.scriptType, { key: asset.filename, 'data-chunk': asset.chunk, async: true, src: asset.url })
           )),
