@@ -18,6 +18,7 @@
   "bin": {
     "build-react-component": "scripts/react-component/run.js",
     "build-react-app": "scripts/react-app/run.js",
+    "build-react-app-static": "scripts/react-app-static/run.js",
     "build-module": "scripts/module/run.js",
     "build-server": "scripts/server/run.js",
     "lint": "scripts/linting/run.js",

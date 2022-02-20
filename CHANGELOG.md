@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
+- [MINOR] Added build-react-app-static for building statically rendered apps (for testing only atm!)
 
 ### Changed
 
