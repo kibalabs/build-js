@@ -22,6 +22,7 @@ const makeReactComponentWebpackConfig = require('../react-component/component.we
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
+    packageFilePath: path.join(process.cwd(), './package.json'),
     configModifier: undefined,
     webpackConfigModifier: undefined,
     analyzeBundle: false,
@@ -40,13 +41,15 @@ module.exports = (inputParams = {}) => {
     params = configModifier(params);
   }
   process.env.NODE_ENV = 'production';
+  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || package.name;
 
   const sourceDirectoryPath = path.resolve(params.directory);
   const buildDirectoryPath = path.resolve(params.buildDirectory);
   const outputDirectoryPath = path.resolve(params.outputDirectory);
 
   let nodeWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: 'site-node' }),
+    makeCommonWebpackConfig({ ...params, name: `${name}-node` }),
     makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
@@ -57,7 +60,7 @@ module.exports = (inputParams = {}) => {
   }
 
   let webWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: 'site' }),
+    makeCommonWebpackConfig({ ...params, name: `${name}-web` }),
     makeJsWebpackConfig({ ...params, polyfill: true, react: true }),
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
@@ -97,6 +100,12 @@ module.exports = (inputParams = {}) => {
         ...pageHead.styles,
         ...pageHead.scripts,
       ];
+      const seoTags = params.seoTags ? params.seoTags.map((tag) => (
+        {type: tag.tagName, attributes: tag.attributes }
+      )) : [];
+      if (!pageHead.title) {
+        seoTags.push({type: 'title', content: params.title || name });
+      }
       const headString = ReactDOMServer.renderToStaticMarkup(
         React.createElement(
           'head',
