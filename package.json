@@ -76,7 +76,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/node": "^17.0.18",
+    "@types/node": "^17.0.19",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "styled-components": "^5.3.3"
