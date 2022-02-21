@@ -101,10 +101,10 @@ module.exports = (inputParams = {}) => {
         ...pageHead.scripts,
       ];
       const seoTags = page.seoTags ? page.seoTags.map((tag) => (
-        {type: tag.tagName, attributes: tag.attributes }
+        { type: tag.tagName, attributes: tag.attributes }
       )) : [];
       if (!pageHead.title) {
-        seoTags.push({type: 'title', content: page.title || name });
+        seoTags.push({ type: 'title', content: page.title || name });
       }
       const headString = ReactDOMServer.renderToStaticMarkup(
         React.createElement(
