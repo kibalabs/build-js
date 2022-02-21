@@ -100,16 +100,19 @@ module.exports = (inputParams = {}) => {
         ...pageHead.styles,
         ...pageHead.scripts,
       ];
-      const seoTags = params.seoTags ? params.seoTags.map((tag) => (
+      const seoTags = page.seoTags ? page.seoTags.map((tag) => (
         {type: tag.tagName, attributes: tag.attributes }
       )) : [];
       if (!pageHead.title) {
-        seoTags.push({type: 'title', content: params.title || name });
+        seoTags.push({type: 'title', content: page.title || name });
       }
       const headString = ReactDOMServer.renderToStaticMarkup(
         React.createElement(
           'head',
           null,
+          ...seoTags.map((tag, index) => (
+            React.createElement(tag.type, { ...tag.attributes, key: index })
+          )),
           ...tags.map((tag, index) => (
             React.createElement(tag.type, { ...tag.attributes, key: index, 'ui-react-head': tag.headId }, tag.content)
           )),
