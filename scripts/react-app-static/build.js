@@ -100,6 +100,10 @@ module.exports = (inputParams = {}) => {
         ...pageHead.styles,
         ...pageHead.scripts,
       ];
+      if (!page.seoTags && params.seoTags && page.path === '/') {
+        // eslint-disable-next-line no-param-reassign
+        page.seoTags = params.seoTags;
+      }
       const seoTags = page.seoTags ? page.seoTags.map((tag) => (
         { type: tag.tagName, attributes: tag.attributes }
       )) : [];
@@ -110,6 +114,10 @@ module.exports = (inputParams = {}) => {
         React.createElement(
           'head',
           null,
+          // NOTE(krishan711): this should be kept in sync with react-app/index.html
+          React.createElement('meta', { charset: 'utf-8' }),
+          React.createElement('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
+          React.createElement('script', { type: 'text/javascript', src: '/runtimeConfig.js' }),
           ...seoTags.map((tag, index) => (
             React.createElement(tag.type, { ...tag.attributes, key: index })
           )),

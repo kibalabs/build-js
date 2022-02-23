@@ -28,6 +28,7 @@
   "files": [
     "scripts/*"
   ],
+  "//": "NOTE(krishan711): something is wrong with babel-plugin-styled-components - it freezes the build after this version!",
   "dependencies": {
     "@babel/core": "^7.17.5",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
@@ -45,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "babel-loader": "^8.2.3",
-    "babel-plugin-styled-components": "^2.0.3",
+    "babel-plugin-styled-components": "2.0.3",
     "chalk": "^4.1.2",
     "commander": "^9.0.0",
     "console-table-printer": "^2.10.0",
