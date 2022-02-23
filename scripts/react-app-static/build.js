@@ -101,6 +101,7 @@ module.exports = (inputParams = {}) => {
         ...pageHead.scripts,
       ];
       if (!page.seoTags && params.seoTags && page.path === '/') {
+        // eslint-disable-next-line no-param-reassign
         page.seoTags = params.seoTags;
       }
       const seoTags = page.seoTags ? page.seoTags.map((tag) => (
