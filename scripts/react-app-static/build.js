@@ -118,6 +118,7 @@ module.exports = (inputParams = {}) => {
           React.createElement('meta', { charset: 'utf-8' }),
           React.createElement('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
           React.createElement('script', { type: 'text/javascript', src: '/runtimeConfig.js' }),
+          React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_STATIC_PATH = '${page.path}';` } }),
           ...seoTags.map((tag, index) => (
             React.createElement(tag.type, { ...tag.attributes, key: index })
           )),
