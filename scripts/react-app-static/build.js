@@ -115,7 +115,7 @@ module.exports = (inputParams = {}) => {
           'head',
           null,
           // NOTE(krishan711): this should be kept in sync with react-app/index.html
-          React.createElement('meta', { charset: 'utf-8' }),
+          React.createElement('meta', { charSet: 'utf-8' }),
           React.createElement('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
           React.createElement('script', { type: 'text/javascript', src: '/runtimeConfig.js' }),
           React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_STATIC_PATH = '${page.path}';` } }),
