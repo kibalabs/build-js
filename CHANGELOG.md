@@ -8,11 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
-- [MINOR] Added build-react-app-static for building statically rendered apps (for testing only atm!)
 
 ### Changed
 
 ### Removed
+
+## [0.8.3] - 2022-04-05
+
+### Added
+- [MINOR] Added build-react-app-static for building statically rendered apps (for testing only atm!)
 
 ## [0.8.2] - 2021-12-26
 
