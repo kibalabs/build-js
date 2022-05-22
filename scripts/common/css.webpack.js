@@ -1,11 +1,13 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const { removeUndefinedProperties } = require('../util');
+
 const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return {
     plugins: [
       new MiniCssExtractPlugin(),

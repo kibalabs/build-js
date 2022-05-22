@@ -12,6 +12,7 @@ const buildImagesWebpackConfig = require('../common/images.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
 const { open } = require('../common/platformUtil');
 const webpackUtil = require('../common/webpackUtil');
+const { removeUndefinedProperties } = require('../util');
 const buildAppWebpackConfig = require('./app.webpack');
 
 module.exports = (inputParams = {}) => {
@@ -19,12 +20,22 @@ module.exports = (inputParams = {}) => {
     configModifier: undefined,
     dev: false,
     start: false,
+    polyfill: true,
+    polyfillTargets: undefined,
     webpackConfigModifier: undefined,
     analyzeBundle: false,
     shouldAliasModules: true,
+    addHtmlOutput: true,
+    addRuntimeConfig: true,
+    runtimeConfigVars: {},
+    seoTags: [],
+    packageFilePath: path.join(process.cwd(), './package.json'),
+    entryFilePath: path.join(process.cwd(), './src/index.tsx'),
+    outputDirectory: path.join(process.cwd(), './dist'),
+    publicDirectory: path.join(process.cwd(), './public'),
   };
 
-  let params = { ...defaultParams, ...inputParams };
+  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const configModifier = require(path.join(process.cwd(), params.configModifier));
@@ -34,7 +45,7 @@ module.exports = (inputParams = {}) => {
 
   let mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig(params),
-    buildJsWebpackConfig({ ...params, react: true, polyfill: true }),
+    buildJsWebpackConfig({ ...params, react: true }),
     buildCssWebpackConfig(params),
     buildImagesWebpackConfig(params),
     buildAppWebpackConfig(params),

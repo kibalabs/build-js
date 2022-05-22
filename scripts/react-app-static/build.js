@@ -19,6 +19,7 @@ const makeJsWebpackConfig = require('../common/js.webpack');
 const { createAndRunCompiler } = require('../common/webpackUtil');
 const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const makeReactComponentWebpackConfig = require('../react-component/component.webpack');
+const { removeUndefinedProperties } = require('../util');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
@@ -28,13 +29,14 @@ module.exports = (inputParams = {}) => {
     analyzeBundle: false,
     shouldAliasModules: true,
     addHtmlOutput: false,
+    polyfillTargets: undefined,
     pages: [{ path: '/', filename: 'index.html' }],
     directory: path.join(process.cwd(), 'src'),
     buildDirectory: path.join(process.cwd(), 'build'),
     outputDirectory: path.join(process.cwd(), 'dist'),
   };
 
-  let params = { ...defaultParams, ...inputParams };
+  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const configModifier = require(path.join(process.cwd(), params.configModifier));

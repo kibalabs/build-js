@@ -4,6 +4,7 @@ const path = require('path');
 const chalk = require('chalk');
 const { ESLint } = require('eslint');
 
+const { removeUndefinedProperties } = require('../util');
 const buildEslintConfig = require('./eslint.config');
 
 const defaultParams = {
@@ -15,7 +16,7 @@ const defaultParams = {
 };
 
 module.exports = async (inputParams = {}) => {
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = null;
   if (params.configModifier) {
     // eslint-disable-next-line import/no-dynamic-require, global-require

@@ -1,10 +1,19 @@
+const fs = require('fs');
+
+const { removeUndefinedProperties } = require('../util');
 const buildBabelConfig = require('./babel.config');
 
 const defaultParams = {
+  packageFilePath: undefined,
+  polyfillTargets: undefined,
 };
 
 module.exports = (inputParams = {}) => {
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
+  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  if (!params.polyfillTargets) {
+    params.polyfillTargets = package.browserslist;
+  }
   const babelConfig = buildBabelConfig(params);
   return {
     resolve: {

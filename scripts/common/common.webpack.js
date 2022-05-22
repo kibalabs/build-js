@@ -4,18 +4,19 @@ const path = require('path');
 const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
 
 const PrintAssetSizesPlugin = require('../plugins/printAssetSizesPlugin');
+const { removeUndefinedProperties } = require('../util');
 const packageUtil = require('./packageUtil');
 
-module.exports = (inputParams = {}) => {
-  const defaultParams = {
-    dev: false,
-    analyzeBundle: false,
-    packageFilePath: path.join(process.cwd(), './package.json'),
-    shouldAliasModules: true,
-    name: undefined,
-  };
-  const params = { ...defaultParams, ...inputParams };
+const defaultParams = {
+  dev: false,
+  analyzeBundle: false,
+  packageFilePath: undefined,
+  shouldAliasModules: true,
+  name: undefined,
+};
 
+module.exports = (inputParams = {}) => {
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const modules = packageUtil.getExternalModules(package);
   // NOTE(krishan711): this aliases all the modules declared in package.json to the one installed in node_modules

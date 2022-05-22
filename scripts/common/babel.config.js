@@ -1,12 +1,15 @@
-module.exports = (inputParams = {}) => {
-  const defaultParams = {
-    polyfill: false,
-    react: false,
-    dev: false,
-    preserveModules: false,
-  };
-  const params = { ...defaultParams, ...inputParams };
+const { removeUndefinedProperties } = require('../util');
 
+const defaultParams = {
+  polyfill: false,
+  polyfillTargets: 'defaults, >0.2%, not dead, ie 11',
+  react: false,
+  dev: false,
+  preserveModules: false,
+};
+
+module.exports = (inputParams = {}) => {
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const polyfillSettings = {
     // NOTE(krishan711): this should be entry if we aren't processing all the node_modules
     // useBuiltIns: 'entry',
@@ -15,9 +18,10 @@ module.exports = (inputParams = {}) => {
       version: 3,
       proposals: true,
     },
-    // TODO(krishan711): support reading this from package.json if its there
-    targets: 'defaults, >0.2%, not dead, ie 11',
+    targets: params.polyfillTargets,
   };
+  console.log('params', params);
+  console.log('polyfillSettings', polyfillSettings);
 
   return {
     sourceType: 'unambiguous',
