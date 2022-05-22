@@ -1,16 +1,17 @@
 const fs = require('fs');
-const path = require('path');
 
+const { removeUndefinedProperties } = require('../util');
+
+const defaultParams = {
+  dev: undefined,
+  name: undefined,
+  packageFilePath: undefined,
+  entryFilePath: undefined,
+  outputDirectory: undefined,
+};
 
 module.exports = (inputParams = {}) => {
-  const defaultParams = {
-    dev: false,
-    packageFilePath: path.join(process.cwd(), './package.json'),
-    name: undefined,
-    entryFilePath: path.join(process.cwd(), './src/index.ts'),
-    outputDirectory: path.join(process.cwd(), './dist'),
-  };
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
   return {

@@ -9,22 +9,30 @@ const buildJsWebpackConfig = require('../common/js.webpack');
 const webpackUtil = require('../common/webpackUtil');
 const generateDeclarations = require('../typing/generateDeclarations');
 const buildTsConfig = require('../typing/ts.config');
+const { removeUndefinedProperties } = require('../util');
 const buildModuleWebpackConfig = require('./module.webpack');
 
-const defaultParams = {
-  configModifier: undefined,
-  dev: false,
-  start: false,
-  webpackConfigModifier: undefined,
-  analyzeBundle: false,
-  polyfill: false,
-  multiEntry: null,
-  allFiles: false,
-  recursive: false,
-};
 
 module.exports = (inputParams = {}) => {
-  let params = { ...defaultParams, ...inputParams };
+  const defaultParams = {
+    configModifier: undefined,
+    dev: false,
+    start: false,
+    webpackConfigModifier: undefined,
+    analyzeBundle: false,
+    polyfill: false,
+    polyfillTargets: undefined,
+    multiEntry: null,
+    allFiles: false,
+    recursive: false,
+    name: undefined,
+    excludeAllNodeModules: false,
+    nodeModulesPaths: undefined,
+    packageFilePath: path.join(process.cwd(), './package.json'),
+    entryFilePath: path.join(process.cwd(), './src/index.ts'),
+    outputDirectory: path.join(process.cwd(), './dist'),
+  };
+  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const configModifier = require(path.join(process.cwd(), params.configModifier));

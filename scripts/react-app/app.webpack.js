@@ -10,22 +10,24 @@ const webpack = require('webpack');
 const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
 const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
 const InjectSeoPlugin = require('../plugins/injectSeoPlugin');
+const { removeUndefinedProperties } = require('../util');
+
+const defaultParams = {
+  dev: undefined,
+  name: undefined,
+  addHtmlOutput: undefined,
+  addRuntimeConfig: undefined,
+  runtimeConfigVars: undefined,
+  seoTags: undefined,
+  title: undefined,
+  packageFilePath: undefined,
+  entryFilePath: undefined,
+  outputDirectory: undefined,
+  publicDirectory: undefined,
+};
 
 module.exports = (inputParams = {}) => {
-  const defaultParams = {
-    dev: false,
-    packageFilePath: path.join(process.cwd(), './package.json'),
-    name: undefined,
-    entryFilePath: path.join(process.cwd(), './src/index.tsx'),
-    outputDirectory: path.join(process.cwd(), './dist'),
-    addHtmlOutput: true,
-    addRuntimeConfig: true,
-    runtimeConfigVars: {},
-    seoTags: [],
-    title: undefined,
-    publicDirectory: path.join(process.cwd(), './public'),
-  };
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
 

@@ -4,21 +4,21 @@ const path = require('path');
 const webpack = require('webpack');
 
 const packageUtil = require('../common/packageUtil');
+const { removeUndefinedProperties } = require('../util');
 
+const defaultParams = {
+  dev: undefined,
+  name: undefined,
+  packageFilePath: undefined,
+  entryFilePath: undefined,
+  outputDirectory: undefined,
+  excludeAllNodeModules: undefined,
+  nodeModulesPath: undefined,
+  nodeModulesPaths: undefined,
+};
 
 module.exports = (inputParams = {}) => {
-  const defaultParams = {
-    dev: false,
-    packageFilePath: path.join(process.cwd(), './package.json'),
-    name: undefined,
-    entryFilePath: path.join(process.cwd(), './src/index.ts'),
-    outputDirectory: path.join(process.cwd(), './dist'),
-    excludeAllNodeModules: false,
-    nodeModulesPath: undefined,
-    // NOTE(krish): allow multiple node_modules paths to cater for lerna
-    nodeModulesPaths: undefined,
-  };
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
   const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];

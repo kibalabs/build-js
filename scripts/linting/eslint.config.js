@@ -1,9 +1,11 @@
+const { removeUndefinedProperties } = require('../util');
+
 const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return {
     env: {
       browser: true,

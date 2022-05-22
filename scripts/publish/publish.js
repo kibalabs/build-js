@@ -1,5 +1,7 @@
 const childProcess = require('child_process');
 
+const { removeUndefinedProperties } = require('../util');
+
 const defaultParams = {
   next: false,
   nextVersion: 1,
@@ -7,7 +9,7 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
 
   if (params.next) {
     Array(parseInt(params.nextVersion || '0', 10)).fill().forEach(() => {

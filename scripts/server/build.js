@@ -6,6 +6,7 @@ const webpackMerge = require('webpack-merge');
 const buildCommonWebpackConfig = require('../common/common.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
 const webpackUtil = require('../common/webpackUtil');
+const { removeUndefinedProperties } = require('../util');
 const buildServerWebpackConfig = require('./server.webpack');
 
 module.exports = (inputParams = {}) => {
@@ -16,8 +17,11 @@ module.exports = (inputParams = {}) => {
     webpackConfigModifier: undefined,
     analyzeBundle: false,
     shouldAliasModules: true,
+    packageFilePath: path.join(process.cwd(), './package.json'),
+    entryFilePath: path.join(process.cwd(), './src/index.ts'),
+    outputDirectory: path.join(process.cwd(), './dist'),
   };
-  let params = { ...defaultParams, ...inputParams };
+  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const configModifier = require(path.join(process.cwd(), params.configModifier));

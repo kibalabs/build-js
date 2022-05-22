@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const glob = require('glob');
 const typescript = require('typescript');
 
+const { removeUndefinedProperties } = require('../util');
 const buildTsConfig = require('./ts.config');
 
 const defaultParams = {
@@ -15,7 +16,7 @@ const defaultParams = {
 };
 
 module.exports = (inputParams = {}) => {
-  const params = { ...defaultParams, ...inputParams };
+  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = {};
   if (params.configModifier) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
