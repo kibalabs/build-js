@@ -20,8 +20,6 @@ module.exports = (inputParams = {}) => {
     },
     targets: params.polyfillTargets,
   };
-  console.log('params', params);
-  console.log('polyfillSettings', polyfillSettings);
 
   return {
     sourceType: 'unambiguous',
