@@ -28,6 +28,9 @@
   "files": [
     "scripts/*"
   ],
+  "engines": {
+    "node": ">14"
+  },
   "dependencies": {
     "@babel/core": "^7.18.0",
     "@babel/plugin-proposal-class-properties": "^7.17.12",
