@@ -17,9 +17,9 @@ const buildAppWebpackConfig = require('./app.webpack');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
-    configModifier: undefined,
     dev: false,
     start: false,
+    configModifier: undefined,
     polyfill: true,
     polyfillTargets: undefined,
     webpackConfigModifier: undefined,
