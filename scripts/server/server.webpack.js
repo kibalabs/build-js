@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const webpack = require('webpack');
+
 const packageUtil = require('../common/packageUtil');
 const { removeUndefinedProperties } = require('../util');
 
