@@ -9,8 +9,8 @@ const makeCssWebpackConfig = require('../common/css.webpack');
 const makeImagesWebpackConfig = require('../common/images.webpack');
 const makeJsWebpackConfig = require('../common/js.webpack');
 const { createAndRunCompiler } = require('../common/webpackUtil');
-const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const makeModuleWebpackConfig = require('../module/module.webpack');
+const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const { removeUndefinedProperties } = require('../util');
 const { renderHtml } = require('./static');
 
