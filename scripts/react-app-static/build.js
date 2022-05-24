@@ -10,7 +10,7 @@ const makeImagesWebpackConfig = require('../common/images.webpack');
 const makeJsWebpackConfig = require('../common/js.webpack');
 const { createAndRunCompiler } = require('../common/webpackUtil');
 const makeReactAppWebpackConfig = require('../react-app/app.webpack');
-const makeReactComponentWebpackConfig = require('../react-component/component.webpack');
+const makeModuleWebpackConfig = require('../module/module.webpack');
 const { removeUndefinedProperties } = require('../util');
 const { renderHtml } = require('./static');
 
@@ -56,7 +56,7 @@ module.exports = (inputParams = {}) => {
     makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
-    makeReactComponentWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
+    makeModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
   );
   if (params.webpackConfigModifier) {
     nodeWebpackConfig = params.webpackConfigModifier(nodeWebpackConfig);
