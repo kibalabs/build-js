@@ -12,6 +12,7 @@ const defaultParams = {
   analyzeBundle: false,
   packageFilePath: undefined,
   shouldAliasModules: true,
+  cleanOutputDirectory: true,
   name: undefined,
 };
 
@@ -42,6 +43,7 @@ module.exports = (inputParams = {}) => {
     },
     output: {
       assetModuleFilename: 'assets/[hash][ext][query]',
+      clean: params.cleanOutputDirectory,
     },
     performance: {
       hints: false,

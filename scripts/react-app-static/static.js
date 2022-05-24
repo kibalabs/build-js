@@ -8,11 +8,11 @@ const ReactDOMServer = require('react-dom/server');
 const { ServerStyleSheet, StyleSheetManager } = require('styled-components');
 
 
-const renderHtml = (app, page, params, appName, webpackBuildStats, pageData = null) => {
+const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePath, pageData = null) => {
   let pageHead = { headId: '', base: null, title: null, links: [], metas: [], styles: [], scripts: [], noscripts: [] };
   const setHead = (newHead) => { pageHead = newHead; };
   const styledComponentsSheet = new ServerStyleSheet();
-  const extractor = new ChunkExtractor({ stats: webpackBuildStats });
+  const extractor = new ChunkExtractor({ statsFile: webpackBuildStatsFilePath });
   const bodyString = ReactDOMServer.renderToString(
     React.createElement(
       ChunkExtractorManager,
@@ -25,8 +25,8 @@ const renderHtml = (app, page, params, appName, webpackBuildStats, pageData = nu
     ),
   );
   let pageSeoTags = page.seoTags;
-  if (!pageSeoTags && params.seoTags && page.path === '/') {
-    pageSeoTags = params.seoTags;
+  if (!pageSeoTags && defaultSeoTags && page.path === '/') {
+    pageSeoTags = defaultSeoTags;
   }
   const seoTags = pageSeoTags || [];
   const tags = [

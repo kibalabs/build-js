@@ -15,6 +15,7 @@ const defaultParams = {
   excludeAllNodeModules: undefined,
   nodeModulesPath: undefined,
   nodeModulesPaths: undefined,
+  outputFilename: 'index.js',
 };
 
 module.exports = (inputParams = {}) => {
@@ -36,13 +37,8 @@ module.exports = (inputParams = {}) => {
       params.entryFilePath,
     ],
     target: 'node',
-    // NOTE(krishan711): apparently this is not needed in webpack5: https://github.com/webpack/webpack/issues/1599
-    node: {
-      __dirname: false,
-      __filename: false,
-    },
     output: {
-      filename: 'index.js',
+      filename: params.outputFilename,
       chunkFilename: '[name].bundle.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,

@@ -1,29 +1,23 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-const dns = require('dns');
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 
-const chalk = require('chalk');
 const webpackMerge = require('webpack-merge');
 
 const makeCommonWebpackConfig = require('../common/common.webpack');
 const makeCssWebpackConfig = require('../common/css.webpack');
 const makeImagesWebpackConfig = require('../common/images.webpack');
 const makeJsWebpackConfig = require('../common/js.webpack');
-const { open } = require('../common/platformUtil');
 const { createAndRunCompiler } = require('../common/webpackUtil');
 const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const makeReactComponentWebpackConfig = require('../react-component/component.webpack');
+const makeServerWebpackConfig = require('../server/server.webpack');
 const { removeUndefinedProperties } = require('../util');
-const { buildAppServer } = require('./server');
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
-
 module.exports = (inputParams = {}) => {
   const defaultParams = {
     dev: false,
-    start: false,
     configModifier: undefined,
     polyfill: true,
     polyfillTargets: undefined,
@@ -53,7 +47,6 @@ module.exports = (inputParams = {}) => {
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
 
-  const publicDirectoryPath = path.resolve(params.publicDirectory);
   const buildDirectoryPath = path.resolve(params.buildDirectory);
   const outputDirectoryPath = path.resolve(params.outputDirectory);
   const entryFilePath = path.resolve(params.entryFilePath);
@@ -64,7 +57,7 @@ module.exports = (inputParams = {}) => {
     makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
-    makeReactComponentWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
+    makeReactComponentWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true, outputFilename: 'app.js' }),
   );
   if (params.webpackConfigModifier) {
     nodeWebpackConfig = params.webpackConfigModifier(nodeWebpackConfig);
@@ -84,22 +77,19 @@ module.exports = (inputParams = {}) => {
   return createAndRunCompiler(nodeWebpackConfig).then(() => {
     return createAndRunCompiler(webWebpackConfig);
   }).then((webpackBuildStats) => {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const { App, routes, globals } = require(path.resolve(buildDirectoryPath, 'index.js'));
-    const app = buildAppServer(App, routes, globals, params, publicDirectoryPath, outputDirectoryPath, name, webpackBuildStats);
-    const host = '0.0.0.0';
-    const port = 3000;
-    return app.listen(port, host, () => {
-      console.log(chalk.cyan('Starting the development server...\n'));
-      if (host === '0.0.0.0') {
-        dns.lookup(os.hostname(), (dnsError, address) => {
-          console.log(`Use ${name} at: http://${address}:${port}`);
-          open(`http://localhost:${port}`, { stdio: 'inherit' });
-        });
-      } else {
-        console.log(`Use ${name} at: http://${host}:${port}`);
-        open(`http://${host}:${port}`, { stdio: 'inherit' });
-      }
-    });
+    const serverFilePath = path.join(buildDirectoryPath, 'server.js');
+    fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
+    fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
+    fs.writeFileSync(path.join(outputDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
+
+    let serverWebpackConfig = webpackMerge.merge(
+      makeCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
+      makeJsWebpackConfig({ ...params, react: false, polyfill: false }),
+      makeServerWebpackConfig({ ...params, entryFilePath: serverFilePath, outputDirectory: outputDirectoryPath, excludeAllNodeModules: true }),
+    );
+    if (params.webpackConfigModifier) {
+      serverWebpackConfig = params.webpackConfigModifier(serverWebpackConfig);
+    }
+    return createAndRunCompiler(serverWebpackConfig);
   });
 };

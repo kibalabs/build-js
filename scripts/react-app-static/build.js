@@ -76,12 +76,13 @@ module.exports = (inputParams = {}) => {
   return createAndRunCompiler(nodeWebpackConfig).then(() => {
     return createAndRunCompiler(webWebpackConfig);
   }).then((webpackBuildStats) => {
+    fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
     // NOTE(krishan711): if this could be done in an async way it would be faster!
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const { App } = require(path.resolve(buildDirectoryPath, 'index.js'));
     params.pages.forEach((page) => {
       console.log(`Rendering page ${page.path} to ${page.filename}`);
-      const output = renderHtml(App, page, params, name, webpackBuildStats);
+      const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), null);
       const outputPath = path.join(outputDirectoryPath, page.filename);
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, output);
