@@ -101,7 +101,10 @@ function formatWebpackMessages(stats) {
 }
 
 const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
-  rimraf.sync(config.output.path);
+  if (config.output.clean) {
+    // NOTE(krishan711): this shouldn't be needed but if its removed the assets plugin doesn't work
+    rimraf.sync(config.output.path);
+  }
   const compiler = webpack(config);
 
   compiler.hooks.compile.tap('webpackUtil', () => {

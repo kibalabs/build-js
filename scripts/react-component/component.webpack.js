@@ -15,15 +15,16 @@ const defaultParams = {
   excludeAllNodeModules: undefined,
   nodeModulesPath: undefined,
   nodeModulesPaths: undefined,
+  outputFilename: 'index.js',
 };
 
 module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
-  const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
   const externalModules = [];
   if (params.excludeAllNodeModules) {
+    const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
     nodeModulesPaths.forEach((nodeModulesPath) => {
       externalModules.push(...packageUtil.getNodeModules(nodeModulesPath));
     });
@@ -36,13 +37,8 @@ module.exports = (inputParams = {}) => {
       params.entryFilePath,
     ],
     target: 'node',
-    // NOTE(krishan711): apparently this is not needed in webpack5: https://github.com/webpack/webpack/issues/1599
-    node: {
-      __dirname: false,
-      __filename: false,
-    },
     output: {
-      filename: 'index.js',
+      filename: params.outputFilename,
       chunkFilename: '[name].bundle.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,

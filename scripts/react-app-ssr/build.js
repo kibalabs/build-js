@@ -11,9 +11,10 @@ const makeJsWebpackConfig = require('../common/js.webpack');
 const { createAndRunCompiler } = require('../common/webpackUtil');
 const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const makeReactComponentWebpackConfig = require('../react-component/component.webpack');
+const makeServerWebpackConfig = require('../server/server.webpack');
 const { removeUndefinedProperties } = require('../util');
-const { renderHtml } = require('./static');
 
+// NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
 module.exports = (inputParams = {}) => {
   const defaultParams = {
     dev: false,
@@ -27,7 +28,7 @@ module.exports = (inputParams = {}) => {
     addRuntimeConfig: true,
     runtimeConfigVars: {},
     seoTags: [],
-    pages: [{ path: '/', filename: 'index.html' }],
+    pages: [],
     packageFilePath: path.join(process.cwd(), './package.json'),
     entryFilePath: path.join(process.cwd(), './src/index.tsx'),
     appEntryFilePath: path.join(process.cwd(), './src/app.tsx'),
@@ -56,7 +57,7 @@ module.exports = (inputParams = {}) => {
     makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
-    makeReactComponentWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
+    makeReactComponentWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true, outputFilename: 'app.js' }),
   );
   if (params.webpackConfigModifier) {
     nodeWebpackConfig = params.webpackConfigModifier(nodeWebpackConfig);
@@ -76,17 +77,20 @@ module.exports = (inputParams = {}) => {
   return createAndRunCompiler(nodeWebpackConfig).then(() => {
     return createAndRunCompiler(webWebpackConfig);
   }).then((webpackBuildStats) => {
-    fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
-    // NOTE(krishan711): if this could be done in an async way it would be faster!
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const { App } = require(path.resolve(buildDirectoryPath, 'index.js'));
-    params.pages.forEach((page) => {
-      console.log(`Rendering page ${page.path} to ${page.filename}`);
-      const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), null);
-      const outputPath = path.join(outputDirectoryPath, page.filename);
-      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, output);
-      console.log(`Done rendering page ${page.path}`);
-    });
+    const serverFilePath = path.join(buildDirectoryPath, 'server.js');
+    fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
+    fs.copyFileSync(path.join(__dirname, './start.sh'), path.join(outputDirectoryPath, 'start.sh'));
+    fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
+    fs.writeFileSync(path.join(outputDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
+
+    let serverWebpackConfig = webpackMerge.merge(
+      makeCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
+      makeJsWebpackConfig({ ...params, react: false, polyfill: false }),
+      makeServerWebpackConfig({ ...params, entryFilePath: serverFilePath, outputDirectory: outputDirectoryPath, excludeAllNodeModules: true }),
+    );
+    if (params.webpackConfigModifier) {
+      serverWebpackConfig = params.webpackConfigModifier(serverWebpackConfig);
+    }
+    return createAndRunCompiler(serverWebpackConfig);
   });
 };

@@ -22,7 +22,7 @@ class PrintAssetSizesPlugin {
       const sortedAssets = emittedAssets.sort((asset1, asset2) => asset1.size < asset2.size);
       const table = new Table({
         columns: [
-          { name: 'name', alignment: 'left', maxLen: 80 },
+          { name: 'name', alignment: 'left', maxLen: 50 },
           { name: 'size', alignment: 'left' },
         ],
       });
