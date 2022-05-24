@@ -9,9 +9,8 @@ const makeCssWebpackConfig = require('../common/css.webpack');
 const makeImagesWebpackConfig = require('../common/images.webpack');
 const makeJsWebpackConfig = require('../common/js.webpack');
 const { createAndRunCompiler } = require('../common/webpackUtil');
+const buildModuleWebpackConfig = require('../module/module.webpack');
 const makeReactAppWebpackConfig = require('../react-app/app.webpack');
-const makeReactComponentWebpackConfig = require('../react-component/component.webpack');
-const makeServerWebpackConfig = require('../server/server.webpack');
 const { removeUndefinedProperties } = require('../util');
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
@@ -57,7 +56,7 @@ module.exports = (inputParams = {}) => {
     makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
-    makeReactComponentWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true, outputFilename: 'app.js' }),
+    buildModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true, outputFilename: 'app.js' }),
   );
   if (params.webpackConfigModifier) {
     nodeWebpackConfig = params.webpackConfigModifier(nodeWebpackConfig);
@@ -86,7 +85,7 @@ module.exports = (inputParams = {}) => {
     let serverWebpackConfig = webpackMerge.merge(
       makeCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
       makeJsWebpackConfig({ ...params, react: false, polyfill: false }),
-      makeServerWebpackConfig({ ...params, entryFilePath: serverFilePath, outputDirectory: outputDirectoryPath, excludeAllNodeModules: true }),
+      buildModuleWebpackConfig({ ...params, entryFilePath: serverFilePath, outputDirectory: outputDirectoryPath, excludeAllNodeModules: true }),
     );
     if (params.webpackConfigModifier) {
       serverWebpackConfig = params.webpackConfigModifier(serverWebpackConfig);

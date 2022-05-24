@@ -2,12 +2,11 @@ const path = require('path');
 
 const webpackMerge = require('webpack-merge');
 
-
 const buildCommonWebpackConfig = require('../common/common.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
 const webpackUtil = require('../common/webpackUtil');
+const buildModuleWebpackConfig = require('../module/module.webpack');
 const { removeUndefinedProperties } = require('../util');
-const buildServerWebpackConfig = require('./server.webpack');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
@@ -32,7 +31,7 @@ module.exports = (inputParams = {}) => {
   let mergedConfig = webpackMerge.merge(
     buildCommonWebpackConfig(params),
     buildJsWebpackConfig(params),
-    buildServerWebpackConfig(params),
+    buildModuleWebpackConfig(params),
   );
   if (params.webpackConfigModifier) {
     mergedConfig = params.webpackConfigModifier(mergedConfig);
