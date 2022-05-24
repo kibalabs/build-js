@@ -114,13 +114,6 @@ const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, sh
     }
   });
 
-  compiler.hooks.invalid.tap('webpackUtil', () => {
-    console.log(`Building ${config.name}...`);
-    if (showNotifications) {
-      notifier.notify({ title: config.name, message: 'Building...' });
-    }
-  });
-
   compiler.hooks.failed.tap('webpackUtil', (error) => {
     console.log(chalk.red(`Failed to build ${config.name}`));
     console.log('Details:');
