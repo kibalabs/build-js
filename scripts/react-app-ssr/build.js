@@ -65,7 +65,7 @@ module.exports = (inputParams = {}) => {
 
   let webWebpackConfig = webpackMerge.merge(
     makeCommonWebpackConfig({ ...params, name: `${name}-web` }),
-    makeJsWebpackConfig({ ...params, react: true }),
+    makeJsWebpackConfig({ ...params, polyfill: true, react: true }),
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
     makeReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
