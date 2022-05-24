@@ -9,10 +9,10 @@ const buildCssWebpackConfig = require('../common/css.webpack');
 const buildImagesWebpackConfig = require('../common/images.webpack');
 const buildJsWebpackConfig = require('../common/js.webpack');
 const webpackUtil = require('../common/webpackUtil');
+const buildModuleWebpackConfig = require('../module/module.webpack');
 const generateDeclarations = require('../typing/generateDeclarations');
 const buildTsConfig = require('../typing/ts.config');
 const { removeUndefinedProperties } = require('../util');
-const buildModuleWebpackConfig = require('../module/module.webpack');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {

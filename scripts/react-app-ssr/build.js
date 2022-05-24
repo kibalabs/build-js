@@ -9,8 +9,8 @@ const makeCssWebpackConfig = require('../common/css.webpack');
 const makeImagesWebpackConfig = require('../common/images.webpack');
 const makeJsWebpackConfig = require('../common/js.webpack');
 const { createAndRunCompiler } = require('../common/webpackUtil');
-const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const buildModuleWebpackConfig = require('../module/module.webpack');
+const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const { removeUndefinedProperties } = require('../util');
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
