@@ -79,6 +79,7 @@ module.exports = (inputParams = {}) => {
   }).then((webpackBuildStats) => {
     const serverFilePath = path.join(buildDirectoryPath, 'server.js');
     fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
+    fs.copyFileSync(path.join(__dirname, './start.sh'), path.join(outputDirectoryPath, 'start.sh'));
     fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
     fs.writeFileSync(path.join(outputDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
 
