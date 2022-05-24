@@ -1,4 +1,4 @@
-FROM node:14.19.1-stretch as build
+FROM node:18.2.0 as build
 
 WORKDIR /app
 

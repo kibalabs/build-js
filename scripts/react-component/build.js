@@ -12,7 +12,7 @@ const webpackUtil = require('../common/webpackUtil');
 const generateDeclarations = require('../typing/generateDeclarations');
 const buildTsConfig = require('../typing/ts.config');
 const { removeUndefinedProperties } = require('../util');
-const buildComponentWebpackConfig = require('./component.webpack');
+const buildModuleWebpackConfig = require('../module/module.webpack');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
@@ -45,7 +45,7 @@ module.exports = (inputParams = {}) => {
     buildJsWebpackConfig({ ...params, react: true, preserveModules: true }),
     buildCssWebpackConfig(params),
     buildImagesWebpackConfig(params),
-    buildComponentWebpackConfig(params),
+    buildModuleWebpackConfig(params),
   );
 
   if (params.multiEntry) {
