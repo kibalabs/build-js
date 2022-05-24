@@ -53,9 +53,8 @@ const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePat
       ...tags.map((tag, index) => (
         React.createElement(tag.type, { ...tag.attributes, key: index, 'ui-react-head': tag.headId }, tag.content)
       )),
-      ...extractor.getPreAssets().map((asset) => (
-        React.createElement('link', { key: asset.filename, 'data-chunk': asset.chunk, rel: asset.linkType, as: asset.scriptType, href: asset.url })
-      )),
+      ...extractor.getLinkElements(),
+      ...extractor.getStyleElements(),
       styledComponentsSheet.getStyleElement(),
     ),
   );
@@ -63,9 +62,7 @@ const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePat
     React.createElement(
       React.Fragment,
       null,
-      ...extractor.getMainAssets().map((asset) => (
-        React.createElement(asset.scriptType, { key: asset.filename, 'data-chunk': asset.chunk, async: true, src: asset.url })
-      )),
+      ...extractor.getScriptElements(),
     ),
   );
   const output = `<!DOCTYPE html>
