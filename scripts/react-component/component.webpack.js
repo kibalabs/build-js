@@ -22,9 +22,9 @@ module.exports = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
-  const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
   const externalModules = [];
   if (params.excludeAllNodeModules) {
+    const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
     nodeModulesPaths.forEach((nodeModulesPath) => {
       externalModules.push(...packageUtil.getNodeModules(nodeModulesPath));
     });
