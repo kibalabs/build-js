@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
-- [MINOR] Added react-app-ssr
+- [MAJOR] Added react-app-ssr
 
 ### Changed
 - [MINOR] Added reading browserslist from package.json if provided
