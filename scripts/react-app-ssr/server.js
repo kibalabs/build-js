@@ -1,6 +1,7 @@
 const path = require('path');
 
 const { renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');
+const compression = require('compression');
 const express = require('express');
 const { matchPath } = require('react-router');
 
@@ -29,6 +30,14 @@ const getPageData = async (urlPath) => {
 const app = express();
 app.disable('x-powered-by');
 app.use(express.static(__dirname, { immutable: true, maxAge: '1y' }));
+app.use(compression({ filter: shouldCompress }));
+
+const shouldCompress = (req, res) => {
+  if (req.headers['x-no-compression']) {
+    return false;
+  }
+  return compression.filter(req, res);
+};
 
 app.get('*', async (req, res) => {
   console.log(req.method, req.path, req.query);
