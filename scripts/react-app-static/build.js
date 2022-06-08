@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const CopyPlugin = require('copy-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 
 const makeCommonWebpackConfig = require('../common/common.webpack');
@@ -57,6 +58,16 @@ module.exports = (inputParams = {}) => {
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
     makeModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
+    // NOTE(krishan711): copy the public directory in cos things in it may be used by the static rendered
+    {
+      plugins: [
+        new CopyPlugin({
+          patterns: [
+            { from: params.publicDirectory, noErrorOnMissing: true },
+          ],
+        }),
+      ],
+    },
   );
   if (params.webpackConfigModifier) {
     nodeWebpackConfig = params.webpackConfigModifier(nodeWebpackConfig);
@@ -83,7 +94,7 @@ module.exports = (inputParams = {}) => {
 
     params.pages.forEach(async (page) => {
       console.log(`Rendering page ${page.path} to ${page.filename}`);
-      const pageData = await getPageData(page.path, routes, globals);
+      const pageData = (routes && globals) ? await getPageData(page.path, routes, globals) : null;
       const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), pageData);
       const outputPath = path.join(outputDirectoryPath, page.filename);
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
