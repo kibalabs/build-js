@@ -4,9 +4,28 @@ const React = require('react');
 const { ChunkExtractor, ChunkExtractorManager } = require('@loadable/server');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const ReactDOMServer = require('react-dom/server');
+const { matchPath } = require('react-router');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { ServerStyleSheet, StyleSheetManager } = require('styled-components');
 
+const getPageData = async (urlPath, appRoutes, globals) => {
+  let matchedRoute = null;
+  let matchData = null;
+  appRoutes.forEach((route) => {
+    if (!matchData) {
+      matchedRoute = route;
+      matchData = matchPath(route.path, urlPath);
+    }
+  });
+  if (matchedRoute && matchedRoute.getPageData) {
+    try {
+      return matchedRoute.getPageData(globals, matchData.params);
+    } catch (error) {
+      console.error(`Failed to getPageDate for ${urlPath}: ${error}`);
+    }
+  }
+  return null;
+};
 
 const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePath, pageData = null) => {
   let pageHead = { headId: '', base: null, title: null, links: [], metas: [], styles: [], scripts: [], noscripts: [] };
@@ -78,5 +97,6 @@ const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePat
 };
 
 module.exports = {
+  getPageData,
   renderHtml,
 };

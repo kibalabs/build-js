@@ -12,7 +12,7 @@ const { createAndRunCompiler } = require('../common/webpackUtil');
 const makeModuleWebpackConfig = require('../module/module.webpack');
 const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const { removeUndefinedProperties } = require('../util');
-const { renderHtml } = require('./static');
+const { getPageData, renderHtml } = require('./static');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
@@ -79,10 +79,12 @@ module.exports = (inputParams = {}) => {
     fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
     // NOTE(krishan711): if this could be done in an async way it would be faster!
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const { App } = require(path.resolve(buildDirectoryPath, 'index.js'));
-    params.pages.forEach((page) => {
+    const { App, routes, globals } = require(path.resolve(buildDirectoryPath, 'index.js'));
+
+    params.pages.forEach(async (page) => {
       console.log(`Rendering page ${page.path} to ${page.filename}`);
-      const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), null);
+      const pageData = await getPageData(page.path, routes, globals);
+      const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), pageData);
       const outputPath = path.join(outputDirectoryPath, page.filename);
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, output);
