@@ -1,31 +1,11 @@
 const path = require('path');
 
-const { renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');
+const { getPageData, renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');
 const compression = require('compression');
 const express = require('express');
-const { matchPath } = require('react-router');
 
 const { App, routes, globals } = require('./app.js');
 const { name, defaultSeoTags } = require('./data.json');
-
-const getPageData = async (urlPath) => {
-  let matchedRoute = null;
-  let matchData = null;
-  routes.forEach((route) => {
-    if (!matchData) {
-      matchedRoute = route;
-      matchData = matchPath(route.path, urlPath);
-    }
-  });
-  if (matchedRoute && matchedRoute.getPageData) {
-    try {
-      return matchedRoute.getPageData(globals, matchData.params);
-    } catch (error) {
-      console.error(`Failed to getPageDate for ${urlPath}: ${error}`);
-    }
-  }
-  return null;
-};
 
 const app = express();
 app.disable('x-powered-by');
@@ -43,7 +23,7 @@ app.get('*', async (req, res) => {
   console.log(req.method, req.path, req.query);
   const startTime = new Date();
   const page = { path: req.path };
-  const pageData = await getPageData(req.path);
+  const pageData = await getPageData(req.path, routes, globals);
   const webpackBuildStatsFilePath = path.join(__dirname, 'webpackBuildStats.json');
   const output = renderHtml(App, page, defaultSeoTags, name, webpackBuildStatsFilePath, pageData);
   const duration = (new Date() - startTime) / 1000.0;

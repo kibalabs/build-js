@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const CopyPlugin = require('copy-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 
 const makeCommonWebpackConfig = require('../common/common.webpack');
@@ -12,7 +13,7 @@ const { createAndRunCompiler } = require('../common/webpackUtil');
 const makeModuleWebpackConfig = require('../module/module.webpack');
 const makeReactAppWebpackConfig = require('../react-app/app.webpack');
 const { removeUndefinedProperties } = require('../util');
-const { renderHtml } = require('./static');
+const { getPageData, renderHtml } = require('./static');
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {
@@ -57,6 +58,16 @@ module.exports = (inputParams = {}) => {
     makeImagesWebpackConfig(params),
     makeCssWebpackConfig(params),
     makeModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
+    // NOTE(krishan711): copy the public directory in cos things in it may be used by the static rendered
+    {
+      plugins: [
+        new CopyPlugin({
+          patterns: [
+            { from: params.publicDirectory, noErrorOnMissing: true },
+          ],
+        }),
+      ],
+    },
   );
   if (params.webpackConfigModifier) {
     nodeWebpackConfig = params.webpackConfigModifier(nodeWebpackConfig);
@@ -79,10 +90,12 @@ module.exports = (inputParams = {}) => {
     fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
     // NOTE(krishan711): if this could be done in an async way it would be faster!
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const { App } = require(path.resolve(buildDirectoryPath, 'index.js'));
-    params.pages.forEach((page) => {
+    const { App, routes, globals } = require(path.resolve(buildDirectoryPath, 'index.js'));
+
+    params.pages.forEach(async (page) => {
       console.log(`Rendering page ${page.path} to ${page.filename}`);
-      const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), null);
+      const pageData = (routes && globals) ? await getPageData(page.path, routes, globals) : null;
+      const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), pageData);
       const outputPath = path.join(outputDirectoryPath, page.filename);
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, output);
