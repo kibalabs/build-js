@@ -15,10 +15,10 @@ jobs:
       - name: Build docker image
         uses: docker/build-push-action@v2
         with:
-          context: app
+          context: .
           load: true
-          cache-from: type=gha,scope=app
-          cache-to: type=gha,mode=max,scope=app
+          cache-from: type=gha,scope=package
+          cache-to: type=gha,mode=max,scope=package
           tags: ${{ env.DOCKER_IMAGE }}
       - name: Run linting
         run: |
