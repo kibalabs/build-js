@@ -1,6 +1,6 @@
+const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const childProcess = require('child_process');
 
 const { removeUndefinedProperties } = require('../util');
 
@@ -25,33 +25,30 @@ module.exports = (inputParams = {}) => {
       if (isWorkspace) {
         // NOTE(krishan711): annoyingly need to update each package's dependencies
         // this says it should work automatically it doesn't: https://github.com/npm/cli/issues/3403
-        const outputLines = (output.split('up to date ')[0]).split('\n');
+        const outputLines = (output.split('up to date ')[0]).split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
         const newPackageVersions = [];
-        for (let i = 0; i < outputLines.length / 2; i++) {
-          if (!outputLines[i * 2]) {
-            continue;
-          }
+        for (let i = 0; i < outputLines.length / 2; i += 1) {
           newPackageVersions[outputLines[i * 2]] = outputLines[(i * 2) + 1].replace('v', '');
         }
         packagePaths.forEach((packagePath) => {
           const packageFilePath = path.join(packagePath, 'package.json');
-          const package = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
-          Object.keys(package.dependencies || {}).forEach((dependencyName) => {
+          const subPackage = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
+          Object.keys(subPackage.dependencies || {}).forEach((dependencyName) => {
             if (newPackageVersions[dependencyName]) {
-              package.dependencies[dependencyName] = newPackageVersions[dependencyName];
+              subPackage.dependencies[dependencyName] = newPackageVersions[dependencyName];
             }
           });
-          Object.keys(package.devDependencies || {}).forEach((dependencyName) => {
+          Object.keys(subPackage.devDependencies || {}).forEach((dependencyName) => {
             if (newPackageVersions[dependencyName]) {
-              package.devDependencies[dependencyName] = newPackageVersions[dependencyName];
+              subPackage.devDependencies[dependencyName] = newPackageVersions[dependencyName];
             }
           });
-          Object.keys(package.peerDependencies || {}).forEach((dependencyName) => {
+          Object.keys(subPackage.peerDependencies || {}).forEach((dependencyName) => {
             if (newPackageVersions[dependencyName]) {
-              package.peerDependencies[dependencyName] = newPackageVersions[dependencyName];
+              subPackage.peerDependencies[dependencyName] = newPackageVersions[dependencyName];
             }
           });
-          fs.writeFileSync(packageFilePath, JSON.stringify(package, undefined, 2), 'utf8');
+          fs.writeFileSync(packageFilePath, JSON.stringify(subPackage, undefined, 2), 'utf8');
         });
       }
     });
