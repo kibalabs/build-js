@@ -25,11 +25,13 @@ module.exports = (inputParams = {}) => {
       if (isWorkspace) {
         // NOTE(krishan711): annoyingly need to update each package's dependencies
         // this says it should work automatically it doesn't: https://github.com/npm/cli/issues/3403
-        const outputLines = (output.split('up to date ')[0]).split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
+        const outputLines = ((output.split('up to date ')[0]).split('added ')[0]).split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
+        console.log('outputLines', outputLines);
         const newPackageVersions = [];
         for (let i = 0; i < outputLines.length / 2; i += 1) {
           newPackageVersions[outputLines[i * 2]] = outputLines[(i * 2) + 1].replace('v', '');
         }
+        console.log('newPackageVersions', newPackageVersions);
         packagePaths.forEach((packagePath) => {
           const packageFilePath = path.join(packagePath, 'package.json');
           const subPackage = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
