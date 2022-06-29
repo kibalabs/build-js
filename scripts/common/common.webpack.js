@@ -34,7 +34,6 @@ module.exports = (inputParams = {}) => {
         fs: false,
         net: false,
         tls: false,
-        path: 'path-browserify',
       },
       alias: {
         '@src': path.join(process.cwd(), './src'),

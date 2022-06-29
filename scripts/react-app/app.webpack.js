@@ -53,6 +53,11 @@ module.exports = (inputParams = {}) => {
       path: params.outputDirectory,
       publicPath: '/',
     },
+    resolve: {
+      fallback: {
+        path: 'path-browserify',
+      },
+    },
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
