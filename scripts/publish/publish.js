@@ -19,17 +19,20 @@ module.exports = (inputParams = {}) => {
   const packagePaths = package.workspaces || [];
 
   if (params.next) {
+    const newPackageVersions = [];
     Array(parseInt(params.nextVersion || '0', 10)).fill().forEach(() => {
-      const workspaceCommandSuffix = isWorkspace ? '--workspaces --workspaces-update --include-workspace-root' : '';
+      const workspaceCommandSuffix = isWorkspace ? '--workspaces --workspaces-update false --include-workspace-root' : '';
       const output = childProcess.execSync(`npm version prerelease --preid=next --no-git-tag-version ${workspaceCommandSuffix}`).toString();
       if (isWorkspace) {
         // NOTE(krishan711): annoyingly need to update each package's dependencies
         // this says it should work automatically it doesn't: https://github.com/npm/cli/issues/3403
         const outputLines = ((output.split('up to date ')[0]).split('added ')[0]).split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
-        const newPackageVersions = [];
         for (let i = 0; i < outputLines.length / 2; i += 1) {
           newPackageVersions[outputLines[i * 2]] = outputLines[(i * 2) + 1].replace('v', '');
         }
+      }
+      if (isWorkspace) {
+        console.log('newPackageVersions', newPackageVersions);
         packagePaths.forEach((packagePath) => {
           const packageFilePath = path.join(packagePath, 'package.json');
           const subPackage = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
