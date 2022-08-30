@@ -1,12 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
+const TerserPlugin = require('terser-webpack-plugin');
 const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
 
 const PrintAssetSizesPlugin = require('../plugins/printAssetSizesPlugin');
 const { removeUndefinedProperties } = require('../util');
 const packageUtil = require('./packageUtil');
-const TerserPlugin = require('terser-webpack-plugin');
 // const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const defaultParams = {
