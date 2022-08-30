@@ -90,7 +90,6 @@ module.exports = (inputParams = {}) => {
       },
       moduleIds: 'deterministic',
       usedExports: true,
-      minimize: !params.dev,
     },
     plugins: [
       ...(params.addHtmlOutput ? [
