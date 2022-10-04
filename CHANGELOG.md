@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Changed
 - [MAJOR] Updated kiba-publish to bump workspace versions correctly
+- [MAJOR] Ignore public files for linting
 
 ### Removed
 
