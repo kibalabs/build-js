@@ -10,10 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Added
 
 ### Changed
-- [MAJOR] Updated kiba-publish to bump workspace versions correctly
-- [MAJOR] Ignore public files for linting
 
 ### Removed
+
+## [0.10.0] - 2022-10-11
+
+### Changed
+- [MAJOR] Updated kiba-publish to bump workspace versions correctly
+- [MAJOR] Ignore public files for linting
 
 ## [0.9.0] - 2022-06-21
 
