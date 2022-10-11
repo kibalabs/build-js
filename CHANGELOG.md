@@ -13,7 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Removed
 
-## [0.10.0] - 2022-10-11
+## [0.11.0] - 2022-10-11
+
+### NOTE(krishan711): v0.10.0 skipped due to npm error
 
 ### Changed
 - [MAJOR] Updated kiba-publish to bump workspace versions correctly
