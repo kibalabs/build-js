@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 
-export const getExternalModules = (package) => {
-  return Object.keys(package.dependencies || {})
-    .concat(Object.keys(package.peerDependencies || {}))
-    .concat(Object.keys(package.optionalDependencies || {}));
+export const getExternalModules = (packageData) => {
+  return Object.keys(packageData.dependencies || {})
+    .concat(Object.keys(packageData.peerDependencies || {}))
+    .concat(Object.keys(packageData.optionalDependencies || {}));
 };
 
-export const isExternalPackageRequest = (package, request) => {
-  const externalModules = getExternalModules(package);
+export const isExternalPackageRequest = (packageData, request) => {
+  const externalModules = getExternalModules(packageData);
   return isExternalModuleRequest(externalModules, request);
 };
 

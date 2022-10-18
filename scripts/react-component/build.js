@@ -14,7 +14,7 @@ import { generateTypescriptDeclarations } from '../typing/generateDeclarations.j
 import { buildTsConfig } from '../typing/ts.config.js';
 import { removeUndefinedProperties } from '../util.js';
 
-export const buildReactComponent = (inputParams = {}) => {
+export const buildReactComponent = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -34,8 +34,7 @@ export const buildReactComponent = (inputParams = {}) => {
   };
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';

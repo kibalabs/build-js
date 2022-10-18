@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { program } from 'commander';
 
-import build from './build.js';
+import { buildStaticReactApp } from './build.js';
 
 const params = program
   .option('-c, --config-modifier <path>')
@@ -12,4 +12,4 @@ const params = program
   .parse(process.argv)
   .opts();
 
-build(params);
+buildStaticReactApp(params);

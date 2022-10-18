@@ -1,13 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import React from 'react';
 
+import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import ReactDOMServer from 'react-dom/server';
 import { matchPath } from 'react-router';
-
-const { ChunkExtractor, ChunkExtractorManager } = require('@loadable/server');
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { ServerStyleSheet, StyleSheetManager } = require('styled-components');
+import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
 export const getPageData = async (urlPath, appRoutes, globals) => {
   let matchedRoute = null;

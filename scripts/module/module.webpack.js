@@ -4,7 +4,7 @@ import path from 'path';
 import webpack from 'webpack';
 
 import { getExternalModules, getNodeModules, isExternalModuleRequest } from '../common/packageUtil.js';
-import { removeUndefinedProperties } from '../util';
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
   dev: undefined,
@@ -20,8 +20,8 @@ const defaultParams = {
 
 export const buildModuleWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
   const externalModules = [];
   if (params.excludeAllNodeModules) {
     const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
@@ -29,7 +29,7 @@ export const buildModuleWebpackConfig = (inputParams = {}) => {
       externalModules.push(...getNodeModules(nodeModulesPath));
     });
   } else {
-    externalModules.push(...getExternalModules(package));
+    externalModules.push(...getExternalModules(packageData));
   }
 
   return {
@@ -48,7 +48,7 @@ export const buildModuleWebpackConfig = (inputParams = {}) => {
     plugins: [
       new webpack.DefinePlugin({
         'process.env.PACKAGE_NAME': JSON.stringify(name),
-        'process.env.PACKAGE_VERSION': JSON.stringify(package.version),
+        'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
       }),
     ],
     externals: [

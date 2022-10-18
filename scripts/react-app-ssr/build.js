@@ -1,6 +1,7 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import webpackMerge from 'webpack-merge';
 
@@ -8,13 +9,13 @@ import { buildCommonWebpackConfig } from '../common/common.webpack.js';
 import { buildCssWebpackConfig } from '../common/css.webpack.js';
 import { buildImagesWebpackConfig } from '../common/images.webpack.js';
 import { buildJsWebpackConfig } from '../common/js.webpack.js';
-import { createAndRunCompiler } from '../common/webpackUtil';
-import { buildModuleWebpackConfig } from '../module/module.webpack';
-import { buildReactAppWebpackConfig } from '../react-app/app.webpack';
+import { createAndRunCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { buildReactAppWebpackConfig } from '../react-app/app.webpack.js';
 import { removeUndefinedProperties } from '../util.js';
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
-export const buildSsrReactApp = (inputParams = {}) => {
+export const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -38,13 +39,12 @@ export const buildSsrReactApp = (inputParams = {}) => {
 
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = 'production';
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
 
   const buildDirectoryPath = path.resolve(params.buildDirectory);
   const outputDirectoryPath = path.resolve(params.outputDirectory);
@@ -77,6 +77,8 @@ export const buildSsrReactApp = (inputParams = {}) => {
     return createAndRunCompiler(webWebpackConfig);
   }).then((webpackBuildStats) => {
     const serverFilePath = path.join(buildDirectoryPath, 'server.js');
+    // eslint-disable-next-line no-underscore-dangle
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
     fs.copyFileSync(path.join(__dirname, './start.sh'), path.join(outputDirectoryPath, 'start.sh'));
     fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));

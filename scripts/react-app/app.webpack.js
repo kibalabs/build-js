@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import LoadablePlugin from '@loadable/webpack-plugin';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
@@ -7,9 +8,9 @@ import CopyPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 
-import CreateRobotsTxtPlugin from '../plugins/createRobotsTxtPlugin';
-import CreateRuntimeConfigPlugin from '../plugins/createRuntimeConfigPlugin';
-import InjectSeoPlugin from '../plugins/injectSeoPlugin';
+import { CreateRobotsTxtPlugin } from '../plugins/createRobotsTxtPlugin.js';
+import { CreateRuntimeConfigPlugin } from '../plugins/createRuntimeConfigPlugin.js';
+import { InjectSeoPlugin } from '../plugins/injectSeoPlugin.js';
 import { removeUndefinedProperties } from '../util.js';
 
 
@@ -29,8 +30,11 @@ const defaultParams = {
 
 export const buildReactAppWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
+  // eslint-disable-next-line no-underscore-dangle
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const htmlTemplateFilePath = path.join(__dirname, './index.html');
 
   const runtimeConfigVars = params.runtimeConfigVars;
   Object.keys(process.env).forEach((key) => {
@@ -97,7 +101,7 @@ export const buildReactAppWebpackConfig = (inputParams = {}) => {
         new HtmlWebpackPlugin({
           inject: true,
           title: name,
-          template: path.join(__dirname, './index.html'),
+          template: htmlTemplateFilePath,
         }),
       ] : []),
       new CopyPlugin({
@@ -106,9 +110,9 @@ export const buildReactAppWebpackConfig = (inputParams = {}) => {
         ],
       }),
       new webpack.DefinePlugin({
-        APP_NAME: JSON.stringify(package.name),
-        APP_VERSION: JSON.stringify(package.version),
-        APP_DESCRIPTION: JSON.stringify(package.description),
+        APP_NAME: JSON.stringify(packageData.name),
+        APP_VERSION: JSON.stringify(packageData.version),
+        APP_DESCRIPTION: JSON.stringify(packageData.description),
         'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG),
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       }),

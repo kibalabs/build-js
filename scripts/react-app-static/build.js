@@ -13,10 +13,9 @@ import { createAndRunCompiler } from '../common/webpackUtil.js';
 import { buildModuleWebpackConfig } from '../module/module.webpack.js';
 import { buildReactAppWebpackConfig } from '../react-app/app.webpack.js';
 import { removeUndefinedProperties } from '../util.js';
+import { getPageData, renderHtml } from './static.js';
 
-const { getPageData, renderHtml } = require('./static');
-
-export const buildStaticReactApp = (inputParams = {}) => {
+export const buildStaticReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -40,13 +39,12 @@ export const buildStaticReactApp = (inputParams = {}) => {
 
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = 'production';
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
 
   const buildDirectoryPath = path.resolve(params.buildDirectory);
   const outputDirectoryPath = path.resolve(params.outputDirectory);
@@ -87,16 +85,16 @@ export const buildStaticReactApp = (inputParams = {}) => {
 
   return createAndRunCompiler(nodeWebpackConfig).then(() => {
     return createAndRunCompiler(webWebpackConfig);
-  }).then((webpackBuildStats) => {
+  }).then(async (webpackBuildStats) => {
     fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
     // NOTE(krishan711): if this could be done in an async way it would be faster!
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const { App, routes, globals } = require(path.resolve(buildDirectoryPath, 'index.js'));
-
+    console.log('here');
+    const app = (await import(path.resolve(buildDirectoryPath, 'index.js')));
+    console.log('app', app);
     params.pages.forEach(async (page) => {
       console.log(`Rendering page ${page.path} to ${page.filename}`);
-      const pageData = (routes && globals) ? await getPageData(page.path, routes, globals) : null;
-      const output = renderHtml(App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), pageData);
+      const pageData = (app.routes && app.globals) ? await getPageData(page.path, app.routes, app.globals) : null;
+      const output = renderHtml(app.App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), pageData);
       const outputPath = path.join(outputDirectoryPath, page.filename);
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, output);

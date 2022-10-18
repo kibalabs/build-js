@@ -15,12 +15,11 @@ const defaultParams = {
   outputFileFormat: undefined,
 };
 
-export const runTyping = (inputParams = {}) => {
+export const runTyping = async (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = {};
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    customConfig = require(path.join(process.cwd(), params.configModifier));
+    customConfig = (await import(path.join(process.cwd(), params.configModifier))).default;
     if (typeof customConfig === 'function') {
       customConfig = customConfig(params);
     }

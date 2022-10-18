@@ -20,8 +20,8 @@ const defaultParams = {
 
 export const buildCommonWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const modules = getExternalModules(package);
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const modules = getExternalModules(packageData);
   // NOTE(krishan711): this aliases all the modules declared in package.json to the one installed in node_modules
   // which makes it much simpler to use locally installed packages with common dependencies (e.g. react, react-dom)
   const localModules = params.shouldAliasModules ? (modules.reduce((accumulator, moduleName) => {
@@ -29,7 +29,7 @@ export const buildCommonWebpackConfig = (inputParams = {}) => {
     return accumulator;
   }, {})) : {};
   return {
-    name: params.name || package.name,
+    name: params.name || packageData.name,
     mode: params.dev ? 'development' : 'production',
     resolve: {
       fallback: {

@@ -15,7 +15,7 @@ import { createCompiler } from '../common/webpackUtil.js';
 import { removeUndefinedProperties } from '../util.js';
 import { buildReactAppWebpackConfig } from './app.webpack.js';
 
-export const buildReactApp = (inputParams = {}) => {
+export const buildReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
@@ -37,8 +37,7 @@ export const buildReactApp = (inputParams = {}) => {
 
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';

@@ -8,7 +8,7 @@ import { createCompiler } from '../common/webpackUtil.js';
 import { buildModuleWebpackConfig } from '../module/module.webpack.js';
 import { removeUndefinedProperties } from '../util.js';
 
-export const buildServer = (inputParams = {}) => {
+export const buildServer = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -22,8 +22,7 @@ export const buildServer = (inputParams = {}) => {
   };
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
