@@ -1,13 +1,13 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const TerserPlugin = require('terser-webpack-plugin');
-const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
+import TerserPlugin from 'terser-webpack-plugin';
+import webpackBundleAnalyzer from 'webpack-bundle-analyzer';
 
-const PrintAssetSizesPlugin = require('../plugins/printAssetSizesPlugin');
-const { removeUndefinedProperties } = require('../util');
-const packageUtil = require('./packageUtil');
-// const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+import { PrintAssetSizesPlugin } from '../plugins/printAssetSizesPlugin.js';
+import { removeUndefinedProperties } from '../util.js';
+import { getExternalModules } from './packageUtil.js';
+// import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 
 const defaultParams = {
   dev: false,
@@ -18,10 +18,10 @@ const defaultParams = {
   name: undefined,
 };
 
-module.exports = (inputParams = {}) => {
+export const buildCommonWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const modules = packageUtil.getExternalModules(package);
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const modules = getExternalModules(packageData);
   // NOTE(krishan711): this aliases all the modules declared in package.json to the one installed in node_modules
   // which makes it much simpler to use locally installed packages with common dependencies (e.g. react, react-dom)
   const localModules = params.shouldAliasModules ? (modules.reduce((accumulator, moduleName) => {
@@ -29,7 +29,7 @@ module.exports = (inputParams = {}) => {
     return accumulator;
   }, {})) : {};
   return {
-    name: params.name || package.name,
+    name: params.name || packageData.name,
     mode: params.dev ? 'development' : 'production',
     resolve: {
       fallback: {

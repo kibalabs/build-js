@@ -1,6 +1,6 @@
-const { RawSource } = require('webpack-sources');
+import WebpackSources from 'webpack-sources';
 
-class CreateRuntimeConfigPlugin {
+export class CreateRuntimeConfigPlugin {
   constructor(vars = {}, filename = 'runtimeConfig.js') {
     this.vars = vars;
     this.filename = filename;
@@ -13,14 +13,8 @@ class CreateRuntimeConfigPlugin {
         Object.keys(this.vars).forEach((key) => {
           fileContent += `GLOBAL.${key} = ${JSON.stringify(this.vars[key])};\n`;
         });
-
-        compilation.emitAsset(
-          this.filename,
-          new RawSource(fileContent),
-        );
+        compilation.emitAsset(this.filename, new WebpackSources.RawSource(fileContent));
       });
     });
   }
 }
-
-module.exports = CreateRuntimeConfigPlugin;

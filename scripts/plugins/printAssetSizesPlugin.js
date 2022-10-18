@@ -1,6 +1,6 @@
-const { Table } = require('console-table-printer');
+import { Table } from 'console-table-printer';
 
-function formatBytes(bytes, decimals = 2) {
+const formatBytes = (bytes, decimals = 2) => {
   if (bytes === 0) {
     return '0 B';
   }
@@ -8,9 +8,9 @@ function formatBytes(bytes, decimals = 2) {
   const bucketIndex = Math.floor(Math.log(bytes) / Math.log(1024));
   const size = parseFloat((bytes / (1024 ** bucketIndex)).toFixed(decimals < 0 ? 0 : decimals));
   return `${size} ${sizes[bucketIndex]}`;
-}
+};
 
-class PrintAssetSizesPlugin {
+export class PrintAssetSizesPlugin {
   // eslint-disable-next-line class-methods-use-this
   apply(compiler) {
     compiler.hooks.done.tap('PrintAssetSizesPlugin', (stats) => {
@@ -33,5 +33,3 @@ class PrintAssetSizesPlugin {
     });
   }
 }
-
-module.exports = PrintAssetSizesPlugin;

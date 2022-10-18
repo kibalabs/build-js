@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const commander = require('commander');
+import { program } from 'commander';
 
-const build = require('./build');
+import { buildModule } from './build.js';
 
-const params = commander
+const params = program
   .option('-wm, --webpack-config-modifier <path>')
   .option('-me, --multi-entry <name>')
   .option('-d, --dev')
@@ -15,4 +15,4 @@ const params = commander
   .parse(process.argv)
   .opts();
 
-build(params);
+buildModule(params);

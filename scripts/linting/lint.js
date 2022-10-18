@@ -1,11 +1,11 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const chalk = require('chalk');
-const { ESLint } = require('eslint');
+import chalk from 'chalk';
+import { ESLint } from 'eslint';
 
-const { removeUndefinedProperties } = require('../util');
-const buildEslintConfig = require('./eslint.config');
+import { removeUndefinedProperties } from '../util.js';
+import { buildEslintConfig } from './eslint.config.js';
 
 const defaultParams = {
   configModifier: undefined,
@@ -15,12 +15,11 @@ const defaultParams = {
   fix: false,
 };
 
-module.exports = async (inputParams = {}) => {
+export const runLinting = async (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = null;
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    customConfig = require(path.join(process.cwd(), params.configModifier));
+    customConfig = (await import(path.join(process.cwd(), params.configModifier))).default;
     if (typeof customConfig === 'function') {
       customConfig = customConfig(params);
     }

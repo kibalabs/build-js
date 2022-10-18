@@ -1,20 +1,21 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const webpackMerge = require('webpack-merge');
+import webpackMerge from 'webpack-merge';
 
-const makeCommonWebpackConfig = require('../common/common.webpack');
-const makeCssWebpackConfig = require('../common/css.webpack');
-const makeImagesWebpackConfig = require('../common/images.webpack');
-const makeJsWebpackConfig = require('../common/js.webpack');
-const { createAndRunCompiler } = require('../common/webpackUtil');
-const buildModuleWebpackConfig = require('../module/module.webpack');
-const makeReactAppWebpackConfig = require('../react-app/app.webpack');
-const { removeUndefinedProperties } = require('../util');
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createAndRunCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { buildReactAppWebpackConfig } from '../react-app/app.webpack.js';
+import { removeUndefinedProperties } from '../util.js';
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
-module.exports = (inputParams = {}) => {
+export const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -38,13 +39,12 @@ module.exports = (inputParams = {}) => {
 
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = 'production';
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
 
   const buildDirectoryPath = path.resolve(params.buildDirectory);
   const outputDirectoryPath = path.resolve(params.outputDirectory);
@@ -52,10 +52,10 @@ module.exports = (inputParams = {}) => {
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
 
   let nodeWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: `${name}-node` }),
-    makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
-    makeImagesWebpackConfig(params),
-    makeCssWebpackConfig(params),
+    buildCommonWebpackConfig({ ...params, name: `${name}-node` }),
+    buildJsWebpackConfig({ ...params, polyfill: false, react: true }),
+    buildImagesWebpackConfig(params),
+    buildCssWebpackConfig(params),
     buildModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true, outputFilename: 'app.js' }),
   );
   if (params.webpackConfigModifier) {
@@ -63,11 +63,11 @@ module.exports = (inputParams = {}) => {
   }
 
   let webWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: `${name}-web` }),
-    makeJsWebpackConfig({ ...params, polyfill: true, react: true }),
-    makeImagesWebpackConfig(params),
-    makeCssWebpackConfig(params),
-    makeReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
+    buildCommonWebpackConfig({ ...params, name: `${name}-web` }),
+    buildJsWebpackConfig({ ...params, polyfill: true, react: true }),
+    buildImagesWebpackConfig(params),
+    buildCssWebpackConfig(params),
+    buildReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
   );
   if (params.webpackConfigModifier) {
     webWebpackConfig = params.webpackConfigModifier(webWebpackConfig);
@@ -77,14 +77,16 @@ module.exports = (inputParams = {}) => {
     return createAndRunCompiler(webWebpackConfig);
   }).then((webpackBuildStats) => {
     const serverFilePath = path.join(buildDirectoryPath, 'server.js');
+    // eslint-disable-next-line no-underscore-dangle
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
     fs.copyFileSync(path.join(__dirname, './start.sh'), path.join(outputDirectoryPath, 'start.sh'));
     fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
     fs.writeFileSync(path.join(outputDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
 
     let serverWebpackConfig = webpackMerge.merge(
-      makeCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
-      makeJsWebpackConfig({ ...params, react: false, polyfill: false }),
+      buildCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
+      buildJsWebpackConfig({ ...params, react: false, polyfill: false }),
       buildModuleWebpackConfig({ ...params, entryFilePath: serverFilePath, outputDirectory: outputDirectoryPath, excludeAllNodeModules: true }),
     );
     if (params.webpackConfigModifier) {

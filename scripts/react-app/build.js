@@ -1,21 +1,21 @@
-const dns = require('dns');
-const os = require('os');
-const path = require('path');
+import dns from 'dns';
+import os from 'os';
+import path from 'path';
 
-const chalk = require('chalk');
-const WebpackDevServer = require('webpack-dev-server');
-const webpackMerge = require('webpack-merge');
+import chalk from 'chalk';
+import WebpackDevServer from 'webpack-dev-server';
+import webpackMerge from 'webpack-merge';
 
-const buildCommonWebpackConfig = require('../common/common.webpack');
-const buildCssWebpackConfig = require('../common/css.webpack');
-const buildImagesWebpackConfig = require('../common/images.webpack');
-const buildJsWebpackConfig = require('../common/js.webpack');
-const { open } = require('../common/platformUtil');
-const webpackUtil = require('../common/webpackUtil');
-const { removeUndefinedProperties } = require('../util');
-const buildAppWebpackConfig = require('./app.webpack');
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { open } from '../common/platformUtil.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { removeUndefinedProperties } from '../util.js';
+import { buildReactAppWebpackConfig } from './app.webpack.js';
 
-module.exports = (inputParams = {}) => {
+export const buildReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
@@ -37,8 +37,7 @@ module.exports = (inputParams = {}) => {
 
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
@@ -48,13 +47,13 @@ module.exports = (inputParams = {}) => {
     buildJsWebpackConfig({ ...params, react: true }),
     buildCssWebpackConfig(params),
     buildImagesWebpackConfig(params),
-    buildAppWebpackConfig(params),
+    buildReactAppWebpackConfig(params),
   );
   if (params.webpackConfigModifier) {
     mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = webpackUtil.createCompiler(mergedConfig);
+  const compiler = createCompiler(mergedConfig);
   if (params.start) {
     const host = '0.0.0.0';
     const port = 3000;

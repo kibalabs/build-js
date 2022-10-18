@@ -1,16 +1,18 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const LoadablePlugin = require('@loadable/webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+import LoadablePlugin from '@loadable/webpack-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
 
-const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
-const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
-const InjectSeoPlugin = require('../plugins/injectSeoPlugin');
-const { removeUndefinedProperties } = require('../util');
+import { CreateRobotsTxtPlugin } from '../plugins/createRobotsTxtPlugin.js';
+import { CreateRuntimeConfigPlugin } from '../plugins/createRuntimeConfigPlugin.js';
+import { InjectSeoPlugin } from '../plugins/injectSeoPlugin.js';
+import { removeUndefinedProperties } from '../util.js';
+
 
 const defaultParams = {
   dev: undefined,
@@ -26,10 +28,13 @@ const defaultParams = {
   publicDirectory: undefined,
 };
 
-module.exports = (inputParams = {}) => {
+export const buildReactAppWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
+  // eslint-disable-next-line no-underscore-dangle
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const htmlTemplateFilePath = path.join(__dirname, './index.html');
 
   const runtimeConfigVars = params.runtimeConfigVars;
   Object.keys(process.env).forEach((key) => {
@@ -96,7 +101,7 @@ module.exports = (inputParams = {}) => {
         new HtmlWebpackPlugin({
           inject: true,
           title: name,
-          template: path.join(__dirname, './index.html'),
+          template: htmlTemplateFilePath,
         }),
       ] : []),
       new CopyPlugin({
@@ -105,9 +110,9 @@ module.exports = (inputParams = {}) => {
         ],
       }),
       new webpack.DefinePlugin({
-        APP_NAME: JSON.stringify(package.name),
-        APP_VERSION: JSON.stringify(package.version),
-        APP_DESCRIPTION: JSON.stringify(package.description),
+        APP_NAME: JSON.stringify(packageData.name),
+        APP_VERSION: JSON.stringify(packageData.version),
+        APP_DESCRIPTION: JSON.stringify(packageData.description),
         'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG),
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       }),

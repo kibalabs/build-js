@@ -1,18 +1,18 @@
-const fs = require('fs');
+import fs from 'fs';
 
-const { removeUndefinedProperties } = require('../util');
-const buildBabelConfig = require('./babel.config');
+import { removeUndefinedProperties } from '../util.js';
+import { buildBabelConfig } from './babel.config.js';
 
 const defaultParams = {
   packageFilePath: undefined,
   polyfillTargets: undefined,
 };
 
-module.exports = (inputParams = {}) => {
+export const buildJsWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   if (!params.polyfillTargets) {
-    params.polyfillTargets = package.browserslist;
+    params.polyfillTargets = packageData.browserslist;
   }
   const babelConfig = buildBabelConfig(params);
   return {

@@ -1,14 +1,17 @@
-const path = require('path');
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const { getPageData, renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');
-const compression = require('compression');
-const express = require('express');
+import compression from 'compression';
+import express from 'express';
 
-const { App, routes, globals } = require('./app.js');
-const { name, defaultSeoTags } = require('./data.json');
+import { getPageData, renderHtml } from '../react-app-static/static.js';
+import { App, globals, routes } from './app.js';
+import { defaultSeoTags, name } from './data.json';
 
 const app = express();
 app.disable('x-powered-by');
+// eslint-disable-next-line no-underscore-dangle
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname, { immutable: true, maxAge: '1y' }));
 app.use(compression({ filter: shouldCompress }));
 

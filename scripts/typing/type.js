@@ -1,12 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const chalk = require('chalk');
-const glob = require('glob');
-const typescript = require('typescript');
+import chalk from 'chalk';
+import glob from 'glob';
+import typescript from 'typescript';
 
-const { removeUndefinedProperties } = require('../util');
-const buildTsConfig = require('./ts.config');
+import { removeUndefinedProperties } from '../util.js';
+import { buildTsConfig } from './ts.config.js';
 
 const defaultParams = {
   configModifier: undefined,
@@ -15,12 +15,11 @@ const defaultParams = {
   outputFileFormat: undefined,
 };
 
-module.exports = (inputParams = {}) => {
+export const runTyping = async (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = {};
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    customConfig = require(path.join(process.cwd(), params.configModifier));
+    customConfig = (await import(path.join(process.cwd(), params.configModifier))).default;
     if (typeof customConfig === 'function') {
       customConfig = customConfig(params);
     }

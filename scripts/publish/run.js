@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
+import { program } from 'commander';
 
-const commander = require('commander');
+import { runPublish } from './publish';
 
-const publish = require('./publish');
-
-const params = commander
+const params = program
   .option('-n, --next')
   .option('-nv, --next-version <number>')
   .parse(process.argv)
   .opts();
 
-publish(params);
+runPublish(params);

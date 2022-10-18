@@ -1,20 +1,20 @@
-const path = require('path');
+import path from 'path';
 
-const chalk = require('chalk');
-const glob = require('glob');
-const webpackMerge = require('webpack-merge');
+import chalk from 'chalk';
+import glob from 'glob';
+import webpackMerge from 'webpack-merge';
 
-const buildCommonWebpackConfig = require('../common/common.webpack');
-const buildCssWebpackConfig = require('../common/css.webpack');
-const buildImagesWebpackConfig = require('../common/images.webpack');
-const buildJsWebpackConfig = require('../common/js.webpack');
-const webpackUtil = require('../common/webpackUtil');
-const buildModuleWebpackConfig = require('../module/module.webpack');
-const generateDeclarations = require('../typing/generateDeclarations');
-const buildTsConfig = require('../typing/ts.config');
-const { removeUndefinedProperties } = require('../util');
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
+import { buildTsConfig } from '../typing/ts.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
-module.exports = (inputParams = {}) => {
+export const buildReactComponent = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -34,8 +34,7 @@ module.exports = (inputParams = {}) => {
   };
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
@@ -67,7 +66,7 @@ module.exports = (inputParams = {}) => {
   const onBuild = () => {
     if (!params.dev) {
       const entryPoints = typeof mergedConfig.entry === 'string' ? [mergedConfig.entry] : Object.values(mergedConfig.entry).flat();
-      generateDeclarations(entryPoints, {
+      generateTypescriptDeclarations(entryPoints, {
         ...tsConfig.compilerOptions,
         outDir: mergedConfig.output.path,
         jsx: 'react',
@@ -79,7 +78,7 @@ module.exports = (inputParams = {}) => {
       console.log('Run', chalk.cyan(`npm install --no-save --force ${process.cwd()}`), `to use ${mergedConfig.name} live 🖥\n`);
     }
   };
-  const compiler = webpackUtil.createCompiler(mergedConfig, onBuild, onPostBuild);
+  const compiler = createCompiler(mergedConfig, onBuild, onPostBuild);
 
   if (params.start) {
     compiler.watch({

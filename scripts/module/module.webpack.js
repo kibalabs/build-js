@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const webpack = require('webpack');
+import webpack from 'webpack';
 
-const packageUtil = require('../common/packageUtil');
-const { removeUndefinedProperties } = require('../util');
+import { getExternalModules, getNodeModules, isExternalModuleRequest } from '../common/packageUtil.js';
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
   dev: undefined,
@@ -18,18 +18,18 @@ const defaultParams = {
   outputFilename: 'index.js',
 };
 
-module.exports = (inputParams = {}) => {
+export const buildModuleWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const name = params.name || package.name;
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
   const externalModules = [];
   if (params.excludeAllNodeModules) {
     const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
     nodeModulesPaths.forEach((nodeModulesPath) => {
-      externalModules.push(...packageUtil.getNodeModules(nodeModulesPath));
+      externalModules.push(...getNodeModules(nodeModulesPath));
     });
   } else {
-    externalModules.push(...packageUtil.getExternalModules(package));
+    externalModules.push(...getExternalModules(packageData));
   }
 
   return {
@@ -39,21 +39,21 @@ module.exports = (inputParams = {}) => {
     target: 'node',
     output: {
       filename: params.outputFilename,
-      chunkFilename: '[name].bundle.js',
-      libraryTarget: 'umd',
       umdNamedDefine: true,
       path: params.outputDirectory,
+      chunkFilename: '[name].bundle.js',
       library: name,
+      libraryTarget: 'umd',
     },
     plugins: [
       new webpack.DefinePlugin({
         'process.env.PACKAGE_NAME': JSON.stringify(name),
-        'process.env.PACKAGE_VERSION': JSON.stringify(package.version),
+        'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
       }),
     ],
     externals: [
       ({ request }, callback) => {
-        if (packageUtil.isExternalModuleRequest(externalModules, request)) {
+        if (isExternalModuleRequest(externalModules, request)) {
           return callback(null, `commonjs ${request}`);
         }
         return callback();

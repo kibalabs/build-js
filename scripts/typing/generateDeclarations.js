@@ -1,6 +1,6 @@
-const ts = require('typescript');
+import ts from 'typescript';
 
-function generateTypescriptDeclarations(filenames, options) {
+export const generateTypescriptDeclarations = (filenames, options) => {
   console.log(`Generating ts declarations for ${filenames}`);
   const program = ts.createProgram(filenames, {
     ...options,
@@ -8,6 +8,4 @@ function generateTypescriptDeclarations(filenames, options) {
   });
   const emitResult = program.emit();
   return emitResult.emitSkipped !== 1;
-}
-
-module.exports = generateTypescriptDeclarations;
+};

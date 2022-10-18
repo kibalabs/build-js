@@ -1,14 +1,14 @@
-const path = require('path');
+import path from 'path';
 
-const webpackMerge = require('webpack-merge');
+import webpackMerge from 'webpack-merge';
 
-const buildCommonWebpackConfig = require('../common/common.webpack');
-const buildJsWebpackConfig = require('../common/js.webpack');
-const webpackUtil = require('../common/webpackUtil');
-const buildModuleWebpackConfig = require('../module/module.webpack');
-const { removeUndefinedProperties } = require('../util');
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { removeUndefinedProperties } from '../util.js';
 
-module.exports = (inputParams = {}) => {
+export const buildServer = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -22,8 +22,7 @@ module.exports = (inputParams = {}) => {
   };
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
@@ -37,7 +36,7 @@ module.exports = (inputParams = {}) => {
     mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = webpackUtil.createCompiler(mergedConfig);
+  const compiler = createCompiler(mergedConfig);
 
   // TODO(krishan711): Start doesn't seem to work!
   if (params.start) {
