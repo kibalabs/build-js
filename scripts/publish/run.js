@@ -2,7 +2,7 @@
 
 import { program } from 'commander';
 
-import { runPublish } from './publish';
+import { runPublish } from './publish.js';
 
 const params = program
   .option('-n, --next')
