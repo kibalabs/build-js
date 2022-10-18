@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 
-const commander = require('commander');
+import commander from 'commander'
 
-const publish = require('./publish');
+import publish from './publish'
 
 const params = commander
   .option('-n, --next')

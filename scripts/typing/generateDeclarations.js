@@ -1,4 +1,4 @@
-const ts = require('typescript');
+import ts from 'typescript'
 
 function generateTypescriptDeclarations(filenames, options) {
   console.log(`Generating ts declarations for ${filenames}`);

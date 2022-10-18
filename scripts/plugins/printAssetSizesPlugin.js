@@ -1,4 +1,4 @@
-const { Table } = require('console-table-printer');
+import { Table } from 'console-table-printer'
 
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) {

@@ -15,6 +15,7 @@
     "lint-fix": "scripts/linting/run.js --config-modifier ./eslintrc-modifier.js --fix",
     "publish-next": "scripts/publish/run.js --next"
   },
+  "type": "module",
   "bin": {
     "build-react-component": "scripts/react-component/run.js",
     "build-react-app": "scripts/react-app/run.js",
@@ -46,11 +47,11 @@
     "@loadable/server": "^5.15.2",
     "@loadable/webpack-plugin": "^5.15.2",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.8",
-    "@typescript-eslint/eslint-plugin": "^5.40.0",
-    "@typescript-eslint/parser": "^5.40.0",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
     "babel-loader": "^8.2.5",
     "babel-plugin-styled-components": "^2.0.7",
-    "chalk": "^4.1.2",
+    "chalk": "^5.1.2",
     "commander": "^9.4.1",
     "compression": "^1.7.4",
     "console-table-printer": "^2.11.1",
@@ -82,7 +83,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/node": "^18.8.4",
+    "@types/node": "^18.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "^5.3.6"

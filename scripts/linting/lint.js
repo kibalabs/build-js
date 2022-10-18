@@ -1,11 +1,11 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs'
+import path from 'path'
 
-const chalk = require('chalk');
-const { ESLint } = require('eslint');
+import chalk from 'chalk'
+import { ESLint } from 'eslint'
 
-const { removeUndefinedProperties } = require('../util');
-const buildEslintConfig = require('./eslint.config');
+import { removeUndefinedProperties } from '../util'
+import buildEslintConfig from './eslint.config'
 
 const defaultParams = {
   configModifier: undefined,

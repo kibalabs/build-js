@@ -1,16 +1,16 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs'
+import path from 'path'
 
 const LoadablePlugin = require('@loadable/webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+import CopyPlugin from 'copy-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import webpack from 'webpack'
 
-const CreateRobotsTxtPlugin = require('../plugins/createRobotsTxtPlugin');
-const CreateRuntimeConfigPlugin = require('../plugins/createRuntimeConfigPlugin');
-const InjectSeoPlugin = require('../plugins/injectSeoPlugin');
-const { removeUndefinedProperties } = require('../util');
+import CreateRobotsTxtPlugin from '../plugins/createRobotsTxtPlugin'
+import CreateRuntimeConfigPlugin from '../plugins/createRuntimeConfigPlugin'
+import InjectSeoPlugin from '../plugins/injectSeoPlugin'
+import { removeUndefinedProperties } from '../util'
 
 const defaultParams = {
   dev: undefined,

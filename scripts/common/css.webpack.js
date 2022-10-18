@@ -1,6 +1,6 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
-const { removeUndefinedProperties } = require('../util');
+import { removeUndefinedProperties } from '../util'
 
 const defaultParams = {
 };

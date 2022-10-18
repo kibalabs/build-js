@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs'
+import path from 'path'
 
-const webpack = require('webpack');
+import webpack from 'webpack'
 
-const packageUtil = require('../common/packageUtil');
-const { removeUndefinedProperties } = require('../util');
+import packageUtil from '../common/packageUtil'
+import { removeUndefinedProperties } from '../util'
 
 const defaultParams = {
   dev: undefined,

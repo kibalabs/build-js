@@ -1,4 +1,4 @@
-const { RawSource } = require('webpack-sources');
+import { RawSource } from 'webpack-sources'
 
 const DEFAULT_FILE_CONTENT = 'User-agent: *\nDisallow:\n';
 

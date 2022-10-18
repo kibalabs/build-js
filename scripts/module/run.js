@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const commander = require('commander');
+import commander from 'commander'
 
-const build = require('./build');
+import build from './build'
 
 const params = commander
   .option('-wm, --webpack-config-modifier <path>')

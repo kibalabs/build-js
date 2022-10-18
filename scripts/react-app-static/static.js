@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const React = require('react');
+import React from 'react'
 
 const { ChunkExtractor, ChunkExtractorManager } = require('@loadable/server');
 // eslint-disable-next-line import/no-extraneous-dependencies
-const ReactDOMServer = require('react-dom/server');
-const { matchPath } = require('react-router');
+import ReactDOMServer from 'react-dom/server'
+import { matchPath } from 'react-router'
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { ServerStyleSheet, StyleSheetManager } = require('styled-components');
 

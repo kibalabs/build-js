@@ -1,19 +1,19 @@
-const dns = require('dns');
-const os = require('os');
-const path = require('path');
+import dns from 'dns'
+import os from 'os'
+import path from 'path'
 
-const chalk = require('chalk');
-const WebpackDevServer = require('webpack-dev-server');
-const webpackMerge = require('webpack-merge');
+import chalk from 'chalk';
+import WebpackDevServer from 'webpack-dev-server'
+import webpackMerge from 'webpack-merge'
 
-const buildCommonWebpackConfig = require('../common/common.webpack');
-const buildCssWebpackConfig = require('../common/css.webpack');
-const buildImagesWebpackConfig = require('../common/images.webpack');
-const buildJsWebpackConfig = require('../common/js.webpack');
-const { open } = require('../common/platformUtil');
-const webpackUtil = require('../common/webpackUtil');
-const { removeUndefinedProperties } = require('../util');
-const buildAppWebpackConfig = require('./app.webpack');
+import buildCommonWebpackConfig from '../common/common.webpack'
+import buildCssWebpackConfig from '../common/css.webpack'
+import buildImagesWebpackConfig from '../common/images.webpack'
+import buildJsWebpackConfig from '../common/js.webpack'
+import { open } from '../common/platformUtil'
+import webpackUtil from '../common/webpackUtil'
+import { removeUndefinedProperties } from '../util'
+import buildAppWebpackConfig from './app.webpack'
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {

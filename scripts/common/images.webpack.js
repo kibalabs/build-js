@@ -1,4 +1,4 @@
-const { removeUndefinedProperties } = require('../util');
+import { removeUndefinedProperties } from '../util'
 
 const defaultParams = {
 };

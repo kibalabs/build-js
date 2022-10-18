@@ -1,4 +1,4 @@
-const { RawSource } = require('webpack-sources');
+import { RawSource } from 'webpack-sources'
 
 class CreateRuntimeConfigPlugin {
   constructor(vars = {}, filename = 'runtimeConfig.js') {

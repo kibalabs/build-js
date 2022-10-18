@@ -1,17 +1,17 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs'
+import path from 'path'
 
-const webpackMerge = require('webpack-merge');
+import webpackMerge from 'webpack-merge'
 
-const makeCommonWebpackConfig = require('../common/common.webpack');
-const makeCssWebpackConfig = require('../common/css.webpack');
-const makeImagesWebpackConfig = require('../common/images.webpack');
-const makeJsWebpackConfig = require('../common/js.webpack');
-const { createAndRunCompiler } = require('../common/webpackUtil');
-const buildModuleWebpackConfig = require('../module/module.webpack');
-const makeReactAppWebpackConfig = require('../react-app/app.webpack');
-const { removeUndefinedProperties } = require('../util');
+import makeCommonWebpackConfig from '../common/common.webpack'
+import makeCssWebpackConfig from '../common/css.webpack'
+import makeImagesWebpackConfig from '../common/images.webpack'
+import makeJsWebpackConfig from '../common/js.webpack'
+import { createAndRunCompiler } from '../common/webpackUtil'
+import buildModuleWebpackConfig from '../module/module.webpack'
+import makeReactAppWebpackConfig from '../react-app/app.webpack'
+import { removeUndefinedProperties } from '../util'
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
 module.exports = (inputParams = {}) => {

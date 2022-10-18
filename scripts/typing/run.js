@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const commander = require('commander');
+import commander from 'commander'
 
-const type = require('./type');
+import type from './type'
 
 const params = commander
   .option('-cm, --config-modifier <path>')

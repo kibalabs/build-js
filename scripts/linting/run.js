@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
+import commander from 'commander'
 
-const commander = require('commander');
-
-const lint = require('./lint');
+import lint from './lint'
 
 const params = commander
   .option('-cm, --config-modifier <path>')

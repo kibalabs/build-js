@@ -1,12 +1,12 @@
-const path = require('path');
+import path from 'path'
 
-const webpackMerge = require('webpack-merge');
+import webpackMerge from 'webpack-merge'
 
-const buildCommonWebpackConfig = require('../common/common.webpack');
-const buildJsWebpackConfig = require('../common/js.webpack');
-const webpackUtil = require('../common/webpackUtil');
-const buildModuleWebpackConfig = require('../module/module.webpack');
-const { removeUndefinedProperties } = require('../util');
+import buildCommonWebpackConfig from '../common/common.webpack'
+import buildJsWebpackConfig from '../common/js.webpack'
+import webpackUtil from '../common/webpackUtil'
+import buildModuleWebpackConfig from '../module/module.webpack'
+import { removeUndefinedProperties } from '../util'
 
 module.exports = (inputParams = {}) => {
   const defaultParams = {

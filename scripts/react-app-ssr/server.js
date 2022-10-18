@@ -1,8 +1,8 @@
-const path = require('path');
+import path from 'path'
 
 const { getPageData, renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');
-const compression = require('compression');
-const express = require('express');
+import compression from 'compression'
+import express from 'express'
 
 const { App, routes, globals } = require('./app.js');
 const { name, defaultSeoTags } = require('./data.json');

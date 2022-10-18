@@ -1,5 +1,5 @@
-const childProcess = require('child_process');
-const os = require('os');
+import childProcess from 'child_process'
+import os from 'os'
 
 const getPlatform = () => {
   let platform = process.platform;

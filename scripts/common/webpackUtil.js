@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-const chalk = require('chalk');
-const notifier = require('node-notifier');
-const rimraf = require('rimraf');
-const webpack = require('webpack');
+import chalk from 'chalk'
+import notifier from 'node-notifier'
+import rimraf from 'rimraf'
+import webpack from 'webpack'
 
 const friendlySyntaxErrorLabel = 'Syntax error:';
 
