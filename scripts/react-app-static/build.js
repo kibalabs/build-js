@@ -56,7 +56,7 @@ export const buildStaticReactApp = async (inputParams = {}) => {
     buildJsWebpackConfig({ ...params, polyfill: false, react: true }),
     buildImagesWebpackConfig(params),
     buildCssWebpackConfig(params),
-    buildModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
+    buildModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, outputFilename: 'index.cjs', excludeAllNodeModules: true }),
     // NOTE(krishan711): copy the public directory in cos things in it may be used by the static rendered
     {
       plugins: [
@@ -83,22 +83,18 @@ export const buildStaticReactApp = async (inputParams = {}) => {
     webWebpackConfig = params.webpackConfigModifier(webWebpackConfig);
   }
 
-  return createAndRunCompiler(nodeWebpackConfig).then(() => {
-    return createAndRunCompiler(webWebpackConfig);
-  }).then(async (webpackBuildStats) => {
-    fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
-    // NOTE(krishan711): if this could be done in an async way it would be faster!
-    console.log('here');
-    const app = (await import(path.resolve(buildDirectoryPath, 'index.js')));
-    console.log('app', app);
-    params.pages.forEach(async (page) => {
-      console.log(`Rendering page ${page.path} to ${page.filename}`);
-      const pageData = (app.routes && app.globals) ? await getPageData(page.path, app.routes, app.globals) : null;
-      const output = renderHtml(app.App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), pageData);
-      const outputPath = path.join(outputDirectoryPath, page.filename);
-      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, output);
-      console.log(`Done rendering page ${page.path}`);
-    });
+  await createAndRunCompiler(nodeWebpackConfig);
+  const webpackBuildStats = await createAndRunCompiler(webWebpackConfig);
+  fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
+  const app = (await import(path.resolve(buildDirectoryPath, 'index.cjs'))).default;
+  // NOTE(krishan711): if this could be done in an parallel way it would be faster!
+  params.pages.forEach(async (page) => {
+    console.log(`Rendering page ${page.path} to ${page.filename}`);
+    const pageData = (app.routes && app.globals) ? await getPageData(page.path, app.routes, app.globals) : null;
+    const output = renderHtml(app.App, page, params.seoTags, name, path.join(buildDirectoryPath, 'webpackBuildStats.json'), pageData);
+    const outputPath = path.join(outputDirectoryPath, page.filename);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.writeFileSync(outputPath, output);
+    console.log(`Done rendering page ${page.path}`);
   });
 };

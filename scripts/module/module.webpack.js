@@ -39,11 +39,11 @@ export const buildModuleWebpackConfig = (inputParams = {}) => {
     target: 'node',
     output: {
       filename: params.outputFilename,
-      chunkFilename: '[name].bundle.js',
-      libraryTarget: 'umd',
       umdNamedDefine: true,
       path: params.outputDirectory,
+      chunkFilename: '[name].bundle.js',
       library: name,
+      libraryTarget: 'umd',
     },
     plugins: [
       new webpack.DefinePlugin({
