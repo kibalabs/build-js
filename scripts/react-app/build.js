@@ -15,7 +15,7 @@ import webpackUtil from '../common/webpackUtil'
 import { removeUndefinedProperties } from '../util'
 import buildAppWebpackConfig from './app.webpack'
 
-module.exports = (inputParams = {}) => {
+export const buildReactApp = (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,

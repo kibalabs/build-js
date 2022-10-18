@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import commander from 'commander'
 
-import build from './build'
+import { buildReactApp } from './build.js'
 
 const params = commander
   .option('-c, --config-modifier <path>')
@@ -10,4 +10,4 @@ const params = commander
   .parse(process.argv)
   .opts();
 
-build(params);
+  buildReactApp(params);
