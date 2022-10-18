@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import commander from 'commander'
+import { program } from 'commander';
 
-import build from './build'
+import { buildSsrReactApp } from './build.js';
 
-const params = commander
+const params = program
   .option('-c, --config-modifier <path>')
   .option('-e, --entry-file-path <path>')
   .option('-b, --app-entry-file-path <path>')
@@ -12,4 +12,4 @@ const params = commander
   .parse(process.argv)
   .opts();
 
-build(params);
+buildSsrReactApp(params);

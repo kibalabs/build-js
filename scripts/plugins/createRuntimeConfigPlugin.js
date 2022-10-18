@@ -1,6 +1,6 @@
-import { RawSource } from 'webpack-sources'
+import { RawSource } from 'webpack-sources';
 
-class CreateRuntimeConfigPlugin {
+export class CreateRuntimeConfigPlugin {
   constructor(vars = {}, filename = 'runtimeConfig.js') {
     this.vars = vars;
     this.filename = filename;
@@ -22,5 +22,3 @@ class CreateRuntimeConfigPlugin {
     });
   }
 }
-
-module.exports = CreateRuntimeConfigPlugin;

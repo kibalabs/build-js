@@ -1,19 +1,19 @@
-import path from 'path'
+import path from 'path';
 
-import chalk from 'chalk'
-import glob from 'glob'
-import webpackMerge from 'webpack-merge'
+import chalk from 'chalk';
+import glob from 'glob';
+import webpackMerge from 'webpack-merge';
 
-import buildCommonWebpackConfig from '../common/common.webpack'
-import buildJsWebpackConfig from '../common/js.webpack'
-import webpackUtil from '../common/webpackUtil'
-import generateDeclarations from '../typing/generateDeclarations'
-import buildTsConfig from '../typing/ts.config'
-import { removeUndefinedProperties } from '../util'
-import buildModuleWebpackConfig from './module.webpack'
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil';
+import { generateTypescriptDeclarations } from '../typing/generateDeclarations';
+import { buildTsConfig } from '../typing/ts.config';
+import { removeUndefinedProperties } from '../util.js';
+import { buildModuleWebpackConfig } from './module.webpack';
 
 
-module.exports = (inputParams = {}) => {
+export const buildModule = (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -34,8 +34,7 @@ module.exports = (inputParams = {}) => {
   };
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const configModifier = require(path.join(process.cwd(), params.configModifier));
+    const configModifier = (import(path.join(process.cwd(), params.configModifier))).default;
     params = configModifier(params);
   }
   // NOTE(krishan711): starting modules in dev mode doesn't work yet. Test in everyview console before re-enabling
@@ -67,7 +66,7 @@ module.exports = (inputParams = {}) => {
   const onBuild = () => {
     if (!params.dev) {
       const entryPoints = typeof mergedConfig.entry === 'string' ? [mergedConfig.entry] : Object.values(mergedConfig.entry).flat();
-      generateDeclarations(entryPoints, {
+      generateTypescriptDeclarations(entryPoints, {
         ...tsConfig.compilerOptions,
         outDir: mergedConfig.output.path,
       });
@@ -78,7 +77,7 @@ module.exports = (inputParams = {}) => {
       console.log('Run', chalk.cyan(`npm install --no-save --force ${process.cwd()}`), `to use ${mergedConfig.name} live 🖥\n`);
     }
   };
-  const compiler = webpackUtil.createCompiler(mergedConfig, onBuild, onPostBuild);
+  const compiler = createCompiler(mergedConfig, onBuild, onPostBuild);
 
   if (params.start) {
     compiler.watch({

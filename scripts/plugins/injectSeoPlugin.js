@@ -1,13 +1,13 @@
-import HtmlWebpackPlugin from 'html-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-class Tag {
+export class Tag {
   constructor(tagName, attributes) {
     this.tagName = tagName;
     this.attributes = attributes;
   }
 }
 
-class MetaTag extends Tag {
+export class MetaTag extends Tag {
   constructor(name, content) {
     super('meta', {
       name,
@@ -16,7 +16,7 @@ class MetaTag extends Tag {
   }
 }
 
-class InjectSeoPlugin {
+export class InjectSeoPlugin {
   constructor(title, tags) {
     this.title = title;
     this.tags = tags;
@@ -38,7 +38,3 @@ class InjectSeoPlugin {
     });
   }
 }
-
-InjectSeoPlugin.Tag = Tag;
-InjectSeoPlugin.MetaTag = MetaTag;
-module.exports = InjectSeoPlugin;

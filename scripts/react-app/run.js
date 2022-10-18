@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import commander from 'commander'
+import { program } from 'commander';
 
-import { buildReactApp } from './build.js'
+import { buildReactApp } from './build.js';
 
-const params = commander
+const params = program
   .option('-c, --config-modifier <path>')
   .option('-d, --dev')
   .option('-s, --start')
   .parse(process.argv)
   .opts();
 
-  buildReactApp(params);
+buildReactApp(params);

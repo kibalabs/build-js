@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import chalk from 'chalk'
-import notifier from 'node-notifier'
-import rimraf from 'rimraf'
-import webpack from 'webpack'
+import chalk from 'chalk';
+import notifier from 'node-notifier';
+import rimraf from 'rimraf';
+import webpack from 'webpack';
 
 const friendlySyntaxErrorLabel = 'Syntax error:';
 
 // NOTE(krishan711): copied from https://github.com/facebook/create-react-app/blob/master/packages/react-dev-utils/formatWebpackMessages.js
-function formatMessage(webpackMessage) {
+const formatMessage = (webpackMessage) => {
   let lines = [];
   if (typeof webpackMessage === 'string') {
     lines = webpackMessage.split('\n');
@@ -82,13 +82,13 @@ function formatMessage(webpackMessage) {
   // Reassemble the message
   message = lines.join('\n');
   return message.trim();
-}
+};
 
-function isLikelyASyntaxError(message) {
+const isLikelyASyntaxError = (message) => {
   return message.indexOf(friendlySyntaxErrorLabel) !== -1;
-}
+};
 
-function formatWebpackMessages(stats) {
+const formatWebpackMessages = (stats) => {
   const statsJson = stats.toJson({}, true);
   const formattedErrors = statsJson.errors.map((error) => formatMessage(error));
   const formattedWarnings = statsJson.warnings.map((error) => formatMessage(error));
@@ -98,9 +98,9 @@ function formatWebpackMessages(stats) {
     result.errors = result.errors.filter(isLikelyASyntaxError);
   }
   return result;
-}
+};
 
-const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
+export const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
   if (config.output.clean) {
     // NOTE(krishan711): this shouldn't be needed but if its removed the assets plugin doesn't work
     rimraf.sync(config.output.path);
@@ -154,7 +154,7 @@ const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, sh
   return compiler;
 };
 
-const createAndRunCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
+export const createAndRunCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true) => {
   return new Promise((resolve, reject) => {
     createCompiler(config, onBuild, onPostBuild, showNotifications).run((err, stats) => {
       if (err || stats.hasErrors()) {
@@ -163,9 +163,4 @@ const createAndRunCompiler = (config, onBuild = undefined, onPostBuild = undefin
       return resolve(stats.toJson());
     });
   });
-};
-
-module.exports = {
-  createCompiler,
-  createAndRunCompiler,
 };

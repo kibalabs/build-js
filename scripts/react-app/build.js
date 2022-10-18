@@ -1,19 +1,19 @@
-import dns from 'dns'
-import os from 'os'
-import path from 'path'
+import dns from 'dns';
+import os from 'os';
+import path from 'path';
 
 import chalk from 'chalk';
-import WebpackDevServer from 'webpack-dev-server'
-import webpackMerge from 'webpack-merge'
+import WebpackDevServer from 'webpack-dev-server';
+import webpackMerge from 'webpack-merge';
 
-import buildCommonWebpackConfig from '../common/common.webpack'
-import buildCssWebpackConfig from '../common/css.webpack'
-import buildImagesWebpackConfig from '../common/images.webpack'
-import buildJsWebpackConfig from '../common/js.webpack'
-import { open } from '../common/platformUtil'
-import webpackUtil from '../common/webpackUtil'
-import { removeUndefinedProperties } from '../util'
-import buildAppWebpackConfig from './app.webpack'
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { open } from '../common/platformUtil.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { removeUndefinedProperties } from '../util.js';
+import { buildReactAppWebpackConfig } from './app.webpack.js';
 
 export const buildReactApp = (inputParams = {}) => {
   const defaultParams = {
@@ -48,13 +48,13 @@ export const buildReactApp = (inputParams = {}) => {
     buildJsWebpackConfig({ ...params, react: true }),
     buildCssWebpackConfig(params),
     buildImagesWebpackConfig(params),
-    buildAppWebpackConfig(params),
+    buildReactAppWebpackConfig(params),
   );
   if (params.webpackConfigModifier) {
     mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = webpackUtil.createCompiler(mergedConfig);
+  const compiler = createCompiler(mergedConfig);
   if (params.start) {
     const host = '0.0.0.0';
     const port = 3000;

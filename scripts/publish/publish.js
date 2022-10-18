@@ -1,8 +1,8 @@
-import childProcess from 'child_process'
-import fs from 'fs'
-import path from 'path'
+import childProcess from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
-import { removeUndefinedProperties } from '../util'
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
   next: false,
@@ -10,7 +10,7 @@ const defaultParams = {
   ignoreDuplicateError: true,
 };
 
-module.exports = (inputParams = {}) => {
+export const runPublish = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
 
   const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));

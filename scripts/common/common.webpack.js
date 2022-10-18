@@ -1,12 +1,12 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-import TerserPlugin from 'terser-webpack-plugin'
-import webpackBundleAnalyzer from 'webpack-bundle-analyzer'
+import TerserPlugin from 'terser-webpack-plugin';
+import webpackBundleAnalyzer from 'webpack-bundle-analyzer';
 
-import PrintAssetSizesPlugin from '../plugins/printAssetSizesPlugin'
-import { removeUndefinedProperties } from '../util'
-import packageUtil from './packageUtil'
+import { PrintAssetSizesPlugin } from '../plugins/printAssetSizesPlugin.js';
+import { removeUndefinedProperties } from '../util.js';
+import { getExternalModules } from './packageUtil.js';
 // import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 
 const defaultParams = {
@@ -18,10 +18,10 @@ const defaultParams = {
   name: undefined,
 };
 
-module.exports = (inputParams = {}) => {
+export const buildCommonWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  const modules = packageUtil.getExternalModules(package);
+  const modules = getExternalModules(package);
   // NOTE(krishan711): this aliases all the modules declared in package.json to the one installed in node_modules
   // which makes it much simpler to use locally installed packages with common dependencies (e.g. react, react-dom)
   const localModules = params.shouldAliasModules ? (modules.reduce((accumulator, moduleName) => {

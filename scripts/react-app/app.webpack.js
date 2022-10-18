@@ -1,16 +1,17 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-const LoadablePlugin = require('@loadable/webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-import CopyPlugin from 'copy-webpack-plugin'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import webpack from 'webpack'
+import LoadablePlugin from '@loadable/webpack-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
 
-import CreateRobotsTxtPlugin from '../plugins/createRobotsTxtPlugin'
-import CreateRuntimeConfigPlugin from '../plugins/createRuntimeConfigPlugin'
-import InjectSeoPlugin from '../plugins/injectSeoPlugin'
-import { removeUndefinedProperties } from '../util'
+import CreateRobotsTxtPlugin from '../plugins/createRobotsTxtPlugin';
+import CreateRuntimeConfigPlugin from '../plugins/createRuntimeConfigPlugin';
+import InjectSeoPlugin from '../plugins/injectSeoPlugin';
+import { removeUndefinedProperties } from '../util.js';
+
 
 const defaultParams = {
   dev: undefined,
@@ -26,7 +27,7 @@ const defaultParams = {
   publicDirectory: undefined,
 };
 
-module.exports = (inputParams = {}) => {
+export const buildReactAppWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;

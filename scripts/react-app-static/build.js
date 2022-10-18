@@ -1,21 +1,22 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-import CopyPlugin from 'copy-webpack-plugin'
-import webpackMerge from 'webpack-merge'
+import CopyPlugin from 'copy-webpack-plugin';
+import webpackMerge from 'webpack-merge';
 
-import makeCommonWebpackConfig from '../common/common.webpack'
-import makeCssWebpackConfig from '../common/css.webpack'
-import makeImagesWebpackConfig from '../common/images.webpack'
-import makeJsWebpackConfig from '../common/js.webpack'
-import { createAndRunCompiler } from '../common/webpackUtil'
-import makeModuleWebpackConfig from '../module/module.webpack'
-import makeReactAppWebpackConfig from '../react-app/app.webpack'
-import { removeUndefinedProperties } from '../util'
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createAndRunCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { buildReactAppWebpackConfig } from '../react-app/app.webpack.js';
+import { removeUndefinedProperties } from '../util.js';
+
 const { getPageData, renderHtml } = require('./static');
 
-module.exports = (inputParams = {}) => {
+export const buildStaticReactApp = (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -53,11 +54,11 @@ module.exports = (inputParams = {}) => {
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
 
   let nodeWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: `${name}-node` }),
-    makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
-    makeImagesWebpackConfig(params),
-    makeCssWebpackConfig(params),
-    makeModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
+    buildCommonWebpackConfig({ ...params, name: `${name}-node` }),
+    buildJsWebpackConfig({ ...params, polyfill: false, react: true }),
+    buildImagesWebpackConfig(params),
+    buildCssWebpackConfig(params),
+    buildModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true }),
     // NOTE(krishan711): copy the public directory in cos things in it may be used by the static rendered
     {
       plugins: [
@@ -74,11 +75,11 @@ module.exports = (inputParams = {}) => {
   }
 
   let webWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: `${name}-web` }),
-    makeJsWebpackConfig({ ...params, polyfill: true, react: true }),
-    makeImagesWebpackConfig(params),
-    makeCssWebpackConfig(params),
-    makeReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
+    buildCommonWebpackConfig({ ...params, name: `${name}-web` }),
+    buildJsWebpackConfig({ ...params, polyfill: true, react: true }),
+    buildImagesWebpackConfig(params),
+    buildCssWebpackConfig(params),
+    buildReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
   );
   if (params.webpackConfigModifier) {
     webWebpackConfig = params.webpackConfigModifier(webWebpackConfig);

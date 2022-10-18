@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import commander from 'commander'
+import { program } from 'commander';
 
-import type from './type'
+import { runTyping } from './type.js';
 
-const params = commander
+const params = program
   .option('-cm, --config-modifier <path>')
   .option('-d, --directory [path]')
   .option('-o, --output-file [path]')
@@ -12,4 +12,4 @@ const params = commander
   .parse(process.argv)
   .opts();
 
-type(params);
+runTyping(params);

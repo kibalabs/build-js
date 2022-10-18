@@ -1,10 +1,10 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-import webpack from 'webpack'
+import webpack from 'webpack';
 
-import packageUtil from '../common/packageUtil'
-import { removeUndefinedProperties } from '../util'
+import { getExternalModules, getNodeModules, isExternalModuleRequest } from '../common/packageUtil.js';
+import { removeUndefinedProperties } from '../util';
 
 const defaultParams = {
   dev: undefined,
@@ -18,7 +18,7 @@ const defaultParams = {
   outputFilename: 'index.js',
 };
 
-module.exports = (inputParams = {}) => {
+export const buildModuleWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || package.name;
@@ -26,10 +26,10 @@ module.exports = (inputParams = {}) => {
   if (params.excludeAllNodeModules) {
     const nodeModulesPaths = params.nodeModulesPaths || [params.nodeModulesPath || path.join(process.cwd(), './node_modules')];
     nodeModulesPaths.forEach((nodeModulesPath) => {
-      externalModules.push(...packageUtil.getNodeModules(nodeModulesPath));
+      externalModules.push(...getNodeModules(nodeModulesPath));
     });
   } else {
-    externalModules.push(...packageUtil.getExternalModules(package));
+    externalModules.push(...getExternalModules(package));
   }
 
   return {
@@ -53,7 +53,7 @@ module.exports = (inputParams = {}) => {
     ],
     externals: [
       ({ request }, callback) => {
-        if (packageUtil.isExternalModuleRequest(externalModules, request)) {
+        if (isExternalModuleRequest(externalModules, request)) {
           return callback(null, `commonjs ${request}`);
         }
         return callback();

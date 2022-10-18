@@ -1,8 +1,8 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-import chalk from 'chalk'
-import { ESLint } from 'eslint'
+import chalk from 'chalk';
+import { ESLint } from 'eslint';
 
 import { removeUndefinedProperties } from '../util.js';
 import { buildEslintConfig } from './eslint.config.js';
@@ -19,8 +19,7 @@ export const runLinting = async (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = null;
   if (params.configModifier) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    customConfig = import(path.join(process.cwd(), params.configModifier));
+    customConfig = (await import(path.join(process.cwd(), params.configModifier))).default;
     if (typeof customConfig === 'function') {
       customConfig = customConfig(params);
     }

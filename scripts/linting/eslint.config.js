@@ -1,4 +1,4 @@
-import { removeUndefinedProperties } from '../util.js'
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
 };

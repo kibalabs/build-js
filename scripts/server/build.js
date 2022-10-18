@@ -1,14 +1,14 @@
-import path from 'path'
+import path from 'path';
 
-import webpackMerge from 'webpack-merge'
+import webpackMerge from 'webpack-merge';
 
-import buildCommonWebpackConfig from '../common/common.webpack'
-import buildJsWebpackConfig from '../common/js.webpack'
-import webpackUtil from '../common/webpackUtil'
-import buildModuleWebpackConfig from '../module/module.webpack'
-import { removeUndefinedProperties } from '../util'
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { removeUndefinedProperties } from '../util.js';
 
-module.exports = (inputParams = {}) => {
+export const buildServer = (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -37,7 +37,7 @@ module.exports = (inputParams = {}) => {
     mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = webpackUtil.createCompiler(mergedConfig);
+  const compiler = createCompiler(mergedConfig);
 
   // TODO(krishan711): Start doesn't seem to work!
   if (params.start) {

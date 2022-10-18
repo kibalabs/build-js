@@ -1,20 +1,20 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
-import webpackMerge from 'webpack-merge'
+import webpackMerge from 'webpack-merge';
 
-import makeCommonWebpackConfig from '../common/common.webpack'
-import makeCssWebpackConfig from '../common/css.webpack'
-import makeImagesWebpackConfig from '../common/images.webpack'
-import makeJsWebpackConfig from '../common/js.webpack'
-import { createAndRunCompiler } from '../common/webpackUtil'
-import buildModuleWebpackConfig from '../module/module.webpack'
-import makeReactAppWebpackConfig from '../react-app/app.webpack'
-import { removeUndefinedProperties } from '../util'
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createAndRunCompiler } from '../common/webpackUtil';
+import { buildModuleWebpackConfig } from '../module/module.webpack';
+import { buildReactAppWebpackConfig } from '../react-app/app.webpack';
+import { removeUndefinedProperties } from '../util.js';
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
-module.exports = (inputParams = {}) => {
+export const buildSsrReactApp = (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -52,10 +52,10 @@ module.exports = (inputParams = {}) => {
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
 
   let nodeWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: `${name}-node` }),
-    makeJsWebpackConfig({ ...params, polyfill: false, react: true }),
-    makeImagesWebpackConfig(params),
-    makeCssWebpackConfig(params),
+    buildCommonWebpackConfig({ ...params, name: `${name}-node` }),
+    buildJsWebpackConfig({ ...params, polyfill: false, react: true }),
+    buildImagesWebpackConfig(params),
+    buildCssWebpackConfig(params),
     buildModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true, outputFilename: 'app.js' }),
   );
   if (params.webpackConfigModifier) {
@@ -63,11 +63,11 @@ module.exports = (inputParams = {}) => {
   }
 
   let webWebpackConfig = webpackMerge.merge(
-    makeCommonWebpackConfig({ ...params, name: `${name}-web` }),
-    makeJsWebpackConfig({ ...params, polyfill: true, react: true }),
-    makeImagesWebpackConfig(params),
-    makeCssWebpackConfig(params),
-    makeReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
+    buildCommonWebpackConfig({ ...params, name: `${name}-web` }),
+    buildJsWebpackConfig({ ...params, polyfill: true, react: true }),
+    buildImagesWebpackConfig(params),
+    buildCssWebpackConfig(params),
+    buildReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
   );
   if (params.webpackConfigModifier) {
     webWebpackConfig = params.webpackConfigModifier(webWebpackConfig);
@@ -83,8 +83,8 @@ module.exports = (inputParams = {}) => {
     fs.writeFileSync(path.join(outputDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
 
     let serverWebpackConfig = webpackMerge.merge(
-      makeCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
-      makeJsWebpackConfig({ ...params, react: false, polyfill: false }),
+      buildCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
+      buildJsWebpackConfig({ ...params, react: false, polyfill: false }),
       buildModuleWebpackConfig({ ...params, entryFilePath: serverFilePath, outputDirectory: outputDirectoryPath, excludeAllNodeModules: true }),
     );
     if (params.webpackConfigModifier) {

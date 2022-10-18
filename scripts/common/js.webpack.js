@@ -1,14 +1,14 @@
-import fs from 'fs'
+import fs from 'fs';
 
-import { removeUndefinedProperties } from '../util'
-import buildBabelConfig from './babel.config'
+import { removeUndefinedProperties } from '../util.js';
+import buildBabelConfig from './babel.config';
 
 const defaultParams = {
   packageFilePath: undefined,
   polyfillTargets: undefined,
 };
 
-module.exports = (inputParams = {}) => {
+export const buildJsWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const package = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   if (!params.polyfillTargets) {
