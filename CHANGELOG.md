@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
+- [MINOR] Added bundle build time analysis to react building
 
 ### Changed
 - [MAJOR] Updated package to be an [ESM module](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
