@@ -36,7 +36,7 @@ export const buildServer = async (inputParams = {}) => {
     mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = createCompiler(mergedConfig);
+  const compiler = createCompiler(mergedConfig, undefined, undefined, true, params.analyzeBundle);
 
   // TODO(krishan711): Start doesn't seem to work!
   if (params.start) {
