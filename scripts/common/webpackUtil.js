@@ -2,8 +2,8 @@
 import chalk from 'chalk';
 import notifier from 'node-notifier';
 import rimraf from 'rimraf';
-import webpack from 'webpack';
 import SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
+import webpack from 'webpack';
 
 const friendlySyntaxErrorLabel = 'Syntax error:';
 
@@ -109,6 +109,7 @@ export const createCompiler = (config, onBuild = undefined, onPostBuild = undefi
 
   if (analyzeSpeed) {
     const speedMeasurePlugin = new SpeedMeasurePlugin();
+    // eslint-disable-next-line no-param-reassign
     config = speedMeasurePlugin.wrap(config);
   }
 
