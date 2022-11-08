@@ -78,7 +78,7 @@ export const buildReactComponent = async (inputParams = {}) => {
       console.log('Run', chalk.cyan(`npm install --no-save --force ${process.cwd()}`), `to use ${mergedConfig.name} live 🖥\n`);
     }
   };
-  const compiler = createCompiler(mergedConfig, onBuild, onPostBuild);
+  const compiler = createCompiler(mergedConfig, onBuild, onPostBuild, true, params.analyzeBundle);
 
   if (params.start) {
     compiler.watch({

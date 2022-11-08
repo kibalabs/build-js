@@ -83,8 +83,8 @@ export const buildStaticReactApp = async (inputParams = {}) => {
     webWebpackConfig = params.webpackConfigModifier(webWebpackConfig);
   }
 
-  await createAndRunCompiler(nodeWebpackConfig);
-  const webpackBuildStats = await createAndRunCompiler(webWebpackConfig);
+  await createAndRunCompiler(nodeWebpackConfig, undefined, undefined, true, params.analyzeBundle);
+  const webpackBuildStats = await createAndRunCompiler(webWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   fs.writeFileSync(path.join(buildDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
   const app = (await import(path.resolve(buildDirectoryPath, 'index.cjs'))).default;
   // NOTE(krishan711): if this could be done in an parallel way it would be faster!

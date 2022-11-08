@@ -53,7 +53,7 @@ export const buildReactApp = async (inputParams = {}) => {
     mergedConfig = params.webpackConfigModifier(mergedConfig);
   }
 
-  const compiler = createCompiler(mergedConfig);
+  const compiler = createCompiler(mergedConfig, undefined, undefined, true, params.analyzeBundle);
   if (params.start) {
     const host = '0.0.0.0';
     const port = 3000;

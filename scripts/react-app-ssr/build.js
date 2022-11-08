@@ -73,8 +73,8 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     webWebpackConfig = params.webpackConfigModifier(webWebpackConfig);
   }
 
-  return createAndRunCompiler(nodeWebpackConfig).then(() => {
-    return createAndRunCompiler(webWebpackConfig);
+  return createAndRunCompiler(nodeWebpackConfig, undefined, undefined, true, params.analyzeBundle).then(() => {
+    return createAndRunCompiler(webWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   }).then((webpackBuildStats) => {
     const serverFilePath = path.join(buildDirectoryPath, 'server.js');
     // eslint-disable-next-line no-underscore-dangle
@@ -92,6 +92,6 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     if (params.webpackConfigModifier) {
       serverWebpackConfig = params.webpackConfigModifier(serverWebpackConfig);
     }
-    return createAndRunCompiler(serverWebpackConfig);
+    return createAndRunCompiler(serverWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   });
 };
