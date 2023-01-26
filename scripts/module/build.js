@@ -7,7 +7,7 @@ import webpackMerge from 'webpack-merge';
 import { buildCommonWebpackConfig } from '../common/common.webpack.js';
 import { buildJsWebpackConfig } from '../common/js.webpack.js';
 import { createCompiler } from '../common/webpackUtil.js';
-import { generateTypescriptDeclarations } from '../typing/generateDeclarations';
+import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
 import { buildTsConfig } from '../typing/ts.config.js';
 import { removeUndefinedProperties } from '../util.js';
 import { buildModuleWebpackConfig } from './module.webpack.js';
