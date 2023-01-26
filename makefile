@@ -5,19 +5,19 @@ list-outdated: install
 	@ npm outdated
 
 lint-check:
-	@ npx lint
+	@ node scripts/linting/run.js --config-modifier ./eslintrc-modifier.js
 
 lint-check-ci:
-	@ npx lint --output-file lint-check-results.json --output-file-format annotations
+	@ node scripts/linting/run.js --config-modifier ./eslintrc-modifier.js --output-file lint-check-results.json --output-file-format annotations
 
 lint-fix:
-	@ npx lint --fix
+	@ node scripts/linting/run.js --config-modifier ./eslintrc-modifier.js --fix
 
 type-check:
-	@ npx type-check
+	@ echo "Not Supported"
 
 type-check-ci:
-	@ npx type-check --output-file type-check-results.json --output-file-format annotations
+	@ echo "Not Supported"
 
 security-check:
 	@ # NOTE(krishan711): maybe use npm audit
@@ -49,7 +49,7 @@ publish:
 
 publish-next:
 ifneq ($(COMMIT_COUNT),0)
-	npx kiba-publish --next --next-version $(COMMIT_COUNT)
+	node scripts/publish/run.js --next --next-version $(COMMIT_COUNT)
 endif
 
 clean:

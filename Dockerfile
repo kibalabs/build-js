@@ -1,9 +1,14 @@
+# Stage 1: build
 FROM node:18.2.0 as build
 
 WORKDIR /app
+COPY makefile $WORKDIR
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
-RUN npm ci
+# Install requirements
+COPY package.json .
+COPY package-lock.json .
+RUN make install
 
-COPY . .
+# Build app
+COPY . $WORKDIR
+# RUN make build
