@@ -4,9 +4,9 @@ import path from 'path';
 import TerserPlugin from 'terser-webpack-plugin';
 import webpackBundleAnalyzer from 'webpack-bundle-analyzer';
 
+import { getExternalModules } from './packageUtil.js';
 import { PrintAssetSizesPlugin } from '../plugins/printAssetSizesPlugin.js';
 import { removeUndefinedProperties } from '../util.js';
-import { getExternalModules } from './packageUtil.js';
 // import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 
 const defaultParams = {

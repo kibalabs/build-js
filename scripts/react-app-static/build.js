@@ -5,6 +5,7 @@ import path from 'path';
 import CopyPlugin from 'copy-webpack-plugin';
 import webpackMerge from 'webpack-merge';
 
+import { getPageData, renderHtml } from './static.js';
 import { buildCommonWebpackConfig } from '../common/common.webpack.js';
 import { buildCssWebpackConfig } from '../common/css.webpack.js';
 import { buildImagesWebpackConfig } from '../common/images.webpack.js';
@@ -13,7 +14,6 @@ import { createAndRunCompiler } from '../common/webpackUtil.js';
 import { buildModuleWebpackConfig } from '../module/module.webpack.js';
 import { buildReactAppWebpackConfig } from '../react-app/app.webpack.js';
 import { removeUndefinedProperties } from '../util.js';
-import { getPageData, renderHtml } from './static.js';
 
 export const buildStaticReactApp = async (inputParams = {}) => {
   const defaultParams = {

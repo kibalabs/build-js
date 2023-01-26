@@ -4,9 +4,9 @@ import { fileURLToPath } from 'url';
 import compression from 'compression';
 import express from 'express';
 
-import { getPageData, renderHtml } from '../react-app-static/static.js';
 import { App, globals, routes } from './app.js';
 import { defaultSeoTags, name } from './data.json';
+import { getPageData, renderHtml } from '../react-app-static/static.js';
 
 const app = express();
 app.disable('x-powered-by');

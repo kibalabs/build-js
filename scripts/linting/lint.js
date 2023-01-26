@@ -4,8 +4,8 @@ import path from 'path';
 import chalk from 'chalk';
 import { ESLint } from 'eslint';
 
-import { removeUndefinedProperties } from '../util.js';
 import { buildEslintConfig } from './eslint.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
   configModifier: undefined,
