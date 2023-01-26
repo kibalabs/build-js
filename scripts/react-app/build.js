@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import WebpackDevServer from 'webpack-dev-server';
 import webpackMerge from 'webpack-merge';
 
+import { buildReactAppWebpackConfig } from './app.webpack.js';
 import { buildCommonWebpackConfig } from '../common/common.webpack.js';
 import { buildCssWebpackConfig } from '../common/css.webpack.js';
 import { buildImagesWebpackConfig } from '../common/images.webpack.js';
@@ -13,7 +14,6 @@ import { buildJsWebpackConfig } from '../common/js.webpack.js';
 import { open } from '../common/platformUtil.js';
 import { createCompiler } from '../common/webpackUtil.js';
 import { removeUndefinedProperties } from '../util.js';
-import { buildReactAppWebpackConfig } from './app.webpack.js';
 
 export const buildReactApp = async (inputParams = {}) => {
   const defaultParams = {

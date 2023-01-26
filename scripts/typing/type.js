@@ -5,8 +5,8 @@ import chalk from 'chalk';
 import glob from 'glob';
 import typescript from 'typescript';
 
-import { removeUndefinedProperties } from '../util.js';
 import { buildTsConfig } from './ts.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
   configModifier: undefined,
