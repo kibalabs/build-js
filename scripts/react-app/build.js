@@ -19,6 +19,7 @@ export const buildReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
+    port: 3000,
     configModifier: undefined,
     polyfill: true,
     polyfillTargets: undefined,
@@ -56,7 +57,7 @@ export const buildReactApp = async (inputParams = {}) => {
   const compiler = createCompiler(mergedConfig, undefined, undefined, true, params.analyzeBundle);
   if (params.start) {
     const host = '0.0.0.0';
-    const port = 3000;
+    const port = params.port;
     const server = new WebpackDevServer({
       host,
       port,
