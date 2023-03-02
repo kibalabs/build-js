@@ -66,20 +66,20 @@ export const runPublish = (inputParams = {}) => {
     });
   }
 
-  // try {
-  //   const workspaceCommandSuffix = isWorkspace ? '--workspaces --if-present' : '';
-  //   const nextCommandSuffix = params.next ? '--tag next' : '';
-  //   childProcess.execSync(`npm publish ${nextCommandSuffix} ${workspaceCommandSuffix}`);
-  // } catch (error) {
-  //   let ignoreError = false;
-  //   if (error.message.includes('You cannot publish over the previously published versions')) {
-  //     if (params.ignoreDuplicateError) {
-  //       console.log('Skipping already published version!');
-  //       ignoreError = true;
-  //     }
-  //   }
-  //   if (!ignoreError) {
-  //     throw error;
-  //   }
-  // }
+  try {
+    const workspaceCommandSuffix = isWorkspace ? '--workspaces --if-present' : '';
+    const nextCommandSuffix = params.next ? '--tag next' : '';
+    childProcess.execSync(`npm publish ${nextCommandSuffix} ${workspaceCommandSuffix}`);
+  } catch (error) {
+    let ignoreError = false;
+    if (error.message.includes('You cannot publish over the previously published versions')) {
+      if (params.ignoreDuplicateError) {
+        console.log('Skipping already published version!');
+        ignoreError = true;
+      }
+    }
+    if (!ignoreError) {
+      throw error;
+    }
+  }
 };
