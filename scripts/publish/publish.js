@@ -7,7 +7,7 @@ import { removeUndefinedProperties } from '../util.js';
 const defaultParams = {
   next: false,
   nextVersion: 0,
-  nextType: 'prerelease',
+  nextType: null,
   ignoreDuplicateError: true,
 };
 
@@ -19,20 +19,26 @@ export const runPublish = (inputParams = {}) => {
   const packagePaths = packageData.workspaces || [];
 
   if (params.next) {
-    let nextType = params.nextType || 'prerelease';
-    if (nextType.startsWith('beta-')) {
-      nextType = nextType.replace('beta-', '');
-    }
-    if (!['prerelease', 'premajor', 'preminor', 'prepatch', 'major', 'minor', 'patch'].includes(nextType)) {
-      throw new Error(`Invalid nextType: ${nextType}`);
-    }
-    if (!nextType.startsWith('pre')) {
-      nextType = `pre${nextType}`;
+    if (params.nextType) {
+      let nextType = params.nextType;
+      if (nextType.startsWith('beta-')) {
+        nextType = nextType.replace('beta-', '');
+      }
+      if (!['prerelease', 'premajor', 'preminor', 'prepatch', 'major', 'minor', 'patch'].includes(nextType)) {
+        throw new Error(`Invalid nextType: ${nextType}`);
+      }
+      if (!nextType.startsWith('pre')) {
+        nextType = `pre${nextType}`;
+      }
+      if (nextType !== 'prerelease' && nextType !== 'prepatch') {
+        const workspaceCommandSuffix = isWorkspace ? '--workspaces --workspaces-update false --include-workspace-root' : '';
+        childProcess.execSync(`npm version ${nextType} --preid=next --no-git-tag-version ${workspaceCommandSuffix}`).toString();
+      }
     }
     const newPackageVersions = [];
     Array(parseInt(params.nextVersion || '0', 10)).fill().forEach(() => {
       const workspaceCommandSuffix = isWorkspace ? '--workspaces --workspaces-update false --include-workspace-root' : '';
-      const output = childProcess.execSync(`npm version ${nextType} --preid=next --no-git-tag-version ${workspaceCommandSuffix}`).toString();
+      const output = childProcess.execSync(`npm version prerelease --preid=next --no-git-tag-version ${workspaceCommandSuffix}`).toString();
       if (isWorkspace) {
         // NOTE(krishan711): annoyingly need to update each packageData's dependencies
         // this says it should work automatically it doesn't: https://github.com/npm/cli/issues/3403
