@@ -1,11 +1,11 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-import chalk from 'chalk';
-import { ESLint } from 'eslint';
+const chalk = require('chalk');
+const { ESLint } = require('eslint');
 
-import { buildEslintConfig } from './eslint.config.js';
-import { removeUndefinedProperties } from '../util.js';
+const { buildEslintConfig } = require('./eslint.config');
+const { removeUndefinedProperties } = require('../util');
 
 const defaultParams = {
   configModifier: undefined,
@@ -15,7 +15,7 @@ const defaultParams = {
   fix: false,
 };
 
-export const runLinting = async (inputParams = {}) => {
+const runLinting = async (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = null;
   if (params.configModifier) {
@@ -136,3 +136,7 @@ class PrettyFormatter {
     return output;
   }
 }
+
+module.exports = {
+  runLinting,
+};

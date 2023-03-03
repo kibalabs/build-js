@@ -1,19 +1,12 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+const path = require('path');
+// const { fileURLToPath } = require('url');
 
-import compression from 'compression';
-import express from 'express';
+const { getPageData, renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');
+const compression = require('compression');
+const express = require('express');
 
-import { App, globals, routes } from './app.js';
-import { defaultSeoTags, name } from './data.json';
-import { getPageData, renderHtml } from '../react-app-static/static.js';
-
-const app = express();
-app.disable('x-powered-by');
-// eslint-disable-next-line no-underscore-dangle
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use(express.static(__dirname, { immutable: true, maxAge: '1y' }));
-app.use(compression({ filter: shouldCompress }));
+const { App, globals, routes } = require('./app');
+const { defaultSeoTags, name } = require('./data.json');
 
 const shouldCompress = (req, res) => {
   if (req.headers['x-no-compression']) {
@@ -21,6 +14,12 @@ const shouldCompress = (req, res) => {
   }
   return compression.filter(req, res);
 };
+
+const app = express();
+app.disable('x-powered-by');
+
+app.use(express.static(__dirname, { immutable: true, maxAge: '1y' }));
+app.use(compression({ filter: shouldCompress }));
 
 app.get('*', async (req, res) => {
   console.log(req.method, req.path, req.query);

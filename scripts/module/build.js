@@ -1,19 +1,19 @@
-import path from 'path';
+const path = require('path');
 
-import chalk from 'chalk';
-import glob from 'glob';
-import webpackMerge from 'webpack-merge';
+const chalk = require('chalk');
+const glob = require('glob');
+const webpackMerge = require('webpack-merge');
 
-import { buildModuleWebpackConfig } from './module.webpack.js';
-import { buildCommonWebpackConfig } from '../common/common.webpack.js';
-import { buildJsWebpackConfig } from '../common/js.webpack.js';
-import { createCompiler } from '../common/webpackUtil.js';
-import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
-import { buildTsConfig } from '../typing/ts.config.js';
-import { removeUndefinedProperties } from '../util.js';
+const { buildModuleWebpackConfig } = require('./module.webpack');
+const { buildCommonWebpackConfig } = require('../common/common.webpack');
+const { buildJsWebpackConfig } = require('../common/js.webpack');
+const { createCompiler } = require('../common/webpackUtil');
+const { generateTypescriptDeclarations } = require('../typing/generateDeclarations');
+const { buildTsConfig } = require('../typing/ts.config');
+const { removeUndefinedProperties } = require('../util');
 
 
-export const buildModule = async (inputParams = {}) => {
+const buildModule = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -89,4 +89,8 @@ export const buildModule = async (inputParams = {}) => {
   } else {
     compiler.run();
   }
+};
+
+module.exports = {
+  buildModule,
 };

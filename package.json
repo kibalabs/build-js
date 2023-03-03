@@ -9,7 +9,6 @@
   },
   "homepage": "https://github.com/kibalabs/build-js",
   "bugs": "https://github.com/kibalabs/build-js/issues",
-  "type": "module",
   "bin": {
     "build-react-component": "scripts/react-component/run.js",
     "build-react-app": "scripts/react-app/run.js",
@@ -45,7 +44,7 @@
     "@typescript-eslint/parser": "^5.54.0",
     "babel-loader": "^9.1.2",
     "babel-plugin-styled-components": "^2.0.7",
-    "chalk": "^5.2.0",
+    "chalk": "^4.1.2",
     "commander": "^10.0.0",
     "compression": "^1.7.4",
     "console-table-printer": "^2.11.1",

@@ -1,25 +1,25 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-export const getExternalModules = (packageData) => {
+const getExternalModules = (packageData) => {
   return Object.keys(packageData.dependencies || {})
     .concat(Object.keys(packageData.peerDependencies || {}))
     .concat(Object.keys(packageData.optionalDependencies || {}));
 };
 
-export const isExternalPackageRequest = (packageData, request) => {
+const isExternalPackageRequest = (packageData, request) => {
   const externalModules = getExternalModules(packageData);
   return isExternalModuleRequest(externalModules, request);
 };
 
-export const isExternalModuleRequest = (externalModules, request) => {
+const isExternalModuleRequest = (externalModules, request) => {
   if (request.endsWith('.css')) {
     return false;
   }
   return externalModules.includes(request) || externalModules.some((packageName) => request.indexOf(`${packageName}/`) === 0);
 };
 
-export const getNodeModules = (nodeModulesDirectory) => {
+const getNodeModules = (nodeModulesDirectory) => {
   const moduleNames = fs.readdirSync(nodeModulesDirectory);
   const resolvedModules = moduleNames.map((moduleName) => {
     if (moduleName.startsWith('@')) {
@@ -33,4 +33,11 @@ export const getNodeModules = (nodeModulesDirectory) => {
     return previousValue.concat(currentValue);
   }, []);
   return allModules;
+};
+
+module.exports = {
+  getExternalModules,
+  isExternalModuleRequest,
+  isExternalPackageRequest,
+  getNodeModules,
 };

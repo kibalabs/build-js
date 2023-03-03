@@ -1,4 +1,4 @@
-import { removeUndefinedProperties } from '../util.js';
+const { removeUndefinedProperties } = require('../util');
 
 const defaultParams = {
   polyfill: false,
@@ -8,7 +8,7 @@ const defaultParams = {
   preserveModules: false,
 };
 
-export const buildBabelConfig = (inputParams = {}) => {
+const buildBabelConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const polyfillSettings = {
     // NOTE(krishan711): this should be entry if we aren't processing all the node_modules
@@ -53,4 +53,8 @@ export const buildBabelConfig = (inputParams = {}) => {
       compact: true,
     }],
   };
+};
+
+module.exports = {
+  buildBabelConfig,
 };

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
+const { program } = require('commander');
 
-import { runTyping } from './type.js';
+const { runTyping } = require('./type');
 
 const params = program
   .option('-cm, --config-modifier <path>')

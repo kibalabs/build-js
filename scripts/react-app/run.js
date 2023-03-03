@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { program } from 'commander';
+const { program } = require('commander');
 
-import { buildReactApp } from './build.js';
+const { buildReactApp } = require('./build');
 
 const params = program
   .option('-c, --config-modifier <path>')

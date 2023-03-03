@@ -1,9 +1,9 @@
-import { removeUndefinedProperties } from '../util.js';
+const { removeUndefinedProperties } = require('../util');
 
 const defaultParams = {
 };
 
-export const buildEslintConfig = (inputParams = {}) => {
+const buildEslintConfig = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return {
@@ -108,4 +108,8 @@ export const buildEslintConfig = (inputParams = {}) => {
       },
     }],
   };
+};
+
+module.exports = {
+  buildEslintConfig,
 };

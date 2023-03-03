@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-import webpack from 'webpack';
+const webpack = require('webpack');
 
-import { getExternalModules, getNodeModules, isExternalModuleRequest } from '../common/packageUtil.js';
-import { removeUndefinedProperties } from '../util.js';
+const { getExternalModules, getNodeModules, isExternalModuleRequest } = require('../common/packageUtil');
+const { removeUndefinedProperties } = require('../util');
 
 const defaultParams = {
   dev: undefined,
@@ -18,7 +18,7 @@ const defaultParams = {
   outputFilename: 'index.js',
 };
 
-export const buildModuleWebpackConfig = (inputParams = {}) => {
+const buildModuleWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || packageData.name;
@@ -61,4 +61,8 @@ export const buildModuleWebpackConfig = (inputParams = {}) => {
     ],
     devtool: params.dev ? 'source-map' : false,
   };
+};
+
+module.exports = {
+  buildModuleWebpackConfig,
 };

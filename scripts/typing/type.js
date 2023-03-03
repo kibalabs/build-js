@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-import chalk from 'chalk';
-import glob from 'glob';
-import typescript from 'typescript';
+const chalk = require('chalk');
+const glob = require('glob');
+const typescript = require('typescript');
 
-import { buildTsConfig } from './ts.config.js';
-import { removeUndefinedProperties } from '../util.js';
+const { buildTsConfig } = require('./ts.config');
+const { removeUndefinedProperties } = require('../util');
 
 const defaultParams = {
   configModifier: undefined,
@@ -15,7 +15,7 @@ const defaultParams = {
   outputFileFormat: undefined,
 };
 
-export const runTyping = async (inputParams = {}) => {
+const runTyping = async (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = {};
   if (params.configModifier) {
@@ -133,3 +133,7 @@ class PrettyFormatter {
     return output;
   }
 }
+
+module.exports = {
+  runTyping,
+};
