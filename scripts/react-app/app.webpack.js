@@ -1,17 +1,16 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs');
+const path = require('path');
 
-import LoadablePlugin from '@loadable/webpack-plugin';
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import CopyPlugin from 'copy-webpack-plugin';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import webpack from 'webpack';
+const LoadablePlugin = require('@loadable/webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
-import { CreateRobotsTxtPlugin } from '../plugins/createRobotsTxtPlugin.js';
-import { CreateRuntimeConfigPlugin } from '../plugins/createRuntimeConfigPlugin.js';
-import { InjectSeoPlugin } from '../plugins/injectSeoPlugin.js';
-import { removeUndefinedProperties } from '../util.js';
+const { CreateRobotsTxtPlugin } = require('../plugins/createRobotsTxtPlugin');
+const { CreateRuntimeConfigPlugin } = require('../plugins/createRuntimeConfigPlugin');
+const { InjectSeoPlugin } = require('../plugins/injectSeoPlugin');
+const { removeUndefinedProperties } = require('../util');
 
 
 const defaultParams = {
@@ -28,12 +27,12 @@ const defaultParams = {
   publicDirectory: undefined,
 };
 
-export const buildReactAppWebpackConfig = (inputParams = {}) => {
+const buildReactAppWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || packageData.name;
-  // eslint-disable-next-line no-underscore-dangle
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+  // const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const htmlTemplateFilePath = path.join(__dirname, './index.html');
 
   const runtimeConfigVars = params.runtimeConfigVars;
@@ -123,4 +122,8 @@ export const buildReactAppWebpackConfig = (inputParams = {}) => {
       ...(params.dev ? [new ReactRefreshWebpackPlugin({ overlay: false })] : []),
     ],
   };
+};
+
+module.exports = {
+  buildReactAppWebpackConfig,
 };

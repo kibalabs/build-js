@@ -1,5 +1,5 @@
 
-export const removeUndefinedProperties = (obj) => {
+const removeUndefinedProperties = (obj) => {
   return Object.keys(obj).reduce((current, key) => {
     if (obj[key] !== undefined) {
       // eslint-disable-next-line no-param-reassign
@@ -7,4 +7,8 @@ export const removeUndefinedProperties = (obj) => {
     }
     return current;
   }, {});
+};
+
+module.exports = {
+  removeUndefinedProperties,
 };

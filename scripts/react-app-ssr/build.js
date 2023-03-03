@@ -1,21 +1,20 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs');
+const path = require('path');
 
-import webpackMerge from 'webpack-merge';
+const webpackMerge = require('webpack-merge');
 
-import { buildCommonWebpackConfig } from '../common/common.webpack.js';
-import { buildCssWebpackConfig } from '../common/css.webpack.js';
-import { buildImagesWebpackConfig } from '../common/images.webpack.js';
-import { buildJsWebpackConfig } from '../common/js.webpack.js';
-import { createAndRunCompiler } from '../common/webpackUtil.js';
-import { buildModuleWebpackConfig } from '../module/module.webpack.js';
-import { buildReactAppWebpackConfig } from '../react-app/app.webpack.js';
-import { removeUndefinedProperties } from '../util.js';
+const { buildCommonWebpackConfig } = require('../common/common.webpack');
+const { buildCssWebpackConfig } = require('../common/css.webpack');
+const { buildImagesWebpackConfig } = require('../common/images.webpack');
+const { buildJsWebpackConfig } = require('../common/js.webpack');
+const { createAndRunCompiler } = require('../common/webpackUtil');
+const { buildModuleWebpackConfig } = require('../module/module.webpack');
+const { buildReactAppWebpackConfig } = require('../react-app/app.webpack');
+const { removeUndefinedProperties } = require('../util');
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
-export const buildSsrReactApp = async (inputParams = {}) => {
+const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -76,9 +75,9 @@ export const buildSsrReactApp = async (inputParams = {}) => {
   return createAndRunCompiler(nodeWebpackConfig, undefined, undefined, true, params.analyzeBundle).then(() => {
     return createAndRunCompiler(webWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   }).then((webpackBuildStats) => {
-    const serverFilePath = path.join(buildDirectoryPath, 'server.js');
-    // eslint-disable-next-line no-underscore-dangle
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const serverFilePath = path.join(buildDirectoryPath, 'server');
+
+    // const __dirname = path.dirname(fileURLToPath(import.meta.url));
     fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
     fs.copyFileSync(path.join(__dirname, './start.sh'), path.join(outputDirectoryPath, 'start.sh'));
     fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
@@ -94,4 +93,8 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     }
     return createAndRunCompiler(serverWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   });
+};
+
+module.exports = {
+  buildSsrReactApp,
 };

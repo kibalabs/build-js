@@ -1,21 +1,21 @@
-import dns from 'dns';
-import os from 'os';
-import path from 'path';
+const dns = require('dns');
+const os = require('os');
+const path = require('path');
 
-import chalk from 'chalk';
-import WebpackDevServer from 'webpack-dev-server';
-import webpackMerge from 'webpack-merge';
+const chalk = require('chalk');
+const WebpackDevServer = require('webpack-dev-server');
+const webpackMerge = require('webpack-merge');
 
-import { buildReactAppWebpackConfig } from './app.webpack.js';
-import { buildCommonWebpackConfig } from '../common/common.webpack.js';
-import { buildCssWebpackConfig } from '../common/css.webpack.js';
-import { buildImagesWebpackConfig } from '../common/images.webpack.js';
-import { buildJsWebpackConfig } from '../common/js.webpack.js';
-import { open } from '../common/platformUtil.js';
-import { createCompiler } from '../common/webpackUtil.js';
-import { removeUndefinedProperties } from '../util.js';
+const { buildReactAppWebpackConfig } = require('./app.webpack');
+const { buildCommonWebpackConfig } = require('../common/common.webpack');
+const { buildCssWebpackConfig } = require('../common/css.webpack');
+const { buildImagesWebpackConfig } = require('../common/images.webpack');
+const { buildJsWebpackConfig } = require('../common/js.webpack');
+const { open } = require('../common/platformUtil');
+const { createCompiler } = require('../common/webpackUtil');
+const { removeUndefinedProperties } = require('../util');
 
-export const buildReactApp = async (inputParams = {}) => {
+const buildReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
@@ -96,4 +96,8 @@ export const buildReactApp = async (inputParams = {}) => {
   } else {
     compiler.run();
   }
+};
+
+module.exports = {
+  buildReactApp,
 };

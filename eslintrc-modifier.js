@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   rules: {
     'no-console': 'off',
   },

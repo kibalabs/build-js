@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Changed
 - [MINOR] Allow specifying port for build-react-app --start
+- [MAJOR] Undid work to convert package to be ESM
 
 ### Removed
 

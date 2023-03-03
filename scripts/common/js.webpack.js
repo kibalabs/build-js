@@ -1,14 +1,14 @@
-import fs from 'fs';
+const fs = require('fs');
 
-import { buildBabelConfig } from './babel.config.js';
-import { removeUndefinedProperties } from '../util.js';
+const { buildBabelConfig } = require('./babel.config');
+const { removeUndefinedProperties } = require('../util');
 
 const defaultParams = {
   packageFilePath: undefined,
   polyfillTargets: undefined,
 };
 
-export const buildJsWebpackConfig = (inputParams = {}) => {
+const buildJsWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   if (!params.polyfillTargets) {
@@ -38,4 +38,8 @@ export const buildJsWebpackConfig = (inputParams = {}) => {
       ],
     },
   };
+};
+
+module.exports = {
+  buildJsWebpackConfig,
 };

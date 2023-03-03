@@ -1,8 +1,9 @@
 import childProcess from 'child_process';
-import fs from 'fs';
-import path from 'path';
 
-import { removeUndefinedProperties } from '../util.js';
+const fs = require('fs');
+const path = require('path');
+
+const { removeUndefinedProperties } = require('../util');
 
 const defaultParams = {
   next: false,
@@ -11,7 +12,7 @@ const defaultParams = {
   ignoreDuplicateError: true,
 };
 
-export const runPublish = (inputParams = {}) => {
+const runPublish = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
 
   const packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'));
@@ -88,4 +89,8 @@ export const runPublish = (inputParams = {}) => {
       throw error;
     }
   }
+};
+
+module.exports = {
+  runPublish,
 };

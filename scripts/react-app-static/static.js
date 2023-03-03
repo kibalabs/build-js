@@ -1,14 +1,14 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import React from 'react';
+const React = require('react');
 
-import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
+const { ChunkExtractor, ChunkExtractorManager } = require('@loadable/server');
 // eslint-disable-next-line import/no-extraneous-dependencies
-import ReactDOMServer from 'react-dom/server';
-import { matchPath } from 'react-router';
+const ReactDOMServer = require('react-dom/server');
+const { matchPath } = require('react-router');
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
+const { ServerStyleSheet, StyleSheetManager } = require('styled-components');
 
-export const getPageData = async (urlPath, appRoutes, globals) => {
+const getPageData = async (urlPath, appRoutes, globals) => {
   let matchedRoute = null;
   let matchData = null;
   appRoutes.forEach((route) => {
@@ -27,7 +27,7 @@ export const getPageData = async (urlPath, appRoutes, globals) => {
   return null;
 };
 
-export const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePath, pageData = null) => {
+const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePath, pageData = null) => {
   let pageHead = { headId: '', base: null, title: null, links: [], metas: [], styles: [], scripts: [], noscripts: [] };
   const setHead = (newHead) => { pageHead = newHead; };
   const styledComponentsSheet = new ServerStyleSheet();
@@ -94,4 +94,9 @@ export const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStats
     </html>
   `;
   return output;
+};
+
+module.exports = {
+  getPageData,
+  renderHtml,
 };

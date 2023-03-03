@@ -1,13 +1,13 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-import TerserPlugin from 'terser-webpack-plugin';
-import webpackBundleAnalyzer from 'webpack-bundle-analyzer';
+const TerserPlugin = require('terser-webpack-plugin');
+const webpackBundleAnalyzer = require('webpack-bundle-analyzer');
 
-import { getExternalModules } from './packageUtil.js';
-import { PrintAssetSizesPlugin } from '../plugins/printAssetSizesPlugin.js';
-import { removeUndefinedProperties } from '../util.js';
-// import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
+const { getExternalModules } = require('./packageUtil');
+const { PrintAssetSizesPlugin } = require('../plugins/printAssetSizesPlugin');
+const { removeUndefinedProperties } = require('../util');
+// const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const defaultParams = {
   dev: false,
@@ -18,7 +18,7 @@ const defaultParams = {
   name: undefined,
 };
 
-export const buildCommonWebpackConfig = (inputParams = {}) => {
+const buildCommonWebpackConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const modules = getExternalModules(packageData);
@@ -91,4 +91,8 @@ export const buildCommonWebpackConfig = (inputParams = {}) => {
       ] : []),
     ],
   };
+};
+
+module.exports = {
+  buildCommonWebpackConfig,
 };

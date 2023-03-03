@@ -1,8 +1,8 @@
-import WebpackSources from 'webpack-sources';
+const WebpackSources = require('webpack-sources');
 
 const DEFAULT_FILE_CONTENT = 'User-agent: *\nDisallow:\n';
 
-export class CreateRobotsTxtPlugin {
+class CreateRobotsTxtPlugin {
   constructor(fileContent = DEFAULT_FILE_CONTENT) {
     this.filename = 'robots.txt';
     this.fileContent = fileContent;
@@ -16,3 +16,7 @@ export class CreateRobotsTxtPlugin {
     });
   }
 }
+
+module.exports = {
+  CreateRobotsTxtPlugin,
+};
