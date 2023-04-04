@@ -5,15 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with some additions:
 - For all changes include one of [PATCH | MINOR | MAJOR] with the scope of the change being made.
 
-## [Unreleased]
-
-### Added
+## [0.13.0] - 2022-11-15
 
 ### Changed
 - [MINOR] Allow specifying port for build-react-app --start
 - [MAJOR] revert to being a non-ESM module
-
-### Removed
 
 ## [0.12.0] - 2022-11-15
 
