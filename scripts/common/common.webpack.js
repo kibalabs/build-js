@@ -79,7 +79,6 @@ const buildCommonWebpackConfig = (inputParams = {}) => {
             },
           },
         }),
-        // new CssMinimizerPlugin(),
       ],
     },
     stats: 'none',
