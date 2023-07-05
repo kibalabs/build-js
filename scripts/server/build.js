@@ -23,7 +23,7 @@ const buildServer = async (inputParams = {}) => {
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
-    if (configModifier.constructor.name == 'AsyncFunction') {
+    if (configModifier.constructor.name === 'AsyncFunction') {
       params = await configModifier(params);
     } else {
       params = configModifier(params);
