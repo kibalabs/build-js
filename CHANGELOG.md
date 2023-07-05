@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with some additions:
 - For all changes include one of [PATCH | MINOR | MAJOR] with the scope of the change being made.
 
+## [Unreleased]
+
+### Added
+- [MINOR] Added support for async configModifiers
+
+### Changed
+
+### Removed
+
 ## [0.13.0] - 2022-11-15
 
 ### Changed

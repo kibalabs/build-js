@@ -39,7 +39,11 @@ const buildReactApp = async (inputParams = {}) => {
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
-    params = configModifier(params);
+    if (configModifier.constructor.name === 'AsyncFunction') {
+      params = await configModifier(params);
+    } else {
+      params = configModifier(params);
+    }
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 

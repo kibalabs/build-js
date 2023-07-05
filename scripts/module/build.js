@@ -35,7 +35,11 @@ const buildModule = async (inputParams = {}) => {
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
-    params = configModifier(params);
+    if (configModifier.constructor.name === 'AsyncFunction') {
+      params = await configModifier(params);
+    } else {
+      params = configModifier(params);
+    }
   }
   // NOTE(krishan711): starting modules in dev mode doesn't work yet. Test in everyview console before re-enabling
   params.dev = false;
