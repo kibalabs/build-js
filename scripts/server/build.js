@@ -48,7 +48,6 @@ const buildServer = async (inputParams = {}) => {
       aggregateTimeout: 1000,
       poll: true,
       ignored: ['**/*.d.ts'],
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     }, () => {});
   } else {
     compiler.run();

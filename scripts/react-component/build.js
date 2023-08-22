@@ -89,8 +89,7 @@ const buildReactComponent = async (inputParams = {}) => {
       aggregateTimeout: 1000,
       poll: true,
       ignored: ['**/*.d.ts'],
-    // }, (e, s) => {console.log('here', e, s.toJson({ all: false, warnings: true, errors: true }))});
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+      // }, (e, s) => {console.log('here', e, s.toJson({ all: false, warnings: true, errors: true }))});
     }, () => {});
   } else {
     compiler.run();
