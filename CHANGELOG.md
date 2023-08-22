@@ -8,11 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
-- [MINOR] Added support for async configModifiers
 
 ### Changed
 
 ### Removed
+
+## [0.13.1] - 2023-08-22
+
+### Added
+- [MINOR] Added support for async configModifiers
+
+### Changed
+- [MINOR] Updated dependencies
 
 ## [0.13.0] - 2022-11-15
 
