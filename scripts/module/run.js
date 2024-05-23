@@ -11,7 +11,7 @@ const params = program
   .option('-a, --all-files') // When using multi-entry look at all files not just index
   .option('-s, --start')
   .option('-e, --standalone') // TODO(krish): think of a better name - this implies the dependencies are added but they aren't (it just polyfills)
-  .option('-a, --analyze-bundle')
+  .option('-ab, --analyze-bundle')
   .parse(process.argv)
   .opts();
 
