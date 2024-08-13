@@ -66,12 +66,8 @@ const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePat
       React.createElement('script', { type: 'text/javascript', src: '/runtimeConfig.js' }),
       React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_RENDERED_PATH = '${page.path}';` } }),
       React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_PAGE_DATA = ${JSON.stringify(pageData)};` } }),
-      ...seoTags.map((tag, index) => (
-        React.createElement(tag.tagName, { ...tag.attributes, key: index })
-      )),
-      ...tags.map((tag, index) => (
-        React.createElement(tag.type, { ...tag.attributes, key: index, 'ui-react-head': tag.headId }, tag.content)
-      )),
+      ...seoTags.map((tag) => React.createElement(tag.tagName, { ...tag.attributes, key: JSON.stringify(tag) })),
+      ...tags.map((tag) => React.createElement(tag.type, { ...tag.attributes, key: tag.headId, 'ui-react-head': tag.headId }, tag.content)),
       ...extractor.getLinkElements(),
       ...extractor.getStyleElements(),
       styledComponentsSheet.getStyleElement(),

@@ -26,14 +26,16 @@ const runTyping = async (inputParams = {}) => {
   }
   const tsConfig = buildTsConfig(params);
   // NOTE(krishan711): I couldn't find a way to filter node_modules in the glob (filtering needed for lerna repos)
-  const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts, tsx}'));
+  const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts,tsx}'));
   const filteredFiles = files.filter((file) => !file.includes('/node_modules/'));
-  const program = typescript.createProgram(filteredFiles, {
-    ...tsConfig.compilerOptions,
-    ...(customConfig.compilerOptions || {}),
-    noEmit: true,
-  });
-
+  const config = typescript.parseJsonConfigFileContent({
+    compilerOptions: {
+      ...tsConfig.compilerOptions,
+      ...customConfig.compilerOptions,
+      noEmit: true,
+    },
+  }, typescript.sys, process.cwd());
+  const program = typescript.createProgram(filteredFiles, config.options);
   // NOTE(krishan711): from https://github.com/microsoft/TypeScript-wiki/blob/master/Using-the-Compiler-API.md
   const emitResult = program.emit();
   const allDiagnostics = typescript.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);

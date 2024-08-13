@@ -9,7 +9,6 @@ const buildTsConfig = (inputParams = {}) => {
   return {
     compilerOptions: {
       target: 'ES2020',
-      module: 'none',
       jsx: 'react',
       declaration: true,
       declarationMap: true,
@@ -30,6 +29,8 @@ const buildTsConfig = (inputParams = {}) => {
       allowSyntheticDefaultImports: true,
       esModuleInterop: true,
       resolveJsonModule: true,
+      module: 'nodenext',
+      moduleResolution: 'nodenext',
     },
   };
 };
