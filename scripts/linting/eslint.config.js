@@ -28,6 +28,7 @@ const buildEslintConfig = (inputParams = {}) => {
     },
     plugins: [
       'unused-imports',
+      '@stylistic',
     ],
     settings: {
       react: {
@@ -43,11 +44,10 @@ const buildEslintConfig = (inputParams = {}) => {
     rules: {
       // NOTE(krishan711): next two lines are weird because of https://stackoverflow.com/questions/63961803/eslint-says-all-enums-in-typescript-app-are-already-declared-in-the-upper-scope
       'no-shadow': 'off',
+      '@stylistic/indent': ['error', 2],
       '@typescript-eslint/no-shadow': ['error'],
-      '@typescript-eslint/indent': ['error', 2],
       '@typescript-eslint/no-empty-interface': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      // NOTE(krishan711): we use https://github.com/sweepline/eslint-plugin-unused-imports so it can automatically remove unused imports
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'error',
