@@ -16,7 +16,7 @@ const buildEslintConfig = (inputParams = {}) => {
       'plugin:@typescript-eslint/recommended',
       'plugin:react/recommended',
       'plugin:react-hooks/recommended',
-      'airbnb-base',
+      'airbnb',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {

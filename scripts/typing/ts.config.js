@@ -9,7 +9,6 @@ const buildTsConfig = (inputParams = {}) => {
   return {
     compilerOptions: {
       target: 'ES2020',
-      module: 'none',
       jsx: 'react',
       declaration: true,
       declarationMap: true,
