@@ -78,6 +78,9 @@ const buildEslintConfig = (inputParams = {}) => {
       'react/jsx-closing-bracket-location': ['error', 'line-aligned'],
       'react/jsx-one-expression-per-line': ['error', { allow: 'single-child' }],
       'react/jsx-filename-extension': [1, { extensions: ['.tsx', '.jsx'] }],
+      'react/jsx-boolean-value': 'never',
+      'react/jsx-fragments': 'element',
+      'react/jsx-no-useless-fragment': 'off',
       'react/destructuring-assignment': 'off',
       'react/require-default-props': 'off',
       'react/jsx-wrap-multilines': ['error', {
