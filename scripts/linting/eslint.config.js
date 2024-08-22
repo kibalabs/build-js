@@ -47,6 +47,9 @@ const buildEslintConfig = (inputParams = {}) => {
       '@stylistic/indent': ['error', 2],
       '@typescript-eslint/no-shadow': ['error'],
       '@typescript-eslint/no-empty-interface': 'off',
+      '@typescript-eslint/no-empty-object-type': ['error', {
+        allowInterfaces: 'always',
+      }],
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
