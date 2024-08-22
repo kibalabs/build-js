@@ -1,11 +1,14 @@
-const ts = require('typescript');
+const typescript = require('typescript');
 
 const generateTypescriptDeclarations = (filenames, options) => {
   console.log(`Generating ts declarations for ${filenames}`);
-  const program = ts.createProgram(filenames, {
-    ...options,
-    emitDeclarationOnly: true,
-  });
+  const config = typescript.parseJsonConfigFileContent({
+    compilerOptions: {
+      ...options,
+      emitDeclarationOnly: true,
+    },
+  }, typescript.sys, process.cwd());
+  const program = typescript.createProgram(filenames, config.options);
   const emitResult = program.emit();
   return emitResult.emitSkipped !== 1;
 };
