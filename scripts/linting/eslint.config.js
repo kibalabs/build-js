@@ -106,6 +106,7 @@ const buildEslintConfig = (inputParams = {}) => {
         pathGroupsExcludedImportTypes: ['builtin'],
         'newlines-between': 'always',
       }],
+      'jsx-a11y/anchor-is-valid': 'off',
     },
     overrides: [{
       files: ['**/*.tsx'],
