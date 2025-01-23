@@ -6,8 +6,8 @@ const { runPublish } = require('./publish');
 
 const params = program
   .option('-n, --next')
-  .option('-nv, --next-version <number>')
-  .option('-nt, --next-type <string>')
+  .option('-v, --next-version <number>')
+  .option('-t, --next-type <string>')
   .parse(process.argv)
   .opts();
 
