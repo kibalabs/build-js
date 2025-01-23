@@ -1,8 +1,9 @@
 const path = require('path');
 
-const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
-const { buildModuleRolldownConfig } = require('./rolldown.config');
 const { rolldown } = require('rolldown');
+
+const { buildModuleRolldownConfig } = require('./rolldown.config');
+const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
 
 
 const buildModuleRolldown = async (inputParams = {}) => {
@@ -24,13 +25,13 @@ const buildModuleRolldown = async (inputParams = {}) => {
   params.dev = false;
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
-  const rolldownConfig = buildModuleRolldownConfig(params);
+  let rolldownConfig = buildModuleRolldownConfig(params);
   if (params.rolldownConfigModifier) {
     rolldownConfig = params.rolldownConfigModifier(rolldownConfig);
   }
   const bundle = await rolldown(rolldownConfig);
-  await bundle.write()
-  await bundle.close()
+  await bundle.write();
+  await bundle.close();
 };
 
 module.exports = {

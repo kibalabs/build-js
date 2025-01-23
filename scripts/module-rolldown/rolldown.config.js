@@ -1,13 +1,13 @@
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
+const typescript = require('@rollup/plugin-typescript');
 const { defineConfig } = require('rolldown');
 const { minify } = require('rollup-plugin-esbuild');
-const typescript = require('@rollup/plugin-typescript');
 
-const { removeUndefinedProperties } = require('../util.js');
-const { buildTsConfig } = require('../typing/ts.config.js');
 const { getExternalModules, getNodeModules } = require('../common/packageUtil.js');
+const { buildTsConfig } = require('../typing/ts.config.js');
+const { removeUndefinedProperties } = require('../util.js');
 
 const defaultParams = {
   dev: undefined,
@@ -44,11 +44,11 @@ const buildModuleRolldownConfig = (inputParams = {}) => {
     output: {
       dir: params.outputDirectory,
       file: params.outputFilename,
-      name: name,
+      name,
       format: 'umd',
       sourcemap: !params.dev,
     },
-    platform: "node",
+    platform: 'node',
     plugins: [
       minify(),
       ...(params.dev ? [] : [typescript({
@@ -56,7 +56,7 @@ const buildModuleRolldownConfig = (inputParams = {}) => {
           ...tsConfig.compilerOptions,
           emitDeclarationOnly: true,
           module: 'preserve',
-          moduleResolution: "Bundler",
+          moduleResolution: 'Bundler',
           outDir: params.outputDirectory,
         },
         tsconfig: './tsconfig.json',
@@ -74,7 +74,7 @@ const buildModuleRolldownConfig = (inputParams = {}) => {
       return isExternal;
     },
   });
-}
+};
 
 module.exports = {
   buildModuleRolldownConfig,
