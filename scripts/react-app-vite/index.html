@@ -6,9 +6,9 @@
     <title>{title}</title>
   </head>
   <body>
-    <div id="root"></div>
     <!-- NOTE(krishan711): needed for old webpack libraries -->
     <script>window.global ||= window;</script>
+    <div id="root"><!--ssr--></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
