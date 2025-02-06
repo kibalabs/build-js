@@ -43,9 +43,9 @@ const buildSsrReactApp = async (inputParams = {}) => {
     viteConfig = params.viteConfigModifier(viteConfig);
   }
 
-  // const buildDirectoryPath = path.resolve(params.buildDirectory);
-  // const outputDirectoryPath = path.resolve(params.outputDirectory);
-  // const entryFilePath = path.resolve(params.entryFilePath);
+  const buildDirectoryPath = path.resolve(params.buildDirectory);
+  const outputDirectoryPath = path.resolve(params.outputDirectory);
+  const entryFilePath = path.resolve(params.entryFilePath);
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
 
   // let nodeWebpackConfig = webpackMerge.merge(
@@ -96,7 +96,13 @@ const buildSsrReactApp = async (inputParams = {}) => {
   await build(mergeConfig(viteConfig, {
     // NOTE(krishan711): prevent the hashes in the names
     build: {
+      ssr: true,
+      outDir: './dist-ssr',
+      commonjsOptions: {
+        transformMixedEsModules: true
+      },
       rollupOptions: {
+        input: appEntryFilePath,
         output: {
           entryFileNames: `assets/[name].js`,
           chunkFileNames: `assets/[name].js`,
@@ -107,16 +113,15 @@ const buildSsrReactApp = async (inputParams = {}) => {
   }));
 
   console.log('building server')
-  const template = fs.readFileSync('./dist/index.html', 'utf-8');
-  console.log('indexPath', path.resolve('./dist/assets/index.js'));
-  const index = require(path.resolve('./dist/assets/index.js'));
-  console.log('index', index);
+  // const template = fs.readFileSync('./dist-ssr/index.html', 'utf-8');
+  const app = require(path.resolve('./dist-ssr/assets/app.js'));
+  console.log('app', app);
   const appServer = createAppServer();
-  appServer.use(express.static('./dist/'), { index: false });
+  appServer.use(express.static('./dist-ssr/'), { index: false });
   appServer.use('*', async (_, res) => {
     try {
-      const html = template.replace(`<!--outlet-->`, render);
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+      // const html = template.replace(`<!--outlet-->`, render);
+      res.status(200).set({ 'Content-Type': 'text/html' }).end('<html />');
     } catch (error) {
       res.status(500).end(error);
     }

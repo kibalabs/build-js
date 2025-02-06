@@ -53,6 +53,7 @@ const buildReactAppViteConfig = (inputParams = {}) => {
     },
     build: {
       rollupOptions: {
+        input: params.entryFilePath,
         external: ['fs', 'path'],
         output: {
           // NOTE(krishan711): this splits each vendor into a separate file because

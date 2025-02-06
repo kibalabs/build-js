@@ -26,7 +26,6 @@ const buildReactApp = async (inputParams = {}) => {
     outputDirectory: path.join(process.cwd(), './dist'),
     publicDirectory: path.join(process.cwd(), './public'),
   };
-
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   params = await runParamsConfigModifier(params);
 
