@@ -97,9 +97,6 @@ const getFileSize = (filePath) => {
 
 const getFileSizes = (filePaths) => {
   return filePaths.reduce((current, filePath) => {
-    if (filePath.startsWith('\x00')) {
-      return current;
-    }
     // eslint-disable-next-line no-param-reassign
     current += getFileSize(filePath);
     return current;
