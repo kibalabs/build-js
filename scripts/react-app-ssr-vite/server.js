@@ -18,7 +18,7 @@ const shouldCompress = (req, res) => {
 const createAppServer = () => {
   const app = express();
   app.disable('x-powered-by');
-  app.use(express.static(__dirname, { immutable: true, maxAge: '1y' }));
+  // app.use(express.static(__dirname, { immutable: true, maxAge: '1y' }));
   app.use(compression({ filter: shouldCompress }));
   // app.get('*', async (req, res) => {
   //   console.log(req.method, req.path, req.query);

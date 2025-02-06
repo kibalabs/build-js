@@ -84,47 +84,6 @@ const buildReactAppViteConfig = (inputParams = {}) => {
     },
     publicDir: params.publicDirectory,
   });
-
-  // return {
-  //   entry: [
-  //     'whatwg-fetch',
-  //     // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
-  //     // 'core-js/stable',
-  //     // 'regenerator-runtime/runtime',
-  //     params.entryFilePath,
-  //   ],
-  //   target: 'web',
-  //   output: {
-  //     filename: '[name].[contenthash].js',
-  //     chunkFilename: '[name].[contenthash].bundle.js',
-  //     path: params.outputDirectory,
-  //     publicPath: '/',
-  //   },
-  //   resolve: {
-  //     fallback: {
-  //       path: 'path-browserify',
-  //     },
-  //   },
-  //   plugins: [
-  //     ...(params.addHtmlOutput ? [
-  //       new HtmlWebpackPlugin({
-  //         inject: true,
-  //         title: name,
-  //         template: htmlTemplateFilePath,
-  //       }),
-  //     ] : []),
-  //     new CopyPlugin({
-  //       patterns: [
-  //         { from: params.publicDirectory, noErrorOnMissing: true },
-  //       ],
-  //     }),
-  //     new CreateRobotsTxtPlugin(),
-  //     new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
-  //     ...(params.seoTags || params.title ? [new InjectSeoPlugin(params.title || name, params.seoTags)] : []),
-  //     ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
-  //     ...(params.dev ? [new ReactRefreshWebpackPlugin({ overlay: false })] : []),
-  //   ],
-  // };
 };
 
 module.exports = {

@@ -3,12 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const { fileURLToPath } = require('url');
 
-const { renderToString } = require('react-dom/server');
-const { createServer, mergeConfig, build } = require('vite');
+// const { renderToString } = require('react-dom/server');
+const { mergeConfig, build } = require('vite');
 
 const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
 const { createAppServer } = require('./server');
-const { getPageData } = require('../react-app-static/static');
+// const { getPageData } = require('../react-app-static/static');
 const { buildReactAppViteConfig } = require('../react-app-vite/app.config');
 
 
@@ -22,7 +22,7 @@ const buildSsrReactApp = async (inputParams = {}) => {
     viteConfigModifier: undefined,
     analyzeBundle: false,
     shouldAliasModules: true,
-    addHtmlOutput: false,
+    addHtmlOutput: true,
     addRuntimeConfig: true,
     runtimeConfigVars: {},
     seoTags: [],
@@ -92,23 +92,29 @@ const buildSsrReactApp = async (inputParams = {}) => {
   //   return createAndRunCompiler(serverWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   // });
 
+  console.log('building app')
   await build(mergeConfig(viteConfig, {
     // NOTE(krishan711): prevent the hashes in the names
-    rollupOptions: {
-      output: {
-        entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
-      }
-    }
+    build: {
+      rollupOptions: {
+        output: {
+          entryFileNames: `assets/[name].js`,
+          chunkFileNames: `assets/[name].js`,
+          assetFileNames: `assets/[name].[ext]`,
+        },
+      },
+    },
   }));
 
+  console.log('building server')
+  const template = fs.readFileSync('./dist/index.html', 'utf-8');
+  console.log('indexPath', path.resolve('./dist/assets/index.js'));
+  const index = require(path.resolve('./dist/assets/index.js'));
+  console.log('index', index);
   const appServer = createAppServer();
-  app.use(express.static(path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'dist/client'), { index: false }));
-  app.use('*', async (_, res) => {
+  appServer.use(express.static('./dist/'), { index: false });
+  appServer.use('*', async (_, res) => {
     try {
-      const template = fs.readFileSync('./dist/index.html', 'utf-8');
-      const { render } = await import('./dist/index.js');
       const html = template.replace(`<!--outlet-->`, render);
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     } catch (error) {
@@ -137,7 +143,6 @@ const buildSsrReactApp = async (inputParams = {}) => {
   //     next(error);
   //   }
   // });
-
   appServer.listen(params.port);
 };
 
