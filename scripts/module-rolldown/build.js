@@ -2,7 +2,7 @@ const path = require('path');
 
 const { rolldown } = require('rolldown');
 
-const { buildModuleRolldownConfig } = require('./rolldown.config');
+const { buildModuleRolldownConfig } = require('./module.config');
 const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
 
 
