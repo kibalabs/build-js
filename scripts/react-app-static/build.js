@@ -1,21 +1,21 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const CopyPlugin = require('copy-webpack-plugin');
-const webpackMerge = require('webpack-merge');
+import CopyPlugin from 'copy-webpack-plugin';
+import webpackMerge from 'webpack-merge';
 
-const { getPageData, renderHtml } = require('./static');
-const { buildCommonWebpackConfig } = require('../common/common.webpack');
-const { buildCssWebpackConfig } = require('../common/css.webpack');
-const { buildImagesWebpackConfig } = require('../common/images.webpack');
-const { buildJsWebpackConfig } = require('../common/js.webpack');
-const { createAndRunCompiler } = require('../common/webpackUtil');
-const { buildModuleWebpackConfig } = require('../module/module.webpack');
-const { buildReactAppWebpackConfig } = require('../react-app/app.webpack');
-const { removeUndefinedProperties } = require('../util');
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createAndRunCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { removeUndefinedProperties } from '../util.js';
+import { getPageData, renderHtml } from './static.js';
+import { buildReactAppWebpackConfig } from '../react-app/app.webpack';
 
-const buildStaticReactApp = async (inputParams = {}) => {
+export const buildStaticReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -101,8 +101,4 @@ const buildStaticReactApp = async (inputParams = {}) => {
     fs.writeFileSync(outputPath, output);
     console.log(`Done rendering page ${page.path}`);
   });
-};
-
-module.exports = {
-  buildStaticReactApp,
 };

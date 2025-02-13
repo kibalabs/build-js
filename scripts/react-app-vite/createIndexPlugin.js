@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const createIndexPlugin = ({
+export const createIndexPlugin = ({
   templateFilePath,
   name,
 }) => {
@@ -16,9 +16,4 @@ const createIndexPlugin = ({
       fs.unlinkSync(destinationPath);
     },
   };
-};
-
-
-module.exports = {
-  createIndexPlugin,
 };

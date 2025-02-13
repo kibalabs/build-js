@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-const chalk = require('chalk');
-const notifier = require('node-notifier');
-const rimraf = require('rimraf');
-const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
-const webpack = require('webpack');
+import chalk from 'chalk';
+import notifier from 'node-notifier';
+import { rimraf } from 'rimraf';
+import SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
+import webpack from 'webpack';
+
 
 const friendlySyntaxErrorLabel = 'Syntax error:';
 
@@ -101,7 +102,7 @@ const formatWebpackMessages = (stats) => {
   return result;
 };
 
-const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true, analyzeSpeed = false) => {
+export const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true, analyzeSpeed = false) => {
   if (config.output.clean) {
     // NOTE(krishan711): this shouldn't be needed but if its removed the assets plugin doesn't work
     rimraf.sync(config.output.path);
@@ -162,7 +163,7 @@ const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, sh
   return compiler;
 };
 
-const createAndRunCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true, analyzeSpeed = false) => {
+export const createAndRunCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true, analyzeSpeed = false) => {
   return new Promise((resolve, reject) => {
     createCompiler(config, onBuild, onPostBuild, showNotifications, analyzeSpeed).run((err, stats) => {
       if (err || stats.hasErrors()) {
@@ -171,9 +172,4 @@ const createAndRunCompiler = (config, onBuild = undefined, onPostBuild = undefin
       return resolve(stats.toJson());
     });
   });
-};
-
-module.exports = {
-  createCompiler,
-  createAndRunCompiler,
 };

@@ -1,4 +1,4 @@
-const createRuntimeConfigPlugin = ({
+export const createRuntimeConfigPlugin = ({
   vars = {},
 }) => {
   let scriptContent = 'const GLOBAL = typeof window !== "undefined" ? window : global;';
@@ -11,8 +11,4 @@ const createRuntimeConfigPlugin = ({
       return html.replace('<body>', `<body><script>${scriptContent}</script>`);
     },
   };
-};
-
-module.exports = {
-  createRuntimeConfigPlugin,
 };

@@ -110,6 +110,7 @@ export const buildEslintConfig = (inputParams = {}) => {
         'newlines-between': 'always',
       }],
       'jsx-a11y/anchor-is-valid': 'off',
+      'no-underscore-dangle': ['error', { allow: ['__dirname'] }],
     },
     overrides: [{
       files: ['**/*.tsx'],

@@ -1,14 +1,15 @@
-const path = require('path');
+import path from 'path';
 
-const webpackMerge = require('webpack-merge');
+import webpackMerge from 'webpack-merge';
 
-const { buildCommonWebpackConfig } = require('../common/common.webpack');
-const { buildJsWebpackConfig } = require('../common/js.webpack');
-const { createCompiler } = require('../common/webpackUtil');
-const { buildModuleWebpackConfig } = require('../module/module.webpack');
-const { removeUndefinedProperties } = require('../util');
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { removeUndefinedProperties } from '../util.js';
 
-const buildServer = async (inputParams = {}) => {
+
+export const buildServer = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -52,8 +53,4 @@ const buildServer = async (inputParams = {}) => {
   } else {
     compiler.run();
   }
-};
-
-module.exports = {
-  buildServer,
 };

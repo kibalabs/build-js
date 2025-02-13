@@ -1,13 +1,15 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const pluginReactSwc = require('@vitejs/plugin-react-swc');
-const { defineConfig } = require('vite');
+import pluginReactSwc from '@vitejs/plugin-react-swc';
+import { defineConfig } from 'vite';
 
-const { removeUndefinedProperties, getNodeModuleName, getNodeModuleSize } = require('../util');
-const { createIndexPlugin } = require('./createIndexPlugin');
-const { createRuntimeConfigPlugin } = require('./createRuntimeConfigPlugin');
-const { injectSeoPlugin } = require('./injectSeoPlugin');
+import { createIndexPlugin } from './createIndexPlugin.js';
+import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin.js';
+import { injectSeoPlugin } from './injectSeoPlugin.js';
+import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util.js';
+
 
 const defaultParams = {
   dev: undefined,
@@ -23,12 +25,12 @@ const defaultParams = {
   publicDirectory: 'public',
 };
 
-const buildReactAppViteConfig = (inputParams = {}) => {
+export const buildReactAppViteConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || packageData.name;
 
-  // const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const indexTemplateFilePath = path.join(__dirname, './index.html');
 
   const runtimeConfigVars = params.runtimeConfigVars;
@@ -84,49 +86,4 @@ const buildReactAppViteConfig = (inputParams = {}) => {
     },
     publicDir: params.publicDirectory,
   });
-
-  // return {
-  //   entry: [
-  //     'whatwg-fetch',
-  //     // NOTE(krishan711): these two are needed when babel is using useBuiltIns: 'entry'
-  //     // 'core-js/stable',
-  //     // 'regenerator-runtime/runtime',
-  //     params.entryFilePath,
-  //   ],
-  //   target: 'web',
-  //   output: {
-  //     filename: '[name].[contenthash].js',
-  //     chunkFilename: '[name].[contenthash].bundle.js',
-  //     path: params.outputDirectory,
-  //     publicPath: '/',
-  //   },
-  //   resolve: {
-  //     fallback: {
-  //       path: 'path-browserify',
-  //     },
-  //   },
-  //   plugins: [
-  //     ...(params.addHtmlOutput ? [
-  //       new HtmlWebpackPlugin({
-  //         inject: true,
-  //         title: name,
-  //         template: htmlTemplateFilePath,
-  //       }),
-  //     ] : []),
-  //     new CopyPlugin({
-  //       patterns: [
-  //         { from: params.publicDirectory, noErrorOnMissing: true },
-  //       ],
-  //     }),
-  //     new CreateRobotsTxtPlugin(),
-  //     new LoadablePlugin({ outputAsset: false, writeToDisk: false }),
-  //     ...(params.seoTags || params.title ? [new InjectSeoPlugin(params.title || name, params.seoTags)] : []),
-  //     ...(params.addRuntimeConfig ? [new CreateRuntimeConfigPlugin(runtimeConfigVars)] : []),
-  //     ...(params.dev ? [new ReactRefreshWebpackPlugin({ overlay: false })] : []),
-  //   ],
-  // };
-};
-
-module.exports = {
-  buildReactAppViteConfig,
 };
