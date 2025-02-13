@@ -1,6 +1,6 @@
-const typescript = require('typescript');
+import typescript from 'typescript';
 
-const generateTypescriptDeclarations = (filenames, options) => {
+export const generateTypescriptDeclarations = (filenames, options) => {
   console.log(`Generating ts declarations for ${filenames}`);
   const config = typescript.parseJsonConfigFileContent({
     compilerOptions: {
@@ -11,8 +11,4 @@ const generateTypescriptDeclarations = (filenames, options) => {
   const program = typescript.createProgram(filenames, config.options);
   const emitResult = program.emit();
   return emitResult.emitSkipped !== 1;
-};
-
-module.exports = {
-  generateTypescriptDeclarations,
 };
