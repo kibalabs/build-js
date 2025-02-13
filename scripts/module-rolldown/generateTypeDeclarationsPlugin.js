@@ -1,4 +1,3 @@
-
 import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
 import { buildTsConfig } from '../typing/ts.config.js';
 
