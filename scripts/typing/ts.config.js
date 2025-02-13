@@ -1,9 +1,9 @@
-const { removeUndefinedProperties } = require('../util');
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
 };
 
-const buildTsConfig = (inputParams = {}) => {
+export const buildTsConfig = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return {
@@ -29,12 +29,8 @@ const buildTsConfig = (inputParams = {}) => {
       allowSyntheticDefaultImports: true,
       esModuleInterop: true,
       resolveJsonModule: true,
-      module: 'nodenext',
-      moduleResolution: 'nodenext',
+      module: 'preserve',
+      moduleResolution: 'bundler',
     },
   };
-};
-
-module.exports = {
-  buildTsConfig,
 };

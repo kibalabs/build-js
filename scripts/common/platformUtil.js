@@ -1,7 +1,8 @@
-const childProcess = require('child_process');
-const os = require('os');
+import childProcess from 'child_process';
+import os from 'os';
 
-const getPlatform = () => {
+
+export const getPlatform = () => {
   let platform = process.platform;
   if (platform === 'linux' && os.release().indexOf('Microsoft') !== -1) {
     platform = 'win32';
@@ -9,7 +10,7 @@ const getPlatform = () => {
   return platform;
 };
 
-const getOpenCommand = (platform) => {
+export const getOpenCommand = (platform) => {
   let command;
   switch (platform) {
     case 'win32': {
@@ -28,7 +29,7 @@ const getOpenCommand = (platform) => {
   return command;
 };
 
-const open = (args, options) => {
+export const open = (args, options) => {
   const platform = getPlatform();
   const command = getOpenCommand(platform);
   let openArgs = typeof args === 'string' ? [args] : args;
@@ -40,10 +41,4 @@ const open = (args, options) => {
     openArgs = ['/c', 'start', '""'].concat(openArgs);
   }
   return childProcess.execFile(command, openArgs, options);
-};
-
-module.exports = {
-  getPlatform,
-  getOpenCommand,
-  open,
 };

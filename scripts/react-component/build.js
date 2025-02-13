@@ -1,20 +1,20 @@
-const path = require('path');
+import path from 'node:path';
 
-const chalk = require('chalk');
-const glob = require('glob');
-const webpackMerge = require('webpack-merge');
+import chalk from 'chalk';
+import glob from 'glob';
+import { merge as webpackMerge } from 'webpack-merge';
 
-const { buildCommonWebpackConfig } = require('../common/common.webpack');
-const { buildCssWebpackConfig } = require('../common/css.webpack');
-const { buildImagesWebpackConfig } = require('../common/images.webpack');
-const { buildJsWebpackConfig } = require('../common/js.webpack');
-const { createCompiler } = require('../common/webpackUtil');
-const { buildModuleWebpackConfig } = require('../module/module.webpack');
-const { generateTypescriptDeclarations } = require('../typing/generateDeclarations');
-const { buildTsConfig } = require('../typing/ts.config');
-const { removeUndefinedProperties } = require('../util');
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
+import { buildTsConfig } from '../typing/ts.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
-const buildReactComponent = async (inputParams = {}) => {
+export const buildReactComponent = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -43,7 +43,7 @@ const buildReactComponent = async (inputParams = {}) => {
   }
   process.env.NODE_ENV = params.dev ? 'development' : 'production';
 
-  let mergedConfig = webpackMerge.merge(
+  let mergedConfig = webpackMerge(
     buildCommonWebpackConfig(params),
     buildJsWebpackConfig({ ...params, react: true, preserveModules: true }),
     buildCssWebpackConfig(params),
@@ -94,8 +94,4 @@ const buildReactComponent = async (inputParams = {}) => {
   } else {
     compiler.run();
   }
-};
-
-module.exports = {
-  buildReactComponent,
 };

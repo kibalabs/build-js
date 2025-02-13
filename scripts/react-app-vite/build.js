@@ -1,12 +1,12 @@
-const path = require('path');
+import path from 'path';
 
-const { build, createServer } = require('vite');
+import { build, createServer } from 'vite';
 
-const { buildReactAppViteConfig } = require('./app.config');
-const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
+import { buildReactAppViteConfig } from './app.config.js';
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
 
 // NOTE(krishan711): docs at https://vite.dev/guide/api-javascript.html
-const buildReactApp = async (inputParams = {}) => {
+export const buildReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
@@ -44,51 +44,4 @@ const buildReactApp = async (inputParams = {}) => {
   } else {
     await build(viteConfig);
   }
-
-  // const compiler = createCompiler(mergedConfig, undefined, undefined, true, params.analyzeBundle);
-  // if (params.start) {
-  //   const host = '0.0.0.0';
-  //   const port = params.port;
-  //   const server = new WebpackDevServer({
-  //     host,
-  //     port,
-  //     hot: true,
-  //     historyApiFallback: true,
-  //     devMiddleware: {
-  //       publicPath: mergedConfig.output.publicPath,
-  //     },
-  //     client: {
-  //       logging: 'info',
-  //       overlay: false,
-  //     },
-  //     open: false,
-  //     static: {
-  //       directory: mergedConfig.output.publicPath,
-  //       watch: {
-  //         aggregateTimeout: 1000,
-  //         poll: undefined,
-  //         ignored: ['**/*.d.ts'],
-  //       },
-  //     },
-  //     ...(mergedConfig.devServer || {}),
-  //   }, compiler);
-  //   server.startCallback(() => {
-  //     console.log(chalk.cyan('Starting the development server...\n'));
-  //     if (host === '0.0.0.0') {
-  //       dns.lookup(os.hostname(), (dnsError, address) => {
-  //         console.log(`Use ${mergedConfig.name} at: http://${address}:${port}`);
-  //         open(`http://localhost:${port}`, { stdio: 'inherit' });
-  //       });
-  //     } else {
-  //       console.log(`Use ${mergedConfig.name} at: http://${host}:${port}`);
-  //       open(`http://${host}:${port}`, { stdio: 'inherit' });
-  //     }
-  //   });
-  // } else {
-  //   compiler.run();
-  // }
-};
-
-module.exports = {
-  buildReactApp,
 };

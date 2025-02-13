@@ -2,6 +2,7 @@
   "name": "@kibalabs/build",
   "version": "0.13.2",
   "description": "Utils for building frontend projects at Kiba Labs",
+  "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",

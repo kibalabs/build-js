@@ -8,13 +8,13 @@ list-outdated: install
 	@ npm outdated
 
 lint-check:
-	@ node scripts/linting/run.js --config-modifier ./eslintrc-modifier.js
+	@ node scripts/linting/run.js --config-modifier ./config.build.js
 
 lint-check-ci:
-	@ node scripts/linting/run.js --config-modifier ./eslintrc-modifier.js --output-file lint-check-results.json --output-file-format annotations
+	@ node scripts/linting/run.js --config-modifier ./config.build.js --output-file lint-check-results.json --output-file-format annotations
 
 lint-fix:
-	@ node scripts/linting/run.js --config-modifier ./eslintrc-modifier.js --fix
+	@ node scripts/linting/run.js --config-modifier ./config.build.js --fix
 
 type-check:
 	@ echo "Not Supported"

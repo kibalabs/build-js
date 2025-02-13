@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const { program } = require('commander');
+import { program } from 'commander';
 
-const { buildServer } = require('./build');
+import { buildServer } from './build.js';
 
 const params = program
   .option('-c, --config-modifier <path>')
