@@ -1,14 +1,14 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 import pluginReactSwc from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 
-import { createIndexPlugin } from './createIndexPlugin';
-import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin';
-import { injectSeoPlugin } from './injectSeoPlugin';
-import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util';
+import { createIndexPlugin } from './createIndexPlugin.js';
+import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin.js';
+import { injectSeoPlugin } from './injectSeoPlugin.js';
+import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util.js';
 
 
 const defaultParams = {
@@ -22,7 +22,7 @@ const defaultParams = {
   packageFilePath: undefined,
   entryFilePath: undefined,
   outputDirectory: undefined,
-  publicDirectory: 'public',
+  publicDirectory: undefined,
 };
 
 export const buildReactAppViteConfig = (inputParams = {}) => {
@@ -56,7 +56,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
     build: {
       rollupOptions: {
         input: params.entryFilePath,
-        external: ['fs', 'path'],
+        // external: ['node:fs', 'node:path'],
         output: {
           // NOTE(krishan711): this splits each vendor into a separate file because
           // if we try to chunk the smaller ones together it causes circular imports

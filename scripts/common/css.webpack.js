@@ -1,6 +1,6 @@
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
-import { removeUndefinedProperties } from '../util';
+import { removeUndefinedProperties } from '../util.js';
 
 
 const defaultParams = {

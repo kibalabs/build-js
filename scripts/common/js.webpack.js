@@ -1,7 +1,7 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
-import { buildBabelConfig } from './babel.config';
-import { removeUndefinedProperties } from '../util';
+import { buildBabelConfig } from './babel.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
   packageFilePath: undefined,

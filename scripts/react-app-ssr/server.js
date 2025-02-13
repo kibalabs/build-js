@@ -1,12 +1,12 @@
-import path from 'path';
+import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 import { getPageData, renderHtml } from '@kibalabs/build/scripts/react-app-static/static';
 import compression from 'compression';
 import express from 'express';
 
-import { App, globals, routes } from './app';
-import { defaultSeoTags, name } from './data.json';
+import { App, globals, routes } from './app.js';
+import { defaultSeoTags, name } from './data.json.js';
 // import { fileURLToPath } from 'url';
 
 

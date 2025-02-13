@@ -4,8 +4,8 @@ import path from 'node:path';
 import chalk from 'chalk';
 import { ESLint } from 'eslint';
 
-import { buildEslintConfig } from './eslint.config';
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util';
+import { buildEslintConfig } from './eslint.config.js';
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
 
 
 export const runLinting = async (inputParams = {}) => {

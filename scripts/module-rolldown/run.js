@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { program } from 'commander';
 
-import { buildModuleRolldown } from './build';
+import { buildModuleRolldown } from './build.js';
 
 const params = program
   .option('-c, --config-modifier <path>')

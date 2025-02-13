@@ -1,16 +1,16 @@
-import path from 'path';
+import path from 'node:path';
 
 import chalk from 'chalk';
 import glob from 'glob';
 import webpackMerge from 'webpack-merge';
 
-import { buildModuleWebpackConfig } from './module.webpack';
-import { buildCommonWebpackConfig } from '../common/common.webpack';
-import { buildJsWebpackConfig } from '../common/js.webpack';
-import { createCompiler } from '../common/webpackUtil';
-import { generateTypescriptDeclarations } from '../typing/generateDeclarations';
-import { buildTsConfig } from '../typing/ts.config';
-import { removeUndefinedProperties } from '../util';
+import { buildModuleWebpackConfig } from './module.webpack.js';
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
+import { buildTsConfig } from '../typing/ts.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
 
 export const buildModule = async (inputParams = {}) => {

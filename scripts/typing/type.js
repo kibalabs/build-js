@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import chalk from 'chalk';
 import { glob } from 'glob';
 import typescript from 'typescript';
 
-import { buildTsConfig } from './ts.config';
-import { removeUndefinedProperties } from '../util';
+import { buildTsConfig } from './ts.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
 const defaultParams = {
   configModifier: undefined,

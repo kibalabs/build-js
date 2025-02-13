@@ -4,15 +4,15 @@ import chalk from 'chalk';
 import glob from 'glob';
 import { merge as webpackMerge } from 'webpack-merge';
 
-import { buildCommonWebpackConfig } from '../common/common.webpack';
-import { buildCssWebpackConfig } from '../common/css.webpack';
-import { buildImagesWebpackConfig } from '../common/images.webpack';
-import { buildJsWebpackConfig } from '../common/js.webpack';
-import { createCompiler } from '../common/webpackUtil';
-import { buildModuleWebpackConfig } from '../module/module.webpack';
-import { generateTypescriptDeclarations } from '../typing/generateDeclarations';
-import { buildTsConfig } from '../typing/ts.config';
-import { removeUndefinedProperties } from '../util';
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
+import { buildTsConfig } from '../typing/ts.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
 export const buildReactComponent = async (inputParams = {}) => {
   const defaultParams = {

@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import webpack from 'webpack';
 
-import { getExternalModules, getNodeModules, isExternalModuleRequest } from '../common/packageUtil';
-import { removeUndefinedProperties } from '../util';
+import { getExternalModules, getNodeModules, isExternalModuleRequest } from '../common/packageUtil.js';
+import { removeUndefinedProperties } from '../util.js';
 
 
 const defaultParams = {

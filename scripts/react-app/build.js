@@ -1,19 +1,19 @@
 import dns from 'dns';
+import path from 'node:path';
 import os from 'os';
-import path from 'path';
 
 import chalk from 'chalk';
 import WebpackDevServer from 'webpack-dev-server';
 import webpackMerge from 'webpack-merge';
 
-import { buildReactAppWebpackConfig } from './app.webpack';
-import { buildCommonWebpackConfig } from '../common/common.webpack';
-import { buildCssWebpackConfig } from '../common/css.webpack';
-import { buildImagesWebpackConfig } from '../common/images.webpack';
-import { buildJsWebpackConfig } from '../common/js.webpack';
-import { open } from '../common/platformUtil';
-import { createCompiler } from '../common/webpackUtil';
-import { removeUndefinedProperties } from '../util';
+import { buildReactAppWebpackConfig } from './app.webpack.js';
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildCssWebpackConfig } from '../common/css.webpack.js';
+import { buildImagesWebpackConfig } from '../common/images.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { open } from '../common/platformUtil.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { removeUndefinedProperties } from '../util.js';
 
 
 export const buildReactApp = async (inputParams = {}) => {

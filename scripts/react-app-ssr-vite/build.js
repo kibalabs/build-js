@@ -1,6 +1,6 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { fileURLToPath } = require('url');
 
 // const { renderToString } = require('react-dom/server');
@@ -92,27 +92,27 @@ const buildSsrReactApp = async (inputParams = {}) => {
   //   return createAndRunCompiler(serverWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   // });
 
-  console.log('building app')
+  console.log('building app');
   await build(mergeConfig(viteConfig, {
     // NOTE(krishan711): prevent the hashes in the names
     build: {
       ssr: true,
       outDir: './dist-ssr',
       commonjsOptions: {
-        transformMixedEsModules: true
+        transformMixedEsModules: true,
       },
       rollupOptions: {
         input: appEntryFilePath,
         output: {
-          entryFileNames: `assets/[name].js`,
-          chunkFileNames: `assets/[name].js`,
-          assetFileNames: `assets/[name].[ext]`,
+          entryFileNames: 'assets/[name].js',
+          chunkFileNames: 'assets/[name].js',
+          assetFileNames: 'assets/[name].[ext]',
         },
       },
     },
   }));
 
-  console.log('building server')
+  console.log('building server');
   // const template = fs.readFileSync('./dist-ssr/index.html', 'utf-8');
   const app = require(path.resolve('./dist-ssr/assets/app.js'));
   console.log('app', app);

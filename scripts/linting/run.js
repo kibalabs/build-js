@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { program } from 'commander';
 
-import { runLinting } from './lint';
+import { runLinting } from './lint.js';
 
 const params = program
   .option('-c, --config-modifier <path>')

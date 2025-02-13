@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import TerserPlugin from 'terser-webpack-plugin';
 import webpackBundleAnalyzer from 'webpack-bundle-analyzer';
 
-import { getExternalModules } from './packageUtil';
-import { PrintAssetSizesPlugin } from '../plugins/printAssetSizesPlugin';
-import { removeUndefinedProperties } from '../util';
+import { getExternalModules } from './packageUtil.js';
+import { PrintAssetSizesPlugin } from '../plugins/printAssetSizesPlugin.js';
+import { removeUndefinedProperties } from '../util.js';
 
 // import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 

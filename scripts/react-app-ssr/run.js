@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { program } from 'commander';
 
-import { buildSsrReactApp } from './build';
+import { buildSsrReactApp } from './build.js';
 
 const params = program
   .option('-c, --config-modifier <path>')

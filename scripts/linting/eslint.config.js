@@ -1,4 +1,4 @@
-import { removeUndefinedProperties } from '../util';
+import { removeUndefinedProperties } from '../util.js';
 
 export const buildEslintConfig = (inputParams = {}) => {
   const defaultParams = {

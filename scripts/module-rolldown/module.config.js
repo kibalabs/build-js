@@ -1,13 +1,13 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import typescript from '@rollup/plugin-typescript';
 import { defineConfig } from 'rolldown';
 import { minify } from 'rollup-plugin-esbuild';
 
-import { getExternalModules, getNodeModules } from '../common/packageUtil';
-import { buildTsConfig } from '../typing/ts.config';
-import { removeUndefinedProperties } from '../util';
+import { getExternalModules, getNodeModules } from '../common/packageUtil.js';
+import { buildTsConfig } from '../typing/ts.config.js';
+import { removeUndefinedProperties } from '../util.js';
 
 
 const defaultParams = {

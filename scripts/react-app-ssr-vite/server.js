@@ -1,4 +1,4 @@
-// const path = require('path');
+// const path = require('node:path');
 // const { fileURLToPath } = require('url');
 
 // const { getPageData, renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');

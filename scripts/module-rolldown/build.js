@@ -1,9 +1,9 @@
-import path from 'path';
+import path from 'node:path';
 
 import { rolldown } from 'rolldown';
 
-import { buildModuleRolldownConfig } from './module.config';
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util';
+import { buildModuleRolldownConfig } from './module.config.js';
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
 
 
 export const buildModuleRolldown = async (inputParams = {}) => {

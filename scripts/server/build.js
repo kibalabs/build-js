@@ -1,12 +1,12 @@
-import path from 'path';
+import path from 'node:path';
 
 import webpackMerge from 'webpack-merge';
 
-import { buildCommonWebpackConfig } from '../common/common.webpack';
-import { buildJsWebpackConfig } from '../common/js.webpack';
-import { createCompiler } from '../common/webpackUtil';
-import { buildModuleWebpackConfig } from '../module/module.webpack';
-import { removeUndefinedProperties } from '../util';
+import { buildCommonWebpackConfig } from '../common/common.webpack.js';
+import { buildJsWebpackConfig } from '../common/js.webpack.js';
+import { createCompiler } from '../common/webpackUtil.js';
+import { buildModuleWebpackConfig } from '../module/module.webpack.js';
+import { removeUndefinedProperties } from '../util.js';
 
 
 export const buildServer = async (inputParams = {}) => {

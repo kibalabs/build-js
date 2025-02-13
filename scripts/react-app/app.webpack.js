@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 import LoadablePlugin from '@loadable/webpack-plugin';
@@ -8,10 +8,10 @@ import CopyPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 
-import { CreateRobotsTxtPlugin } from '../plugins/createRobotsTxtPlugin';
-import { CreateRuntimeConfigPlugin } from '../plugins/createRuntimeConfigPlugin';
-import { InjectSeoPlugin } from '../plugins/injectSeoPlugin';
-import { removeUndefinedProperties } from '../util';
+import { CreateRobotsTxtPlugin } from '../plugins/createRobotsTxtPlugin.js';
+import { CreateRuntimeConfigPlugin } from '../plugins/createRuntimeConfigPlugin.js';
+import { InjectSeoPlugin } from '../plugins/injectSeoPlugin.js';
+import { removeUndefinedProperties } from '../util.js';
 
 
 const defaultParams = {

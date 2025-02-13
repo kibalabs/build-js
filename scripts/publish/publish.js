@@ -1,8 +1,8 @@
 import childProcess from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
-import { removeUndefinedProperties } from '../util';
+import { removeUndefinedProperties } from '../util.js';
 
 
 const defaultParams = {
