@@ -1,9 +1,8 @@
-const { removeUndefinedProperties } = require('../util');
+import { removeUndefinedProperties } from '../util.js';
 
-const defaultParams = {
-};
-
-const buildEslintConfig = (inputParams = {}) => {
+export const buildEslintConfig = (inputParams = {}) => {
+  const defaultParams = {
+  };
   // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return {
@@ -117,9 +116,8 @@ const buildEslintConfig = (inputParams = {}) => {
         'react/prop-types': 'off',
       },
     }],
+    // linterOptions: {
+    //   reportUnusedDisableDirectives: 'warn',
+    // },
   };
-};
-
-module.exports = {
-  buildEslintConfig,
 };

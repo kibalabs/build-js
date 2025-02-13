@@ -1,37 +1,32 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const chalk = require('chalk');
-const { ESLint } = require('eslint');
+import chalk from 'chalk';
+import { ESLint } from 'eslint';
 
-const { buildEslintConfig } = require('./eslint.config');
-const { removeUndefinedProperties } = require('../util');
+import { buildEslintConfig } from './eslint.config.js';
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
 
-const defaultParams = {
-  configModifier: undefined,
-  directory: undefined,
-  outputFile: undefined,
-  outputFileFormat: undefined,
-  fix: false,
-};
 
-const runLinting = async (inputParams = {}) => {
-  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  let customConfig = null;
-  if (params.configModifier) {
-    customConfig = (await import(path.join(process.cwd(), params.configModifier))).default;
-    if (typeof customConfig === 'function') {
-      customConfig = customConfig(params);
-    }
-  }
-  const eslintConfig = buildEslintConfig(params);
+export const runLinting = async (inputParams = {}) => {
+  const defaultParams = {
+    configModifier: undefined,
+    eslintConfigOverride: undefined,
+    directory: undefined,
+    outputFile: undefined,
+    outputFileFormat: undefined,
+    fix: false,
+  };
+  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
+  params = await runParamsConfigModifier(params);
+  process.env.NODE_ENV = params.dev ? 'development' : 'production';
+
+  const config = buildEslintConfig(params);
   const eslint = new ESLint({
-    baseConfig: eslintConfig,
-    overrideConfig: customConfig,
-    useEslintrc: false,
-    reportUnusedDisableDirectives: 'warn',
-    errorOnUnmatchedPattern: false,
+    baseConfig: config,
+    overrideConfig: params.eslintConfigOverride,
     fix: !!params.fix,
+    errorOnUnmatchedPattern: false,
   });
   const results = await eslint.lintFiles([
     `${params.directory || process.cwd()}/**/*.js`,
@@ -136,7 +131,3 @@ class PrettyFormatter {
     return output;
   }
 }
-
-module.exports = {
-  runLinting,
-};
