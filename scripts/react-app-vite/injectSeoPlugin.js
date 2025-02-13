@@ -1,4 +1,4 @@
-const injectSeoPlugin = ({
+export const injectSeoPlugin = ({
   title,
   tags,
 }) => {
@@ -14,8 +14,4 @@ const injectSeoPlugin = ({
       };
     },
   };
-};
-
-module.exports = {
-  injectSeoPlugin,
 };

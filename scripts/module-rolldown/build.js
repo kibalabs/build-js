@@ -1,12 +1,12 @@
-const path = require('path');
+import path from 'path';
 
-const { rolldown } = require('rolldown');
+import { rolldown } from 'rolldown';
 
-const { buildModuleRolldownConfig } = require('./module.config');
-const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
+import { buildModuleRolldownConfig } from './module.config';
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util';
 
 
-const buildModuleRolldown = async (inputParams = {}) => {
+export const buildModuleRolldown = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -32,8 +32,4 @@ const buildModuleRolldown = async (inputParams = {}) => {
   const bundle = await rolldown(rolldownConfig);
   await bundle.write();
   await bundle.close();
-};
-
-module.exports = {
-  buildModuleRolldown,
 };

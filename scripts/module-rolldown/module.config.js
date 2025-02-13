@@ -1,13 +1,14 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const typescript = require('@rollup/plugin-typescript');
-const { defineConfig } = require('rolldown');
-const { minify } = require('rollup-plugin-esbuild');
+import typescript from '@rollup/plugin-typescript';
+import { defineConfig } from 'rolldown';
+import { minify } from 'rollup-plugin-esbuild';
 
-const { getExternalModules, getNodeModules } = require('../common/packageUtil.js');
-const { buildTsConfig } = require('../typing/ts.config.js');
-const { removeUndefinedProperties } = require('../util.js');
+import { getExternalModules, getNodeModules } from '../common/packageUtil';
+import { buildTsConfig } from '../typing/ts.config';
+import { removeUndefinedProperties } from '../util';
+
 
 const defaultParams = {
   dev: undefined,
@@ -21,7 +22,7 @@ const defaultParams = {
   outputFilename: undefined,
 };
 
-const buildModuleRolldownConfig = (inputParams = {}) => {
+export const buildModuleRolldownConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || packageData.name;
@@ -74,8 +75,4 @@ const buildModuleRolldownConfig = (inputParams = {}) => {
       return isExternal;
     },
   });
-};
-
-module.exports = {
-  buildModuleRolldownConfig,
 };

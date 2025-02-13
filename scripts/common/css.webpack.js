@@ -1,11 +1,12 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
-const { removeUndefinedProperties } = require('../util');
+import { removeUndefinedProperties } from '../util';
+
 
 const defaultParams = {
 };
 
-const buildCssWebpackConfig = (inputParams = {}) => {
+export const buildCssWebpackConfig = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return {
@@ -41,8 +42,4 @@ const buildCssWebpackConfig = (inputParams = {}) => {
       ],
     },
   };
-};
-
-module.exports = {
-  buildCssWebpackConfig,
 };

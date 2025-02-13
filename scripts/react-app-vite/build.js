@@ -1,12 +1,12 @@
-const path = require('path');
+import path from 'path';
 
-const { build, createServer } = require('vite');
+import { build, createServer } from 'vite';
 
-const { buildReactAppViteConfig } = require('./app.config');
-const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
+import { buildReactAppViteConfig } from './app.config';
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util';
 
 // NOTE(krishan711): docs at https://vite.dev/guide/api-javascript.html
-const buildReactApp = async (inputParams = {}) => {
+export const buildReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
@@ -42,8 +42,4 @@ const buildReactApp = async (inputParams = {}) => {
   } else {
     await build(viteConfig);
   }
-};
-
-module.exports = {
-  buildReactApp,
 };

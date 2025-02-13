@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const { program } = require('commander');
+import { program } from 'commander';
 
-const { runPublish } = require('./publish');
+import { runPublish } from './publish';
 
 const params = program
   .option('-n, --next')

@@ -1,9 +1,9 @@
-const { removeUndefinedProperties } = require('../util');
+import { removeUndefinedProperties } from '../util';
 
 const defaultParams = {
 };
 
-const buildImagesWebpackConfig = (inputParams = {}) => {
+export const buildImagesWebpackConfig = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return {
@@ -16,8 +16,4 @@ const buildImagesWebpackConfig = (inputParams = {}) => {
       ],
     },
   };
-};
-
-module.exports = {
-  buildImagesWebpackConfig,
 };

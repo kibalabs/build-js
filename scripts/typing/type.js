@@ -1,12 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const chalk = require('chalk');
-const glob = require('glob');
-const typescript = require('typescript');
+import chalk from 'chalk';
+import { glob } from 'glob';
+import typescript from 'typescript';
 
-const { buildTsConfig } = require('./ts.config');
-const { removeUndefinedProperties } = require('../util');
+import { buildTsConfig } from './ts.config';
+import { removeUndefinedProperties } from '../util';
 
 const defaultParams = {
   configModifier: undefined,
@@ -15,7 +15,7 @@ const defaultParams = {
   outputFileFormat: undefined,
 };
 
-const runTyping = async (inputParams = {}) => {
+export const runTyping = async (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   let customConfig = {};
   if (params.configModifier) {
@@ -59,7 +59,7 @@ const runTyping = async (inputParams = {}) => {
   // process.exit(exitCode);
 };
 
-class GitHubAnnotationsFormatter {
+export class GitHubAnnotationsFormatter {
   // eslint-disable-next-line class-methods-use-this
   format(typingDiagnostics) {
     const annotations = [];
@@ -83,7 +83,7 @@ class GitHubAnnotationsFormatter {
   }
 }
 
-class PrettyFormatter {
+export class PrettyFormatter {
   // eslint-disable-next-line class-methods-use-this
   getSummary(errorCount, warningCount) {
     let summary = '';
@@ -135,7 +135,3 @@ class PrettyFormatter {
     return output;
   }
 }
-
-module.exports = {
-  runTyping,
-};

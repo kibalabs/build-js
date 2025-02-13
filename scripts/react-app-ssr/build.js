@@ -1,20 +1,22 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const webpackMerge = require('webpack-merge');
+import webpackMerge from 'webpack-merge';
 
-const { buildCommonWebpackConfig } = require('../common/common.webpack');
-const { buildCssWebpackConfig } = require('../common/css.webpack');
-const { buildImagesWebpackConfig } = require('../common/images.webpack');
-const { buildJsWebpackConfig } = require('../common/js.webpack');
-const { createAndRunCompiler } = require('../common/webpackUtil');
-const { buildModuleWebpackConfig } = require('../module/module.webpack');
-const { buildReactAppWebpackConfig } = require('../react-app/app.webpack');
-const { removeUndefinedProperties } = require('../util');
+import { buildCommonWebpackConfig } from '../common/common.webpack';
+import { buildCssWebpackConfig } from '../common/css.webpack';
+import { buildImagesWebpackConfig } from '../common/images.webpack';
+import { buildJsWebpackConfig } from '../common/js.webpack';
+import { createAndRunCompiler } from '../common/webpackUtil';
+import { buildModuleWebpackConfig } from '../module/module.webpack';
+import { buildReactAppWebpackConfig } from '../react-app/app.webpack';
+import { removeUndefinedProperties } from '../util';
+
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
-const buildSsrReactApp = async (inputParams = {}) => {
+export const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     configModifier: undefined,
@@ -81,7 +83,7 @@ const buildSsrReactApp = async (inputParams = {}) => {
   }).then((webpackBuildStats) => {
     const serverFilePath = path.join(buildDirectoryPath, 'server');
 
-    // const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
     fs.copyFileSync(path.join(__dirname, './start.sh'), path.join(outputDirectoryPath, 'start.sh'));
     fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
@@ -97,8 +99,4 @@ const buildSsrReactApp = async (inputParams = {}) => {
     }
     return createAndRunCompiler(serverWebpackConfig, undefined, undefined, true, params.analyzeBundle);
   });
-};
-
-module.exports = {
-  buildSsrReactApp,
 };

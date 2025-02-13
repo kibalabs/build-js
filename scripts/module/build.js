@@ -1,19 +1,19 @@
-const path = require('path');
+import path from 'path';
 
-const chalk = require('chalk');
-const glob = require('glob');
-const webpackMerge = require('webpack-merge');
+import chalk from 'chalk';
+import glob from 'glob';
+import webpackMerge from 'webpack-merge';
 
-const { buildModuleWebpackConfig } = require('./module.webpack');
-const { buildCommonWebpackConfig } = require('../common/common.webpack');
-const { buildJsWebpackConfig } = require('../common/js.webpack');
-const { createCompiler } = require('../common/webpackUtil');
-const { generateTypescriptDeclarations } = require('../typing/generateDeclarations');
-const { buildTsConfig } = require('../typing/ts.config');
-const { removeUndefinedProperties } = require('../util');
+import { buildModuleWebpackConfig } from './module.webpack';
+import { buildCommonWebpackConfig } from '../common/common.webpack';
+import { buildJsWebpackConfig } from '../common/js.webpack';
+import { createCompiler } from '../common/webpackUtil';
+import { generateTypescriptDeclarations } from '../typing/generateDeclarations';
+import { buildTsConfig } from '../typing/ts.config';
+import { removeUndefinedProperties } from '../util';
 
 
-const buildModule = async (inputParams = {}) => {
+export const buildModule = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
@@ -92,8 +92,4 @@ const buildModule = async (inputParams = {}) => {
   } else {
     compiler.run();
   }
-};
-
-module.exports = {
-  buildModule,
 };

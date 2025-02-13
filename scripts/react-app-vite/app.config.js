@@ -1,13 +1,15 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const pluginReactSwc = require('@vitejs/plugin-react-swc');
-const { defineConfig } = require('vite');
+import pluginReactSwc from '@vitejs/plugin-react-swc';
+import { defineConfig } from 'vite';
 
-const { removeUndefinedProperties, getNodeModuleName, getNodeModuleSize } = require('../util');
-const { createIndexPlugin } = require('./createIndexPlugin');
-const { createRuntimeConfigPlugin } = require('./createRuntimeConfigPlugin');
-const { injectSeoPlugin } = require('./injectSeoPlugin');
+import { createIndexPlugin } from './createIndexPlugin';
+import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin';
+import { injectSeoPlugin } from './injectSeoPlugin';
+import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util';
+
 
 const defaultParams = {
   dev: undefined,
@@ -23,12 +25,12 @@ const defaultParams = {
   publicDirectory: 'public',
 };
 
-const buildReactAppViteConfig = (inputParams = {}) => {
+export const buildReactAppViteConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || packageData.name;
 
-  // const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const indexTemplateFilePath = path.join(__dirname, './index.html');
 
   const runtimeConfigVars = params.runtimeConfigVars;
@@ -85,8 +87,4 @@ const buildReactAppViteConfig = (inputParams = {}) => {
     },
     publicDir: params.publicDirectory,
   });
-};
-
-module.exports = {
-  buildReactAppViteConfig,
 };
