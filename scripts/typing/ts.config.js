@@ -12,7 +12,6 @@ export const buildTsConfig = (inputParams = {}) => {
       jsx: 'react',
       declaration: true,
       declarationMap: true,
-      sourceMap: true,
       outDir: 'lib',
       strict: true,
       noImplicitAny: true,
