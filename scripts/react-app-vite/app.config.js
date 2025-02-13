@@ -1,9 +1,10 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 import pluginReactSwc from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 import { createIndexPlugin } from './createIndexPlugin.js';
 import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin.js';
@@ -22,7 +23,7 @@ const defaultParams = {
   packageFilePath: undefined,
   entryFilePath: undefined,
   outputDirectory: undefined,
-  publicDirectory: 'public',
+  publicDirectory: undefined,
 };
 
 export const buildReactAppViteConfig = (inputParams = {}) => {
@@ -45,6 +46,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
   return defineConfig({
     plugins: [
       pluginReactSwc(),
+      nodePolyfills(),
       ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name })] : []),
       ...(params.addRuntimeConfig ? [createRuntimeConfigPlugin({ vars: runtimeConfigVars })] : []),
       ...((params.seoTags || params.title) ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
@@ -55,7 +57,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
     },
     build: {
       rollupOptions: {
-        external: ['fs', 'path'],
+        input: params.entryFilePath,
         output: {
           // NOTE(krishan711): this splits each vendor into a separate file because
           // if we try to chunk the smaller ones together it causes circular imports

@@ -1,6 +1,6 @@
 import dns from 'dns';
+import path from 'node:path';
 import os from 'os';
-import path from 'path';
 
 import chalk from 'chalk';
 import WebpackDevServer from 'webpack-dev-server';

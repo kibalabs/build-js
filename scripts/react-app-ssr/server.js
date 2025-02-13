@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 import { getPageData, renderHtml } from '@kibalabs/build/scripts/react-app-static/static';

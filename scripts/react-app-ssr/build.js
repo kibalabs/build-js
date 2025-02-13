@@ -1,6 +1,6 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 import webpackMerge from 'webpack-merge';
@@ -11,7 +11,7 @@ import { buildImagesWebpackConfig } from '../common/images.webpack.js';
 import { buildJsWebpackConfig } from '../common/js.webpack.js';
 import { createAndRunCompiler } from '../common/webpackUtil.js';
 import { buildModuleWebpackConfig } from '../module/module.webpack.js';
-import { buildReactAppWebpackConfig } from '../react-app/app.webpack';
+import { buildReactAppWebpackConfig } from '../react-app/app.webpack.js';
 import { removeUndefinedProperties } from '../util.js';
 
 

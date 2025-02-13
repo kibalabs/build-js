@@ -21,6 +21,7 @@ export const runParamsConfigModifier = async (params) => {
       newParams = configModifier(params);
     }
   }
+  process.env.NODE_ENV = newParams.dev ? 'development' : 'production';
   return newParams;
 };
 

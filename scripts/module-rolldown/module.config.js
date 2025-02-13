@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import typescript from '@rollup/plugin-typescript';
 import { defineConfig } from 'rolldown';

@@ -1,6 +1,6 @@
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import CopyPlugin from 'copy-webpack-plugin';
 import webpackMerge from 'webpack-merge';
