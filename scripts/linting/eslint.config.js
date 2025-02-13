@@ -38,6 +38,7 @@ export const buildEslintConfig = (inputParams = {}) => {
       '**/node_modules/**',
       '**/build/**',
       '**/dist/**',
+      '**/dist-ssr/**',
       '**/public/**',
     ],
     rules: {
