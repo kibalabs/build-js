@@ -39,6 +39,7 @@ export const buildReactApp = async (inputParams = {}) => {
     await server.listen();
     server.printUrls();
     server.bindCLIShortcuts({ print: true });
+    server.openBrowser();
   } else {
     await build(viteConfig);
   }
