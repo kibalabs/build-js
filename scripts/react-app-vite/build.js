@@ -22,7 +22,7 @@ export const buildReactApp = async (inputParams = {}) => {
     runtimeConfigVars: {},
     seoTags: [],
     packageFilePath: path.join(process.cwd(), './package.json'),
-    entryFilePath: path.join(process.cwd(), './src/index.tsx'),
+    entryFilePath: path.join(process.cwd(), './index.html'),
     outputDirectory: path.join(process.cwd(), './dist'),
     publicDirectory: path.join(process.cwd(), './public'),
   };
