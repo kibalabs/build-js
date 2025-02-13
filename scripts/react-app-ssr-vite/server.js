@@ -1,12 +1,12 @@
 // const path = require('node:path');
-// const { fileURLToPath } = require('url');
+// import { fileURLToPath } from 'url';
 
-// const { getPageData, renderHtml } = require('@kibalabs/build/scripts/react-app-static/static');
-const compression = require('compression');
-const express = require('express');
+// import { getPageData, renderHtml } from '@kibalabs/build/scripts/react-app-static/static';
+import compression from 'compression';
+import express from 'express';
 
-// const { App, globals, routes } = require('./app');
-// const { defaultSeoTags, name } = require('./data.json');
+// import { App, globals, routes } from './app';
+// import { defaultSeoTags, name } from './data.json';
 
 const shouldCompress = (req, res) => {
   if (req.headers['x-no-compression']) {
@@ -15,7 +15,7 @@ const shouldCompress = (req, res) => {
   return compression.filter(req, res);
 };
 
-const createAppServer = () => {
+export const createAppServer = () => {
   const app = express();
   app.disable('x-powered-by');
   // app.use(express.static(__dirname, { immutable: true, maxAge: '1y' }));
@@ -50,7 +50,3 @@ const createAppServer = () => {
 // app.listen(port, host, () => {
 //   console.log(`Started server at http://${host}:${port}`);
 // });
-
-module.exports = {
-  createAppServer,
-};

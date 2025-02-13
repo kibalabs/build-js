@@ -1,19 +1,18 @@
+import path from 'node:path';
+
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-const fs = require('node:fs');
-const path = require('node:path');
-const { fileURLToPath } = require('url');
+// import { renderToString } from 'react-dom/server';
+import express from 'express';
+import { build, mergeConfig } from 'vite';
 
-// const { renderToString } = require('react-dom/server');
-const { mergeConfig, build } = require('vite');
-
-const { removeUndefinedProperties, runParamsConfigModifier } = require('../util');
-const { createAppServer } = require('./server');
-// const { getPageData } = require('../react-app-static/static');
-const { buildReactAppViteConfig } = require('../react-app-vite/app.config');
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
+import { createAppServer } from './server.js';
+// import { getPageData } from '../react-app-static/static.js';
+import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
 
 
 // NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
-const buildSsrReactApp = async (inputParams = {}) => {
+export const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
@@ -114,7 +113,7 @@ const buildSsrReactApp = async (inputParams = {}) => {
 
   console.log('building server');
   // const template = fs.readFileSync('./dist-ssr/index.html', 'utf-8');
-  const app = require(path.resolve('./dist-ssr/assets/app.js'));
+  const app = await import(path.resolve('./dist-ssr/assets/app.js'));
   console.log('app', app);
   const appServer = createAppServer();
   appServer.use(express.static('./dist-ssr/'), { index: false });
@@ -149,8 +148,4 @@ const buildSsrReactApp = async (inputParams = {}) => {
   //   }
   // });
   appServer.listen(params.port);
-};
-
-module.exports = {
-  buildSsrReactApp,
 };

@@ -2,14 +2,14 @@
   "name": "@kibalabs/build",
   "version": "0.13.2",
   "description": "Utils for building frontend projects at Kiba Labs",
-  "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kibalabs/build-js.git"
+    "url": "git+https://github.com/kibalabs/build-js.git"
   },
   "homepage": "https://github.com/kibalabs/build-js",
   "bugs": "https://github.com/kibalabs/build-js/issues",
+  "type": "module",
   "bin": {
     "build-react-component": "scripts/react-component/run.js",
     "build-react-app": "scripts/react-app/run.js",

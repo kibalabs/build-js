@@ -55,9 +55,9 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       ...(params.dev ? [] : [typescript({
         compilerOptions: {
           ...tsConfig.compilerOptions,
+          declaration: true,
           emitDeclarationOnly: true,
-          module: 'preserve',
-          moduleResolution: 'Bundler',
+          rootDir: path.dirname(params.entryFilePath),
           outDir: params.outputDirectory,
         },
         tsconfig: './tsconfig.json',

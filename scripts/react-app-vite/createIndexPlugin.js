@@ -13,6 +13,8 @@ export const createIndexPlugin = ({
       fs.writeFileSync(destinationPath, data.replace('{title}', name));
     },
     buildEnd() {
+      // NOTE(krishan711): annoyingly this isnt called in dev mode for some reason
+      // https://github.com/vitejs/vite/issues/15418
       fs.unlinkSync(destinationPath);
     },
   };
