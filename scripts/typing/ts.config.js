@@ -29,8 +29,8 @@ export const buildTsConfig = (inputParams = {}) => {
       allowSyntheticDefaultImports: true,
       esModuleInterop: true,
       resolveJsonModule: true,
-      module: 'nodenext',
-      moduleResolution: 'nodenext',
+      module: 'preserve',
+      moduleResolution: 'bundler',
     },
   };
 };
