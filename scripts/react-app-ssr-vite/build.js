@@ -1,16 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-// NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-import express from 'express';
 import { build, mergeConfig } from 'vite';
 
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
-import { createAppServer } from './server.js';
-// import { getPageData } from '../react-app-static/static.js';
-import { getPageData, renderViteHtml } from '../react-app-static/static.js';
 import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
-
+import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
 
 // NOTE(krishan711): most ideas from https://thenewstack.io/how-to-build-a-server-side-react-app-using-vite-and-express/
 export const buildSsrReactApp = async (inputParams = {}) => {
@@ -44,14 +39,19 @@ export const buildSsrReactApp = async (inputParams = {}) => {
 
   const outputDirectoryPath = path.resolve(params.outputDirectory);
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
-
+  const clientOutputDirectoryPath = path.join(outputDirectoryPath, '_client');
+  const ssrOutputDirectoryPath = path.join(outputDirectoryPath, '_ssr');
   console.log('building app...');
-  await build(viteConfig);
+  await build(mergeConfig(viteConfig, {
+    build: {
+      outDir: clientOutputDirectoryPath,
+    },
+  }));
   console.log('building server app...');
   await build(mergeConfig(viteConfig, {
     build: {
       ssr: true,
-      outDir: path.join(outputDirectoryPath, '_ssr'),
+      outDir: ssrOutputDirectoryPath,
       rollupOptions: {
         input: appEntryFilePath,
         // NOTE(krishan711): prevent the hashes in the names
@@ -63,30 +63,8 @@ export const buildSsrReactApp = async (inputParams = {}) => {
       },
     },
   }));
-
-  const htmlTemplate = await fs.readFileSync(path.join(outputDirectoryPath, 'index.html'), 'utf-8');
-  const app = await import(path.join(outputDirectoryPath, '_ssr/assets/App.js'));
-  const appServer = createAppServer();
-  appServer.use(express.static(outputDirectoryPath, { immutable: true, maxAge: '1y' }));
-  appServer.get('*', async (req, res) => {
-    const startTime = new Date();
-    const page = { path: req.path };
-    const pageData = await getPageData(req.path, app.routes, app.globals);
-    const html = renderViteHtml(app.App, page, params.seoTags, name, pageData, htmlTemplate);
-    // TODO(krishan711): move this stuff to a middleware
-    if (process.env.NAME) {
-      res.header('X-Server-Name', process.env.NAME);
-    }
-    if (process.env.VERSION) {
-      res.header('X-Server-Version', process.env.VERSION);
-    }
-    if (process.env.ENVIRONMENT) {
-      res.header('X-Server-Environment', process.env.ENVIRONMENT);
-    }
-    const duration = (new Date() - startTime) / 1000.0;
-    res.header('X-Response-Time', String(duration));
-    console.log(req.method, req.path, req.query, res.statusCode, duration);
-    res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-  });
-  await appServer.listen(params.port);
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  fs.copyFileSync(path.join(__dirname, './server.js'), path.join(outputDirectoryPath, 'index.js'));
+  fs.writeFileSync(path.join(outputDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
+  console.log('Run `node dist/index.js` to start the server');
 };
