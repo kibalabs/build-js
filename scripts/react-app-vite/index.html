@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <!--ssr-head-->
   </head>
   <body>
     <!-- NOTE(krishan711): needed for old webpack libraries -->
     <script>window.global ||= window;</script>
-    <div id="root"><!--ssr--></div>
+    <div id="root"><!--ssr-body--></div>
     <script type="module" src="/src/index.tsx"></script>
+    <!--ssr-body-assets-->
   </body>
 </html>

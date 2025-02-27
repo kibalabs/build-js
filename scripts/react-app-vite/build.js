@@ -28,7 +28,6 @@ export const buildReactApp = async (inputParams = {}) => {
   };
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   params = await runParamsConfigModifier(params);
-
   let viteConfig = buildReactAppViteConfig(params);
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);

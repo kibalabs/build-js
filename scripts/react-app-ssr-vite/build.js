@@ -1,23 +1,26 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
 // NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
-// import { renderToString } from 'react-dom/server';
 import express from 'express';
 import { build, mergeConfig } from 'vite';
 
 import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
 import { createAppServer } from './server.js';
 // import { getPageData } from '../react-app-static/static.js';
+import { getPageData, renderViteHtml } from '../react-app-static/static.js';
 import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
 
 
-// NOTE(krishan711): most ideas from https://emergent.systems/posts/ssr-in-react/
+// NOTE(krishan711): most ideas from https://thenewstack.io/how-to-build-a-server-side-react-app-using-vite-and-express/
 export const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
     start: false,
     port: 3000,
     configModifier: undefined,
+    polyfill: true,
+    polyfillTargets: undefined,
     viteConfigModifier: undefined,
     analyzeBundle: false,
     shouldAliasModules: true,
@@ -26,82 +29,32 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     runtimeConfigVars: {},
     seoTags: [],
     packageFilePath: path.join(process.cwd(), './package.json'),
-    entryFilePath: path.join(process.cwd(), './src/index.tsx'),
-    appEntryFilePath: path.join(process.cwd(), './src/app.tsx'),
-    buildDirectory: path.join(process.cwd(), './build'),
     outputDirectory: path.join(process.cwd(), './dist'),
     publicDirectory: path.join(process.cwd(), './public'),
+    appEntryFilePath: path.join(process.cwd(), './src/App.tsx'),
   };
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   params = await runParamsConfigModifier(params);
-  // const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
-  // const name = params.name || packageData.name;
-
   let viteConfig = buildReactAppViteConfig(params);
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);
   }
+  const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
+  const name = params.name || packageData.name;
 
-  const buildDirectoryPath = path.resolve(params.buildDirectory);
   const outputDirectoryPath = path.resolve(params.outputDirectory);
-  const entryFilePath = path.resolve(params.entryFilePath);
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
 
-  // let nodeWebpackConfig = webpackMerge.merge(
-  //   buildCommonWebpackConfig({ ...params, name: `${name}-node` }),
-  //   buildJsWebpackConfig({ ...params, polyfill: false, react: true }),
-  //   buildImagesWebpackConfig(params),
-  //   buildCssWebpackConfig(params),
-  //   buildModuleWebpackConfig({ ...params, entryFilePath: appEntryFilePath, outputDirectory: buildDirectoryPath, excludeAllNodeModules: true, outputFilename: 'app.js' }),
-  // );
-  // if (params.webpackConfigModifier) {
-  //   nodeWebpackConfig = params.webpackConfigModifier(nodeWebpackConfig);
-  // }
-
-  // let webWebpackConfig = webpackMerge.merge(
-  //   buildCommonWebpackConfig({ ...params, name: `${name}-web` }),
-  //   buildJsWebpackConfig({ ...params, polyfill: true, react: true }),
-  //   buildImagesWebpackConfig(params),
-  //   buildCssWebpackConfig(params),
-  //   buildReactAppWebpackConfig({ ...params, entryFilePath, outputDirectory: outputDirectoryPath }),
-  // );
-  // if (params.webpackConfigModifier) {
-  //   webWebpackConfig = params.webpackConfigModifier(webWebpackConfig);
-  // }
-
-  // return createAndRunCompiler(nodeWebpackConfig, undefined, undefined, true, params.analyzeBundle).then(() => {
-  //   return createAndRunCompiler(webWebpackConfig, undefined, undefined, true, params.analyzeBundle);
-  // }).then((webpackBuildStats) => {
-  //   const serverFilePath = path.join(buildDirectoryPath, 'server');
-
-  //   // const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  //   fs.copyFileSync(path.join(__dirname, './server.js'), serverFilePath);
-  //   fs.copyFileSync(path.join(__dirname, './start.sh'), path.join(outputDirectoryPath, 'start.sh'));
-  //   fs.writeFileSync(path.join(buildDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
-  //   fs.writeFileSync(path.join(outputDirectoryPath, 'webpackBuildStats.json'), JSON.stringify(webpackBuildStats));
-
-  //   let serverWebpackConfig = webpackMerge.merge(
-  //     buildCommonWebpackConfig({ ...params, cleanOutputDirectory: false, name: `${name}-server` }),
-  //     buildJsWebpackConfig({ ...params, react: false, polyfill: false }),
-  //     buildModuleWebpackConfig({ ...params, entryFilePath: serverFilePath, outputDirectory: outputDirectoryPath, excludeAllNodeModules: true }),
-  //   );
-  //   if (params.webpackConfigModifier) {
-  //     serverWebpackConfig = params.webpackConfigModifier(serverWebpackConfig);
-  //   }
-  //   return createAndRunCompiler(serverWebpackConfig, undefined, undefined, true, params.analyzeBundle);
-  // });
-
-  console.log('building app');
+  console.log('building app...');
+  await build(viteConfig);
+  console.log('building server app...');
   await build(mergeConfig(viteConfig, {
-    // NOTE(krishan711): prevent the hashes in the names
     build: {
       ssr: true,
-      outDir: './dist-ssr',
-      commonjsOptions: {
-        transformMixedEsModules: true,
-      },
+      outDir: path.join(outputDirectoryPath, '_ssr'),
       rollupOptions: {
         input: appEntryFilePath,
+        // NOTE(krishan711): prevent the hashes in the names
         output: {
           entryFileNames: 'assets/[name].js',
           chunkFileNames: 'assets/[name].js',
@@ -111,41 +64,29 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     },
   }));
 
-  console.log('building server');
-  // const template = fs.readFileSync('./dist-ssr/index.html', 'utf-8');
-  const app = await import(path.resolve('./dist-ssr/assets/app.js'));
-  console.log('app', app);
+  const htmlTemplate = await fs.readFileSync(path.join(outputDirectoryPath, 'index.html'), 'utf-8');
+  const app = await import(path.join(outputDirectoryPath, '_ssr/assets/App.js'));
   const appServer = createAppServer();
-  appServer.use(express.static('./dist-ssr/'), { index: false });
-  appServer.use('*', async (_, res) => {
-    try {
-      // const html = template.replace(`<!--outlet-->`, render);
-      res.status(200).set({ 'Content-Type': 'text/html' }).end('<html />');
-    } catch (error) {
-      res.status(500).end(error);
+  appServer.use(express.static(outputDirectoryPath, { immutable: true, maxAge: '1y' }));
+  appServer.get('*', async (req, res) => {
+    const startTime = new Date();
+    const page = { path: req.path };
+    const pageData = await getPageData(req.path, app.routes, app.globals);
+    const html = renderViteHtml(app.App, page, params.seoTags, name, pageData, htmlTemplate);
+    // TODO(krishan711): move this stuff to a middleware
+    if (process.env.NAME) {
+      res.header('X-Server-Name', process.env.NAME);
     }
+    if (process.env.VERSION) {
+      res.header('X-Server-Version', process.env.VERSION);
+    }
+    if (process.env.ENVIRONMENT) {
+      res.header('X-Server-Environment', process.env.ENVIRONMENT);
+    }
+    const duration = (new Date() - startTime) / 1000.0;
+    res.header('X-Response-Time', String(duration));
+    console.log(req.method, req.path, req.query, res.statusCode, duration);
+    res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
   });
-  // appServer.use(vite.middlewares);
-  // appServer.use('*', async (req, res, next) => {
-  //   const url = req.originalUrl;
-  //   console.log('url', url);
-  //   try {
-  //     const indexTemplateFilePath = path.join(__dirname, '..', 'react-app-vite', './index.html');
-  //     const indexTemplate = fs.readFileSync(indexTemplateFilePath, 'utf-8');
-  //     const template = await vite.transformIndexHtml(url, indexTemplate);
-  //     console.log('template', template);
-  //     const { App, routes, globals } = await vite.ssrLoadModule(appEntryFilePath);
-  //     console.log('App', App);
-  //     console.log('routes', routes);
-  //     console.log('globals', globals);
-  //     const pageData = await getPageData(req.path, routes, globals);
-  //     console.log('pageData', pageData);
-  //     const html = template.replace('<!--ssr-->', () => renderToString(App));
-  //     res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-  //   } catch (error) {
-  //     vite.ssrFixStacktrace(error);
-  //     next(error);
-  //   }
-  // });
-  appServer.listen(params.port);
+  await appServer.listen(params.port);
 };

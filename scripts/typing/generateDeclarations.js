@@ -6,6 +6,7 @@ export const generateTypescriptDeclarations = (filenames, options) => {
     compilerOptions: {
       ...options,
       emitDeclarationOnly: true,
+      sourceMap: true,
     },
   }, typescript.sys, process.cwd());
   const program = typescript.createProgram(filenames, config.options);

@@ -1,13 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import typescript from '@rollup/plugin-typescript';
 import { defineConfig } from 'rolldown';
 import { minify } from 'rollup-plugin-esbuild';
 
 import { getExternalModules, getNodeModules } from '../common/packageUtil.js';
-import { buildTsConfig } from '../typing/ts.config.js';
 import { removeUndefinedProperties } from '../util.js';
+import { generateTypeDeclarationsPlugin } from './generateTypeDeclarationsPlugin.js';
 
 
 const defaultParams = {
@@ -26,8 +25,6 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || packageData.name;
-
-  const tsConfig = buildTsConfig({});
 
   const externalModules = [];
   if (params.excludeAllNodeModules) {
@@ -48,21 +45,17 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       name,
       format: 'esm',
       sourcemap: !params.dev,
+      // NOTE(krishan711): not production yet so uses plugin see https://rolldown.rs/guide/features#minification
+      minify: false,
     },
     platform: 'node',
     plugins: [
-      ...(params.dev ? [] : [typescript({
-        compilerOptions: {
-          ...tsConfig.compilerOptions,
-          declaration: true,
-          emitDeclarationOnly: true,
-          // sourceMap: true,
-          // outDir: params.outputDirectory,
-        },
-        tsconfig: './tsconfig.json',
-        noForceEmit: true,
-      })]),
       minify(),
+      // NOTE(krishan711): couldn't get @rollup/plugin-typescript to emit declarations
+      ...(params.dev ? [] : [generateTypeDeclarationsPlugin({
+        inputDirectories: [params.entryFilePath],
+        outputDirectory: params.outputDirectory,
+      })]),
     ],
     define: {
       'process.env.PACKAGE_NAME': JSON.stringify(name),
