@@ -8,7 +8,7 @@ import compression from 'compression';
 import express from 'express';
 
 import * as app from './_ssr/assets/App.js';
-import * as data from './data.json' with { type: 'json' };
+import data from './data.json' with { type: 'json' };
 
 const shouldCompress = (req, res) => {
   if (req.headers['x-no-compression']) {
@@ -48,7 +48,7 @@ export const createAppServer = () => {
 };
 
 const host = '0.0.0.0';
-const port = 3000;
+const port = data.port || 3000;
 const server = createAppServer();
 server.listen(port, host, () => {
   console.log(`Started server at http://${host}:${port}`);

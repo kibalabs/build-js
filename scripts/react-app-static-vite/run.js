@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { program } from 'commander';
 
-import { buildSsrReactApp } from './build.js';
+import { buildStaticReactApp } from './build.js';
 
 const params = program
   .option('-c, --config-modifier <path>')
@@ -10,4 +10,4 @@ const params = program
   .parse(process.argv)
   .opts();
 
-buildSsrReactApp(params);
+buildStaticReactApp(params);

@@ -1,28 +1,28 @@
+// NOTE(krishan711): this should probably be moved out. it's very specific to ui-react.
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { build, mergeConfig } from 'vite';
 
+import { getPageData, renderViteHtml } from '../react-app-static/static.js';
 import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
 import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
 
-// NOTE(krishan711): most ideas from https://thenewstack.io/how-to-build-a-server-side-react-app-using-vite-and-express/
-export const buildSsrReactApp = async (inputParams = {}) => {
+
+export const buildStaticReactApp = async (inputParams = {}) => {
   const defaultParams = {
     dev: false,
-    start: false,
-    port: 3000,
     configModifier: undefined,
     polyfill: true,
     polyfillTargets: undefined,
-    viteConfigModifier: undefined,
+    webpackConfigModifier: undefined,
     analyzeBundle: false,
     shouldAliasModules: true,
-    addHtmlOutput: true,
+    addHtmlOutput: false,
     addRuntimeConfig: true,
     runtimeConfigVars: {},
     seoTags: [],
+    pages: [{ path: '/', filename: 'index.html' }],
     packageFilePath: path.join(process.cwd(), './package.json'),
     outputDirectory: path.join(process.cwd(), './dist'),
     publicDirectory: path.join(process.cwd(), './public'),
@@ -63,8 +63,17 @@ export const buildSsrReactApp = async (inputParams = {}) => {
       },
     },
   }));
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  fs.copyFileSync(path.join(__dirname, './server.js'), path.join(outputDirectoryPath, 'index.js'));
-  fs.writeFileSync(path.join(outputDirectoryPath, 'data.json'), JSON.stringify({ name, port: params.port, defaultSeoTags: params.seoTags }));
-  console.log('Run `node dist/index.js` to start the server');
+
+  const app = (await import(path.join(ssrOutputDirectoryPath, 'assets/App.js')));
+  const htmlTemplate = await fs.readFileSync(path.join(clientOutputDirectoryPath, 'index.html'), 'utf-8');
+  // NOTE(krishan711): if this could be done in an parallel way it would be faster!
+  params.pages.forEach(async (page) => {
+    console.log(`Rendering page ${page.path} to ${page.filename}`);
+    const pageData = (app.routes && app.globals) ? await getPageData(page.path, app.routes, app.globals) : null;
+    const output = renderViteHtml(app.App, page, params.seoTags, name, pageData, htmlTemplate);
+    const outputPath = path.join(outputDirectoryPath, page.filename);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.writeFileSync(outputPath, output);
+    console.log(`Done rendering page ${page.path}`);
+  });
 };
