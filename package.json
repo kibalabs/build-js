@@ -15,6 +15,7 @@
     "build-react-app": "scripts/react-app/run.js",
     "build-react-app-vite": "scripts/react-app-vite/run.js",
     "build-react-app-static": "scripts/react-app-static/run.js",
+    "build-react-app-static-vite": "scripts/react-app-static-vite/run.js",
     "build-react-app-ssr": "scripts/react-app-ssr/run.js",
     "build-react-app-ssr-vite": "scripts/react-app-ssr-vite/run.js",
     "build-module": "scripts/module/run.js",

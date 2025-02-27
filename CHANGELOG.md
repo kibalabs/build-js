@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - [MINOR] Added react-app-vite to build apps with vite
 - [MAJOR] Converted package into an es-module
 - [MINOR] Added react-app-ssr-vite to build SSR apps with vite
+- [MINOR] Added react-app-static-vite to build SSR apps with vite
 
 ### Changed
 

@@ -65,6 +65,6 @@ export const buildSsrReactApp = async (inputParams = {}) => {
   }));
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   fs.copyFileSync(path.join(__dirname, './server.js'), path.join(outputDirectoryPath, 'index.js'));
-  fs.writeFileSync(path.join(outputDirectoryPath, 'data.json'), JSON.stringify({ name, defaultSeoTags: params.seoTags }));
+  fs.writeFileSync(path.join(outputDirectoryPath, 'data.json'), JSON.stringify({ name, port: params.port, defaultSeoTags: params.seoTags }));
   console.log('Run `node dist/index.js` to start the server');
 };
