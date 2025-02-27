@@ -27,6 +27,57 @@ export const getPageData = async (urlPath, appRoutes, globals) => {
   return null;
 };
 
+export const renderViteHtml = (app, page, defaultSeoTags, appName, pageData, htmlTemplate) => {
+  let pageHead = { headId: '', base: null, title: null, links: [], metas: [], styles: [], scripts: [], noscripts: [] };
+  const setHead = (newHead) => { pageHead = newHead; };
+  const styledComponentsSheet = new ServerStyleSheet();
+  const bodyString = ReactDOMServer.renderToString(
+    React.createElement(
+      StyleSheetManager,
+      { sheet: styledComponentsSheet.instance },
+      React.createElement(app, { staticPath: page.path, pageData, setHead }),
+    ),
+  );
+  let pageSeoTags = page.seoTags;
+  if (!pageSeoTags && defaultSeoTags && page.path === '/') {
+    pageSeoTags = defaultSeoTags;
+  }
+  const seoTags = pageSeoTags || [];
+  const tags = [
+    ...(pageHead.title ? [pageHead.title] : [{ type: 'title', content: page.title || appName, attributes: [] }]),
+    ...(pageHead.base ? [pageHead.base] : []),
+    ...pageHead.links,
+    ...pageHead.metas,
+    ...pageHead.styles,
+    ...pageHead.scripts,
+  ];
+  const headString = ReactDOMServer.renderToStaticMarkup(
+    React.createElement(
+      'head',
+      null,
+      // NOTE(krishan711): this should be kept in sync with react-app/index.html
+      React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_RENDERED_PATH = '${page.path}';` } }),
+      React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_PAGE_DATA = ${JSON.stringify(pageData)};` } }),
+      ...seoTags.map((tag) => React.createElement(tag.tagName, { ...tag.attributes, key: JSON.stringify(tag) })),
+      ...tags.map((tag) => React.createElement(tag.type, { ...tag.attributes, key: tag.headId, 'ui-react-head': tag.headId }, tag.content)),
+      // ...extractor.getLinkElements(),
+      // ...extractor.getStyleElements(),
+      styledComponentsSheet.getStyleElement(),
+    ),
+  );
+  // const bodyAssetsString = ReactDOMServer.renderToStaticMarkup(
+  //   React.createElement(
+  //     React.Fragment,
+  //     null,
+  //     ...extractor.getScriptElements(),
+  //   ),
+  // );
+  let output = htmlTemplate.replace('<!--ssr-body-->', bodyString);
+  output = output.replace('<!--ssr-head-->', headString);
+  // output = output.replace(`<!--ssr-body-assets-->`, bodyAssetsString);
+  return output;
+};
+
 export const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePath, pageData = null) => {
   let pageHead = { headId: '', base: null, title: null, links: [], metas: [], styles: [], scripts: [], noscripts: [] };
   const setHead = (newHead) => { pageHead = newHead; };

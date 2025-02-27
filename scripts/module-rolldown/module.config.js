@@ -45,6 +45,8 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       name,
       format: 'esm',
       sourcemap: !params.dev,
+      // NOTE(krishan711): not production yet so uses plugin see https://rolldown.rs/guide/features#minification
+      minify: false,
     },
     platform: 'node',
     plugins: [
