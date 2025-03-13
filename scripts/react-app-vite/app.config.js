@@ -53,6 +53,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
     ],
     mode: params.dev ? 'development' : 'production',
     server: {
+      host: '0.0.0.0',
       port: params.port,
     },
     build: {

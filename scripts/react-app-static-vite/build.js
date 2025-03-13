@@ -39,19 +39,19 @@ export const buildStaticReactApp = async (inputParams = {}) => {
 
   const outputDirectoryPath = path.resolve(params.outputDirectory);
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
-  const clientOutputDirectoryPath = path.join(outputDirectoryPath, '_client');
-  const ssrOutputDirectoryPath = path.join(outputDirectoryPath, '_ssr');
+  const clientDirectory = path.join(outputDirectoryPath, '_client');
+  const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
   console.log('building app...');
   await build(mergeConfig(viteConfig, {
     build: {
-      outDir: clientOutputDirectoryPath,
+      outDir: clientDirectory,
     },
   }));
   console.log('building server app...');
   await build(mergeConfig(viteConfig, {
     build: {
       ssr: true,
-      outDir: ssrOutputDirectoryPath,
+      outDir: ssrDirectory,
       rollupOptions: {
         input: appEntryFilePath,
         // NOTE(krishan711): prevent the hashes in the names
@@ -63,14 +63,14 @@ export const buildStaticReactApp = async (inputParams = {}) => {
       },
     },
   }));
-
-  const app = (await import(path.join(ssrOutputDirectoryPath, 'assets/App.js')));
-  const htmlTemplate = await fs.readFileSync(path.join(clientOutputDirectoryPath, 'index.html'), 'utf-8');
+  const app = (await import(path.join(ssrDirectory, 'assets/App.js')));
+  console.log('app', app);
+  const htmlTemplate = await fs.readFileSync(path.join(clientDirectory, 'index.html'), 'utf-8');
   // NOTE(krishan711): if this could be done in an parallel way it would be faster!
   params.pages.forEach(async (page) => {
     console.log(`Rendering page ${page.path} to ${page.filename}`);
     const pageData = (app.routes && app.globals) ? await getPageData(page.path, app.routes, app.globals) : null;
-    const output = renderViteHtml(app.App, page, params.seoTags, name, pageData, htmlTemplate);
+    const output = await renderViteHtml(app.App, page, params.seoTags, name, pageData, htmlTemplate);
     const outputPath = path.join(outputDirectoryPath, page.filename);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, output);

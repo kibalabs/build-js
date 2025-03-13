@@ -39,19 +39,19 @@ export const buildSsrReactApp = async (inputParams = {}) => {
 
   const outputDirectoryPath = path.resolve(params.outputDirectory);
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
-  const clientOutputDirectoryPath = path.join(outputDirectoryPath, '_client');
-  const ssrOutputDirectoryPath = path.join(outputDirectoryPath, '_ssr');
+  const clientDirectory = path.join(outputDirectoryPath, '_client');
+  const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
   console.log('building app...');
   await build(mergeConfig(viteConfig, {
     build: {
-      outDir: clientOutputDirectoryPath,
+      outDir: clientDirectory,
     },
   }));
   console.log('building server app...');
   await build(mergeConfig(viteConfig, {
     build: {
       ssr: true,
-      outDir: ssrOutputDirectoryPath,
+      outDir: ssrDirectory,
       rollupOptions: {
         input: appEntryFilePath,
         // NOTE(krishan711): prevent the hashes in the names
@@ -63,8 +63,9 @@ export const buildSsrReactApp = async (inputParams = {}) => {
       },
     },
   }));
+  const appData = { name, port: params.port, defaultSeoTags: params.seoTags };
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   fs.copyFileSync(path.join(__dirname, './server.js'), path.join(outputDirectoryPath, 'index.js'));
-  fs.writeFileSync(path.join(outputDirectoryPath, 'data.json'), JSON.stringify({ name, port: params.port, defaultSeoTags: params.seoTags }));
+  fs.writeFileSync(path.join(ssrDirectory, 'appData.json'), JSON.stringify(appData));
   console.log('Run `node dist/index.js` to start the server');
 };
