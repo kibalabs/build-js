@@ -85,14 +85,6 @@ const removeTitleTagFromString = (htmlString) => {
   return htmlString.replace(titleTag, '');
 };
 
-const removeStringsFromString = (string, stringsToRemove) => {
-  let output = string;
-  stringsToRemove.forEach((stringToRemove) => {
-    output = output.replace(stringToRemove, '');
-  });
-  return output;
-};
-
 export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageData, htmlTemplate) => {
   const styledComponentsSheet = new ServerStyleSheet();
   const bodyString = await renderToString(
@@ -105,7 +97,6 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
   // NOTE(krishan711): prerenderToNodeStream doesnt extract out the stuff that should go to the head so we have to do it manually for now
   const extractedHeadTags = extractHeadContentFromString(bodyString);
   const extractedHeadTagsString = extractedHeadTags.join('');
-  const cleanedBodyString = removeStringsFromString(bodyString, extractedHeadTags);
   let pageSeoTags = page.seoTags;
   if (!pageSeoTags && defaultSeoTags && page.path === '/') {
     pageSeoTags = defaultSeoTags;
@@ -125,7 +116,7 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
   const cleanedHeadString = extractedHeadTagsString.includes('<title>') ? removeTitleTagFromString(headString) : headString;
   const fullHeadString = extractedHeadTagsString + cleanedHeadString;
   const cleanedHTmlTemplate = fullHeadString.includes('<title>') ? removeTitleTagFromString(htmlTemplate) : htmlTemplate;
-  let output = cleanedHTmlTemplate.replace('<!--ssr-body-->', cleanedBodyString);
+  let output = cleanedHTmlTemplate.replace('<!--ssr-body-->', bodyString);
   output = output.replace('<!--ssr-head-->', fullHeadString);
   return output;
 };
