@@ -27,10 +27,7 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     publicDirectory: path.join(process.cwd(), './public'),
     appEntryFilePath: path.join(process.cwd(), './src/App.tsx'),
   };
-  const params = await buildParams(defaultParams, inputParams);
-  if (params.dev) {
-    throw new Error('Dev mode not supported yet');
-  }
+  const params = await buildParams(defaultParams, inputParams, false);
   let viteConfig = buildReactAppViteConfig(params);
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);

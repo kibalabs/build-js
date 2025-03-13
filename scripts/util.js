@@ -11,7 +11,7 @@ export const removeUndefinedProperties = (obj) => {
   }, {});
 };
 
-export const buildParams = async (defaultParams, inputParams) => {
+export const buildParams = async (defaultParams, inputParams, allowDev = true) => {
   let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
@@ -22,6 +22,9 @@ export const buildParams = async (defaultParams, inputParams) => {
     }
   }
   params.dev = process.env.NODE_ENV !== 'production';
+  if (params.dev && !allowDev) {
+    throw new Error('Dev mode not supported yet - please set NODE_ENV=production');
+  }
   return params;
 };
 

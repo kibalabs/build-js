@@ -18,11 +18,7 @@ export const buildModuleRolldown = async (inputParams = {}) => {
     entryFilePath: path.join(process.cwd(), './src/index.ts'),
     outputDirectory: path.join(process.cwd(), './dist'),
   };
-  const params = await buildParams(defaultParams, inputParams);
-  if (params.dev) {
-    throw new Error('Dev mode not supported yet');
-  }
-
+  const params = await buildParams(defaultParams, inputParams, false);
   let rolldownConfig = buildModuleRolldownConfig(params);
   if (params.rolldownConfigModifier) {
     rolldownConfig = params.rolldownConfigModifier(rolldownConfig);
