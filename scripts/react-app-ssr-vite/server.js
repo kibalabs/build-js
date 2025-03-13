@@ -19,8 +19,6 @@ const ssrDirectory = path.join(__dirname, '_ssr');
 const app = (await import(path.join(ssrDirectory, 'assets/app.js')));
 const appData = (await import(path.join(ssrDirectory, 'appData.json'), { with: { type: 'json' } })).default;
 const htmlTemplate = await fs.readFileSync(path.join(clientDirectory, 'index.html'), 'utf-8');
-console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-console.log('process.env.NODE_ENV', process.env.NODE_ENV);
 export const createAppServer = () => {
   const server = express();
   server.disable('x-powered-by');

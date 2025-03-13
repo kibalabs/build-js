@@ -102,14 +102,10 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
       React.createElement(app, { staticPath: page.path, pageData }),
     ),
   );
-  console.log('bodyString', bodyString.length, bodyString.slice(0, 100));
   // NOTE(krishan711): prerenderToNodeStream doesnt extract out the stuff that should go to the head so we have to do it manually for now
   const extractedHeadTags = extractHeadContentFromString(bodyString);
-  console.log('extractedHeadTags', extractedHeadTags);
   const extractedHeadTagsString = extractedHeadTags.join('');
-  console.log('extractedHeadTagsString', extractedHeadTagsString.length, extractedHeadTagsString.slice(0, 100));
   const cleanedBodyString = removeStringsFromString(bodyString, extractedHeadTags);
-  console.log('cleanedBodyString', cleanedBodyString.length, cleanedBodyString.slice(0, 100));
   let pageSeoTags = page.seoTags;
   if (!pageSeoTags && defaultSeoTags && page.path === '/') {
     pageSeoTags = defaultSeoTags;
@@ -126,11 +122,8 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
       styledComponentsSheet.getStyleElement(),
     ),
   );
-  console.log('headString', headString.length, headString.slice(0, 100));
   const cleanedHeadString = extractedHeadTagsString.includes('<title>') ? removeTitleTagFromString(headString) : headString;
-  console.log('cleanedHeadString', cleanedHeadString.length, cleanedHeadString.slice(0, 100));
   const fullHeadString = extractedHeadTagsString + cleanedHeadString;
-  console.log('fullHeadString', fullHeadString.length, fullHeadString.slice(0, 100));
   const cleanedHTmlTemplate = fullHeadString.includes('<title>') ? removeTitleTagFromString(htmlTemplate) : htmlTemplate;
   let output = cleanedHTmlTemplate.replace('<!--ssr-body-->', bodyString);
   output = output.replace('<!--ssr-head-->', fullHeadString);

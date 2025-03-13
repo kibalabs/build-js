@@ -39,7 +39,6 @@ export const buildSsrReactApp = async (inputParams = {}) => {
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
   const clientDirectory = path.join(outputDirectoryPath, '_client');
   const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV);
   console.log('building app...');
   await build(mergeConfig(viteConfig, {
     build: {
