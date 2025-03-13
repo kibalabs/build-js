@@ -37,7 +37,8 @@ export const buildStaticReactApp = async (inputParams = {}) => {
 
   const outputDirectoryPath = path.resolve(params.outputDirectory);
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
-  const clientDirectory = path.join(outputDirectoryPath, '_client');
+  // NOTE(krishan711): this is different from ssr because the client output is the output we want (ssr is only used once)
+  const clientDirectory = outputDirectoryPath;
   const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
   console.log('building app...');
   await build(mergeConfig(viteConfig, {
