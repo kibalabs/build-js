@@ -85,14 +85,6 @@ const removeTitleTagFromString = (htmlString) => {
   return htmlString.replace(titleTag, '');
 };
 
-const removeStringsFromString = (string, stringsToRemove) => {
-  let output = string;
-  stringsToRemove.forEach((stringToRemove) => {
-    output = output.replace(stringToRemove, '');
-  });
-  return output;
-};
-
 export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageData, htmlTemplate) => {
   const styledComponentsSheet = new ServerStyleSheet();
   const bodyString = await renderToString(
