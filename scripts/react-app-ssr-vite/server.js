@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { getPageData, renderViteHtml } from '@kibalabs/build/scripts/react-app-static/static.js';
 import compression from 'compression';
+import express from 'express';
 
 const shouldCompress = (req, res) => {
   if (req.headers['x-no-compression']) {
