@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import { ESLint } from 'eslint';
 
 import { buildEslintConfig } from './eslint.config.js';
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
+import { buildParams } from '../util.js';
 
 
 export const runLinting = async (inputParams = {}) => {
@@ -17,10 +17,7 @@ export const runLinting = async (inputParams = {}) => {
     outputFileFormat: undefined,
     fix: false,
   };
-  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  params = await runParamsConfigModifier(params);
-  process.env.NODE_ENV = params.dev ? 'development' : 'production';
-
+  const params = await buildParams(defaultParams, inputParams);
   const config = buildEslintConfig(params);
   const eslint = new ESLint({
     baseConfig: config,

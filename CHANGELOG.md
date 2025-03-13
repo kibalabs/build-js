@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - [MAJOR] Converted package into an es-module
 - [MINOR] Added react-app-ssr-vite to build SSR apps with vite
 - [MINOR] Added react-app-static-vite to build SSR apps with vite
+- [MAJOR] Update ssr and static rendering to work with react 19 (requires setting NODE_ENV externally)
 
 ### Changed
 

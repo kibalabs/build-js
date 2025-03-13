@@ -6,7 +6,7 @@ import { glob } from 'glob';
 import typescript from 'typescript';
 
 import { buildTsConfig } from './ts.config.js';
-import { removeUndefinedProperties } from '../util.js';
+import { buildParams } from '../util.js';
 
 const defaultParams = {
   configModifier: undefined,
@@ -16,14 +16,7 @@ const defaultParams = {
 };
 
 export const runTyping = async (inputParams = {}) => {
-  const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  let customConfig = {};
-  if (params.configModifier) {
-    customConfig = (await import(path.join(process.cwd(), params.configModifier))).default;
-    if (typeof customConfig === 'function') {
-      customConfig = customConfig(params);
-    }
-  }
+  const params = buildParams(defaultParams, inputParams);
   const tsConfig = buildTsConfig(params);
   // NOTE(krishan711): I couldn't find a way to filter node_modules in the glob (filtering needed for lerna repos)
   const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts,tsx}'));
@@ -31,7 +24,7 @@ export const runTyping = async (inputParams = {}) => {
   const config = typescript.parseJsonConfigFileContent({
     compilerOptions: {
       ...tsConfig.compilerOptions,
-      ...customConfig.compilerOptions,
+      // ...customConfig.compilerOptions,
       noEmit: true,
     },
   }, typescript.sys, process.cwd());

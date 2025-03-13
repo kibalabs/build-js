@@ -11,18 +11,21 @@ export const removeUndefinedProperties = (obj) => {
   }, {});
 };
 
-export const runParamsConfigModifier = async (params) => {
-  let newParams = params;
+export const buildParams = async (defaultParams, inputParams, allowDev = true) => {
+  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   if (params.configModifier) {
     const configModifier = (await import(path.join(process.cwd(), params.configModifier))).default;
     if (configModifier.constructor.name === 'AsyncFunction') {
-      newParams = await configModifier(params);
+      params = await configModifier(params);
     } else {
-      newParams = configModifier(params);
+      params = configModifier(params);
     }
   }
-  process.env.NODE_ENV = newParams.dev ? 'development' : 'production';
-  return newParams;
+  params.dev = process.env.NODE_ENV !== 'production';
+  if (params.dev && !allowDev) {
+    throw new Error('Dev mode not supported yet - please set NODE_ENV=production');
+  }
+  return params;
 };
 
 export const getNodeModuleName = (importPath) => {

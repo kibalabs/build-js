@@ -3,7 +3,7 @@ import path from 'node:path';
 import { build, createServer } from 'vite';
 
 import { buildReactAppViteConfig } from './app.config.js';
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
+import { buildParams } from '../util.js';
 
 // NOTE(krishan711): docs at https://vite.dev/guide/api-javascript.html
 export const buildReactApp = async (inputParams = {}) => {
@@ -26,8 +26,7 @@ export const buildReactApp = async (inputParams = {}) => {
     outputDirectory: path.join(process.cwd(), './dist'),
     publicDirectory: path.join(process.cwd(), './public'),
   };
-  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  params = await runParamsConfigModifier(params);
+  const params = await buildParams(defaultParams, inputParams);
   let viteConfig = buildReactAppViteConfig(params);
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);

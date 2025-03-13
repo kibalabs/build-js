@@ -5,12 +5,11 @@ import { fileURLToPath } from 'node:url';
 import { build, mergeConfig } from 'vite';
 
 import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
+import { buildParams } from '../util.js';
 
 // NOTE(krishan711): most ideas from https://thenewstack.io/how-to-build-a-server-side-react-app-using-vite-and-express/
 export const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
-    dev: false,
     start: false,
     port: 3000,
     configModifier: undefined,
@@ -28,8 +27,7 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     publicDirectory: path.join(process.cwd(), './public'),
     appEntryFilePath: path.join(process.cwd(), './src/App.tsx'),
   };
-  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  params = await runParamsConfigModifier(params);
+  const params = await buildParams(defaultParams, inputParams, false);
   let viteConfig = buildReactAppViteConfig(params);
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);
@@ -39,19 +37,19 @@ export const buildSsrReactApp = async (inputParams = {}) => {
 
   const outputDirectoryPath = path.resolve(params.outputDirectory);
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
-  const clientOutputDirectoryPath = path.join(outputDirectoryPath, '_client');
-  const ssrOutputDirectoryPath = path.join(outputDirectoryPath, '_ssr');
+  const clientDirectory = path.join(outputDirectoryPath, '_client');
+  const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
   console.log('building app...');
   await build(mergeConfig(viteConfig, {
     build: {
-      outDir: clientOutputDirectoryPath,
+      outDir: clientDirectory,
     },
   }));
   console.log('building server app...');
   await build(mergeConfig(viteConfig, {
     build: {
       ssr: true,
-      outDir: ssrOutputDirectoryPath,
+      outDir: ssrDirectory,
       rollupOptions: {
         input: appEntryFilePath,
         // NOTE(krishan711): prevent the hashes in the names
@@ -63,8 +61,9 @@ export const buildSsrReactApp = async (inputParams = {}) => {
       },
     },
   }));
+  const appData = { name, port: params.port, defaultSeoTags: params.seoTags };
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   fs.copyFileSync(path.join(__dirname, './server.js'), path.join(outputDirectoryPath, 'index.js'));
-  fs.writeFileSync(path.join(outputDirectoryPath, 'data.json'), JSON.stringify({ name, port: params.port, defaultSeoTags: params.seoTags }));
+  fs.writeFileSync(path.join(ssrDirectory, 'appData.json'), JSON.stringify(appData));
   console.log('Run `node dist/index.js` to start the server');
 };

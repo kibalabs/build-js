@@ -3,13 +3,12 @@ import path from 'node:path';
 import { rolldown } from 'rolldown';
 
 import { buildModuleRolldownConfig } from './module.config.js';
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
+import { buildParams } from '../util.js';
 
 
 export const buildModuleRolldown = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
-    dev: false,
     start: false,
     rolldownConfigModifier: undefined,
     name: undefined,
@@ -19,12 +18,7 @@ export const buildModuleRolldown = async (inputParams = {}) => {
     entryFilePath: path.join(process.cwd(), './src/index.ts'),
     outputDirectory: path.join(process.cwd(), './dist'),
   };
-  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  params = await runParamsConfigModifier(params);
-  // NOTE(krishan711): starting modules in dev mode doesn't work yet. Test in everyview console before re-enabling
-  params.dev = false;
-  process.env.NODE_ENV = params.dev ? 'development' : 'production';
-
+  const params = await buildParams(defaultParams, inputParams, false);
   let rolldownConfig = buildModuleRolldownConfig(params);
   if (params.rolldownConfigModifier) {
     rolldownConfig = params.rolldownConfigModifier(rolldownConfig);
