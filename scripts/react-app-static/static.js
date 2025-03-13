@@ -125,7 +125,7 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
   const cleanedHeadString = extractedHeadTagsString.includes('<title>') ? removeTitleTagFromString(headString) : headString;
   const fullHeadString = extractedHeadTagsString + cleanedHeadString;
   const cleanedHTmlTemplate = fullHeadString.includes('<title>') ? removeTitleTagFromString(htmlTemplate) : htmlTemplate;
-  let output = cleanedHTmlTemplate.replace('<!--ssr-body-->', bodyString);
+  let output = cleanedHTmlTemplate.replace('<!--ssr-body-->', cleanedBodyString);
   output = output.replace('<!--ssr-head-->', fullHeadString);
   return output;
 };
