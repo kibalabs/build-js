@@ -33,7 +33,6 @@ export const runTyping = async (inputParams = {}) => {
   const emitResult = program.emit();
   const allDiagnostics = typescript.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
   console.log(new PrettyFormatter().format(allDiagnostics));
-  console.log('params', params)
   if (params.outputFile) {
     let formatter = null;
     const fileFormat = params.outputFileFormat || 'pretty';
