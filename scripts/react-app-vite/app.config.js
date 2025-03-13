@@ -13,7 +13,6 @@ import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from 
 
 
 const defaultParams = {
-  dev: undefined,
   name: undefined,
   addHtmlOutput: undefined,
   addRuntimeConfig: undefined,
@@ -51,7 +50,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       ...(params.addRuntimeConfig ? [createRuntimeConfigPlugin({ vars: runtimeConfigVars })] : []),
       ...((params.seoTags || params.title) ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
     ],
-    mode: params.dev ? 'development' : 'production',
+    mode: process.env.NODE_ENV || 'production',
     server: {
       host: '0.0.0.0',
       port: params.port,
@@ -84,8 +83,6 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       APP_NAME: JSON.stringify(name),
       APP_VERSION: JSON.stringify(packageData.version),
       APP_DESCRIPTION: JSON.stringify(packageData.description),
-      // 'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG),
-      // 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     },
     publicDir: params.publicDirectory,
   });

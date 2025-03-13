@@ -43,22 +43,17 @@ async function renderToString(reactComponent) {
 
 
 const extractTitleTagFromString = (htmlString) => {
-  let titleTag = null;
   const titleRegex = /<title>.*?<\/title>/gi;
-  let titleMatch;
   let lastTitleMatch = null;
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    titleMatch = titleRegex.exec(htmlString);
+    const titleMatch = titleRegex.exec(htmlString);
     if (titleMatch === null) {
       break;
     }
     lastTitleMatch = titleMatch;
   }
-  if (lastTitleMatch) {
-    titleTag = lastTitleMatch[0];
-  }
-  return titleTag;
+  return lastTitleMatch ? lastTitleMatch[0] : null;
 };
 
 const extractLinkTagsFromString = (htmlString) => {
@@ -74,7 +69,7 @@ const extractLinkTagsFromString = (htmlString) => {
     linkTags.push(linkMatch[0]);
   }
   return linkTags;
-}
+};
 
 const extractHeadContentFromString = (htmlString) => {
   const titleTag = extractTitleTagFromString(htmlString);
@@ -84,7 +79,6 @@ const extractHeadContentFromString = (htmlString) => {
 
 const removeTitleTagFromString = (htmlString) => {
   const titleTag = extractTitleTagFromString(htmlString);
-  console.log('found titleTag', titleTag);
   if (titleTag == null) {
     return htmlString;
   }
@@ -100,7 +94,6 @@ const removeStringsFromString = (string, stringsToRemove) => {
 };
 
 export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageData, htmlTemplate) => {
-  console.log('renderViteHtml')
   const styledComponentsSheet = new ServerStyleSheet();
   const bodyString = await renderToString(
     React.createElement(

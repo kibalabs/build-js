@@ -5,12 +5,11 @@ import { fileURLToPath } from 'node:url';
 import { build, mergeConfig } from 'vite';
 
 import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
-import { removeUndefinedProperties, runParamsConfigModifier } from '../util.js';
+import { buildParams } from '../util.js';
 
 // NOTE(krishan711): most ideas from https://thenewstack.io/how-to-build-a-server-side-react-app-using-vite-and-express/
 export const buildSsrReactApp = async (inputParams = {}) => {
   const defaultParams = {
-    dev: false,
     start: false,
     port: 3000,
     configModifier: undefined,
@@ -28,8 +27,10 @@ export const buildSsrReactApp = async (inputParams = {}) => {
     publicDirectory: path.join(process.cwd(), './public'),
     appEntryFilePath: path.join(process.cwd(), './src/App.tsx'),
   };
-  let params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
-  params = await runParamsConfigModifier(params);
+  const params = await buildParams(defaultParams, inputParams);
+  if (params.dev) {
+    throw new Error('Dev mode not supported yet');
+  }
   let viteConfig = buildReactAppViteConfig(params);
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);
@@ -41,6 +42,7 @@ export const buildSsrReactApp = async (inputParams = {}) => {
   const appEntryFilePath = path.resolve(params.appEntryFilePath);
   const clientDirectory = path.join(outputDirectoryPath, '_client');
   const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
+  console.log('process.env.NODE_ENV', process.env.NODE_ENV);
   console.log('building app...');
   await build(mergeConfig(viteConfig, {
     build: {
