@@ -16,7 +16,7 @@ const defaultParams = {
 };
 
 export const runTyping = async (inputParams = {}) => {
-  const params = buildParams(defaultParams, inputParams);
+  const params = await buildParams(defaultParams, inputParams);
   const tsConfig = buildTsConfig(params);
   // NOTE(krishan711): I couldn't find a way to filter node_modules in the glob (filtering needed for lerna repos)
   const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts,tsx}'));
@@ -33,6 +33,7 @@ export const runTyping = async (inputParams = {}) => {
   const emitResult = program.emit();
   const allDiagnostics = typescript.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
   console.log(new PrettyFormatter().format(allDiagnostics));
+  console.log('params', params)
   if (params.outputFile) {
     let formatter = null;
     const fileFormat = params.outputFileFormat || 'pretty';
