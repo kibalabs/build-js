@@ -45,7 +45,7 @@ async function renderToString(reactComponent) {
 const extractTitleTagFromString = (htmlString) => {
   const titleRegex = /<title>.*?<\/title>/gi;
   let lastTitleMatch = null;
-  // eslint-disable-next-line no-constant-condition
+
   while (true) {
     const titleMatch = titleRegex.exec(htmlString);
     if (titleMatch === null) {
@@ -60,7 +60,7 @@ const extractLinkTagsFromString = (htmlString) => {
   const linkTags = [];
   const linkRegex = /<link.*?\/>/gi;
   let linkMatch;
-  // eslint-disable-next-line no-constant-condition
+
   while (true) {
     linkMatch = linkRegex.exec(htmlString);
     if (linkMatch === null) {

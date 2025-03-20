@@ -53,7 +53,6 @@ export const runTyping = async (inputParams = {}) => {
 };
 
 export class GitHubAnnotationsFormatter {
-  // eslint-disable-next-line class-methods-use-this
   format(typingDiagnostics) {
     const annotations = [];
     typingDiagnostics.forEach((diagnostic) => {
@@ -77,7 +76,6 @@ export class GitHubAnnotationsFormatter {
 }
 
 export class PrettyFormatter {
-  // eslint-disable-next-line class-methods-use-this
   getSummary(errorCount, warningCount) {
     let summary = '';
     if (errorCount) {

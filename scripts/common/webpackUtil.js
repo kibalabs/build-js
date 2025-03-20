@@ -103,39 +103,36 @@ const formatWebpackMessages = (stats) => {
 };
 
 export const createCompiler = (config, onBuild = undefined, onPostBuild = undefined, showNotifications = true, analyzeSpeed = false) => {
-  if (config.output.clean) {
+  let newConfig = config;
+  if (newConfig.output.clean) {
     // NOTE(krishan711): this shouldn't be needed but if its removed the assets plugin doesn't work
-    rimraf.sync(config.output.path);
+    rimraf.sync(newConfig.output.path);
   }
 
   if (analyzeSpeed) {
     const speedMeasurePlugin = new SpeedMeasurePlugin();
-    // eslint-disable-next-line no-param-reassign
-    config = speedMeasurePlugin.wrap(config);
+    newConfig = speedMeasurePlugin.wrap(newConfig);
   }
 
-  const compiler = webpack(config);
-
+  const compiler = webpack(newConfig);
   compiler.hooks.compile.tap('webpackUtil', () => {
-    console.log(`Building ${config.name}...`);
+    console.log(`Building ${newConfig.name}...`);
     if (showNotifications) {
-      notifier.notify({ title: config.name, message: 'Building...' });
+      notifier.notify({ title: newConfig.name, message: 'Building...' });
     }
   });
-
   compiler.hooks.failed.tap('webpackUtil', (error) => {
-    console.log(chalk.red(`Failed to build ${config.name}`));
+    console.log(chalk.red(`Failed to build ${newConfig.name}`));
     console.log('Details:');
     console.log(error);
     process.exitCode = 1;
   });
-
   compiler.hooks.done.tap('webpackUtil', (stats) => {
     const messages = formatWebpackMessages(stats);
     if (messages.errors.length > 0) {
       console.log(chalk.red(messages.errors[0]));
       if (showNotifications) {
-        notifier.notify({ title: config.name, message: 'Error compiling!' });
+        notifier.notify({ title: newConfig.name, message: 'Error compiling!' });
       }
       process.exitCode = 1;
       return;
@@ -146,12 +143,12 @@ export const createCompiler = (config, onBuild = undefined, onPostBuild = undefi
     if (messages.warnings.length > 0) {
       console.log(chalk.yellow(messages.warnings.join('\n\n')));
       if (showNotifications) {
-        notifier.notify({ title: config.name, message: `Built with ${messages.warnings.length} warnings` });
+        notifier.notify({ title: newConfig.name, message: `Built with ${messages.warnings.length} warnings` });
       }
     } else {
-      console.log(chalk.green(`Successfully built ${config.name} 🚀\n`));
+      console.log(chalk.green(`Successfully built ${newConfig.name} 🚀\n`));
       if (showNotifications) {
-        notifier.notify({ title: config.name, message: 'Successfully built 🚀' });
+        notifier.notify({ title: newConfig.name, message: 'Successfully built 🚀' });
       }
     }
 
