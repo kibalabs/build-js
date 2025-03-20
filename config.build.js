@@ -1,9 +1,11 @@
-/* eslint-disable */
+
 export default (config) => {
-  config.eslintConfigOverride = {
+  const newConfig = config;
+  newConfig.eslintConfigOverride = {
     rules: {
       'no-console': 'off',
+      'class-methods-use-this': 'off',
     },
   };
-  return config;
+  return newConfig;
 };

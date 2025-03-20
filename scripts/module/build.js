@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import chalk from 'chalk';
-import glob from 'glob';
+import { sync } from 'glob';
 import webpackMerge from 'webpack-merge';
 
 import { buildModuleWebpackConfig } from './module.webpack.js';
@@ -56,7 +56,7 @@ export const buildModule = async (inputParams = {}) => {
     const fileNamePattern = indicesOnly ? 'index' : '*';
     const topDirectoryOnly = !params.recursive;
     const directoryPattern = topDirectoryOnly ? '*' : '**';
-    mergedConfig.entry = glob.sync(`./${params.multiEntry}/${directoryPattern}/${fileNamePattern}.{js,jsx,ts,tsx}`).reduce((accumulator, file) => {
+    mergedConfig.entry = sync(`./${params.multiEntry}/${directoryPattern}/${fileNamePattern}.{js,jsx,ts,tsx}`).reduce((accumulator, file) => {
       accumulator[file.replace(new RegExp(`^./${params.multiEntry}/`), '').replace(/\.(j|t)sx?$/, '')] = file;
       return accumulator;
     }, {});

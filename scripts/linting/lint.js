@@ -22,6 +22,7 @@ export const runLinting = async (inputParams = {}) => {
   const eslint = new ESLint({
     baseConfig: config,
     overrideConfig: params.eslintConfigOverride,
+    overrideConfigFile: true,
     fix: !!params.fix,
     errorOnUnmatchedPattern: false,
   });
@@ -47,7 +48,6 @@ export const runLinting = async (inputParams = {}) => {
 };
 
 class GitHubAnnotationsFormatter {
-  // eslint-disable-next-line class-methods-use-this
   format(eslintResults) {
     const annotations = [];
     eslintResults.filter((result) => result.errorCount > 0 || result.warningCount > 0).forEach((result) => {
@@ -71,7 +71,6 @@ class GitHubAnnotationsFormatter {
 }
 
 class PrettyFormatter {
-  // eslint-disable-next-line class-methods-use-this
   getSummary(errorCount, warningCount) {
     let summary = '';
     if (errorCount) {
