@@ -7,8 +7,6 @@ import ReactDOMServer from 'react-dom/server';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import ReactDOMStatic from 'react-dom/static';
 import { matchPath } from 'react-router';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 
 export const getPageData = async (urlPath, appRoutes, globals) => {
   let matchedRoute = null;
@@ -86,13 +84,8 @@ const removeTitleTagFromString = (htmlString) => {
 };
 
 export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageData, htmlTemplate) => {
-  const styledComponentsSheet = new ServerStyleSheet();
   const bodyString = await renderToString(
-    React.createElement(
-      StyleSheetManager,
-      { sheet: styledComponentsSheet.instance },
-      React.createElement(app, { staticPath: page.path, pageData }),
-    ),
+    React.createElement(app, { staticPath: page.path, pageData }),
   );
   // NOTE(krishan711): prerenderToNodeStream doesnt extract out the stuff that should go to the head so we have to do it manually for now
   const extractedHeadTags = extractHeadContentFromString(bodyString);
@@ -110,7 +103,6 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
       React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_RENDERED_PATH = '${page.path}';` } }),
       React.createElement('script', { type: 'text/javascript', dangerouslySetInnerHTML: { __html: `window.KIBA_PAGE_DATA = ${JSON.stringify(pageData)};` } }),
       ...seoTags.map((tag) => React.createElement(tag.tagName, { ...tag.attributes, key: JSON.stringify(tag) })),
-      styledComponentsSheet.getStyleElement(),
     ),
   );
   const cleanedHeadString = extractedHeadTagsString.includes('<title>') ? removeTitleTagFromString(headString) : headString;
@@ -124,17 +116,12 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
 export const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePath, pageData = null) => {
   let pageHead = { headId: '', base: null, title: null, links: [], metas: [], styles: [], scripts: [], noscripts: [] };
   const setHead = (newHead) => { pageHead = newHead; };
-  const styledComponentsSheet = new ServerStyleSheet();
   const extractor = new ChunkExtractor({ statsFile: webpackBuildStatsFilePath });
   const bodyString = ReactDOMServer.renderToString(
     React.createElement(
       ChunkExtractorManager,
       { extractor },
-      React.createElement(
-        StyleSheetManager,
-        { sheet: styledComponentsSheet.instance },
-        React.createElement(app, { staticPath: page.path, pageData, setHead }),
-      ),
+      React.createElement(app, { staticPath: page.path, pageData, setHead }),
     ),
   );
   let pageSeoTags = page.seoTags;
@@ -164,7 +151,6 @@ export const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStats
       ...tags.map((tag) => React.createElement(tag.type, { ...tag.attributes, key: tag.headId, 'ui-react-head': tag.headId }, tag.content)),
       ...extractor.getLinkElements(),
       ...extractor.getStyleElements(),
-      styledComponentsSheet.getStyleElement(),
     ),
   );
   const bodyAssetsString = ReactDOMServer.renderToStaticMarkup(
