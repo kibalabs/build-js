@@ -5,6 +5,7 @@ import { defineConfig } from 'rolldown';
 import { minify } from 'rollup-plugin-esbuild';
 
 import { getExternalModules, getNodeModules } from '../common/packageUtil.js';
+import { sassPlugin } from '../plugins/sassPlugin.js';
 import { removeUndefinedProperties } from '../util.js';
 import { generateTypeDeclarationsPlugin } from './generateTypeDeclarationsPlugin.js';
 
@@ -50,6 +51,7 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
     },
     platform: 'node',
     plugins: [
+      sassPlugin,
       minify(),
       // NOTE(krishan711): couldn't get @rollup/plugin-typescript to emit declarations
       ...(params.dev ? [] : [generateTypeDeclarationsPlugin({
