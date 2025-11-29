@@ -1,7 +1,7 @@
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
-import { createRequire } from 'node:module';
 
 import pluginReactSwc from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
