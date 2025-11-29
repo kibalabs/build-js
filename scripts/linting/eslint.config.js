@@ -35,7 +35,15 @@ export const buildEslintConfig = (inputParams = {}) => {
     tseslint.configs.recommended,
     // NOTE(krishan711): react is imported by airbnb
     // react.configs.flat.recommended,
-    reactHooks.configs['recommended-latest'],
+    {
+      plugins: {
+        'react-hooks': reactHooks,
+      },
+      rules: {
+        'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'error',
+      },
+    },
     globalIgnores([
       '**/node_modules/**/*',
       '**/build/**/*',
@@ -155,6 +163,15 @@ export const buildEslintConfig = (inputParams = {}) => {
       files: ['**/*.tsx'],
       rules: {
         'react/prop-types': 'off',
+      },
+    }, {
+      files: ['**/*.stories.tsx', '**/*.stories.jsx', '.storybook/**/*'],
+      rules: {
+        'react/jsx-props-no-spreading': 'off',
+        'react/no-array-index-key': 'off',
+        'no-alert': 'off',
+        'no-console': 'off',
+        'import/no-extraneous-dependencies': 'off',
       },
     },
   ]);

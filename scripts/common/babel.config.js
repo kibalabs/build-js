@@ -37,7 +37,6 @@ export const buildBabelConfig = (inputParams = {}) => {
       '@babel/plugin-transform-class-properties',
       '@babel/plugin-transform-optional-chaining',
       ...(params.react ? [
-        'babel-plugin-styled-components',
         '@loadable/babel-plugin',
       ] : []),
       ...(params.react && params.dev ? ['react-refresh/babel'] : []),
