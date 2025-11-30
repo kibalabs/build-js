@@ -31,7 +31,6 @@ export const buildReactApp = async (inputParams = {}) => {
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);
   }
-
   if (params.start) {
     const server = await createServer(viteConfig);
     await server.listen();
