@@ -12,6 +12,8 @@ import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin.js';
 import { injectSeoPlugin } from './injectSeoPlugin.js';
 import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 // NOTE(krishan711): Workaround for vite-plugin-node-polyfills shim resolution issue.
 // External packages have hardcoded imports to 'vite-plugin-node-polyfills/shims/*' baked in,
 // but Rollup/esbuild can't resolve these from packages outside the workspace.
@@ -24,6 +26,11 @@ const shimPaths = {
   'vite-plugin-node-polyfills/shims/global': require.resolve('vite-plugin-node-polyfills/shims/global'),
   'vite-plugin-node-polyfills/shims/process': require.resolve('vite-plugin-node-polyfills/shims/process'),
 };
+
+// NOTE(krishan711): Custom shim for node:module. Libraries like markdown-to-jsx v9 import
+// createRequire but never use it. The default polyfill (empty.js) doesn't export createRequire,
+// causing build errors. This provides a stub that throws if actually called.
+const moduleShimPath = path.join(__dirname, './moduleShim.js');
 
 const createShimsResolverPlugin = () => ({
   name: 'vite-plugin-node-polyfills-shims-resolver',
@@ -75,6 +82,9 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
           Buffer: 'build',
           global: 'build',
           process: 'build',
+        },
+        overrides: {
+          module: moduleShimPath,
         },
       }),
       createShimsResolverPlugin(),
