@@ -9,6 +9,7 @@ const params = program
   .option('-o, --output-file [path]')
   .option('-r, --output-file-format [format]')
   .option('-f, --fix')
+  .option('-s, --skip-stylelint')
   .parse(process.argv)
   .opts();
 
