@@ -63,8 +63,6 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
     },
     external: (moduleName) => {
-      // Only externalize modules explicitly declared in dependencies/peerDependencies/optionalDependencies.
-      // Handle scoped packages such as @org/package or @org/package/subpath.
       const packageName = moduleName.startsWith('@') ? moduleName.split('/').slice(0, 2).join('/') : moduleName.split('/')[0];
       const isExternal = externalModules.includes(moduleName) || externalModules.includes(packageName);
       return isExternal;
