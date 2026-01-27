@@ -4,10 +4,10 @@ import path from 'node:path';
 import { defineConfig } from 'rolldown';
 import { minify } from 'rollup-plugin-esbuild';
 
+import { generateTypeDeclarationsPlugin } from './generateTypeDeclarationsPlugin.js';
 import { getExternalModules, getNodeModules } from '../common/packageUtil.js';
 import { sassPlugin } from '../plugins/sassPlugin.js';
 import { removeUndefinedProperties } from '../util.js';
-import { generateTypeDeclarationsPlugin } from './generateTypeDeclarationsPlugin.js';
 
 
 const defaultParams = {
@@ -36,7 +36,6 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
   } else {
     externalModules.push(...getExternalModules(packageData));
   }
-
   // NOTE(krishan711): not sure why but outputDirectory is not being used
   return defineConfig({
     input: params.entryFilePath,
@@ -49,7 +48,7 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       // NOTE(krishan711): not production yet so uses plugin see https://rolldown.rs/guide/features#minification
       minify: false,
     },
-    platform: 'node',
+    platform: 'neutral',
     plugins: [
       sassPlugin,
       minify(),
@@ -64,8 +63,17 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
     },
     external: (module) => {
-      const isExternal = externalModules.includes(module) || externalModules.includes(module.split('/')[0]);
-      // console.log('module', module, isExternal);
+      // Only externalize modules explicitly declared in dependencies/peerDependencies/optionalDependencies.
+      // Handle scoped packages such as @org/package or @org/package/subpath.
+      const getPackageName = (mod) => {
+        if (mod.startsWith('@')) {
+          const parts = mod.split('/');
+          return parts.length >= 2 ? `${parts[0]}/${parts[1]}` : mod;
+        }
+        return mod.split('/')[0];
+      };
+      const packageName = getPackageName(module);
+      const isExternal = externalModules.includes(module) || externalModules.includes(packageName);
       return isExternal;
     },
   });
