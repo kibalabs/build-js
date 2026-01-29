@@ -49,6 +49,10 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       minify: false,
     },
     platform: 'neutral',
+    // Explicitly set mainFields for module resolution
+    resolve: {
+      mainFields: ['module', 'main'],
+    },
     plugins: [
       sassPlugin,
       minify(),
@@ -63,6 +67,10 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
     },
     external: (moduleName) => {
+      // Treat node: prefixed imports as external
+      if (moduleName.startsWith('node:')) {
+        return true;
+      }
       const packageName = moduleName.startsWith('@') ? moduleName.split('/').slice(0, 2).join('/') : moduleName.split('/')[0];
       const isExternal = externalModules.includes(moduleName) || externalModules.includes(packageName);
       return isExternal;
