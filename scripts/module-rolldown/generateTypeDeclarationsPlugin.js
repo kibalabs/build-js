@@ -2,15 +2,17 @@ import { generateTypescriptDeclarations } from '../typing/generateDeclarations.j
 import { buildTsConfig } from '../typing/ts.config.js';
 
 export const generateTypeDeclarationsPlugin = ({
-  inputDirectories,
+  inputFilePaths,
   outputDirectory,
+  compilerOptions = {},
 }) => {
   const tsConfig = buildTsConfig({});
   return {
     name: 'generate-type-declarations',
     buildStart() {
-      generateTypescriptDeclarations(inputDirectories, {
+      generateTypescriptDeclarations(inputFilePaths, {
         ...tsConfig.compilerOptions,
+        ...compilerOptions,
         outDir: outputDirectory,
         // NOTE(krishan711): below works to output one file but it
         // incorrectly puts declare module "index" instead of

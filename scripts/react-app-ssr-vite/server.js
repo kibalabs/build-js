@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { getPageData, renderViteHtml } from '@kibalabs/build/scripts/react-app-static/static.js';
+import { getPageData, renderViteHtml } from '@kibalabs/build/scripts/common/reactStatic.js';
 import compression from 'compression';
 import express from 'express';
 

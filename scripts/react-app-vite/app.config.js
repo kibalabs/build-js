@@ -16,7 +16,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // NOTE(krishan711): Workaround for vite-plugin-node-polyfills shim resolution issue.
 // External packages have hardcoded imports to 'vite-plugin-node-polyfills/shims/*' baked in,
-// but Rollup/esbuild can't resolve these from packages outside the workspace.
+// but the bundler can't resolve these from packages outside the workspace.
 // We resolve the actual shim paths and create aliases for both build and dev.
 // See: https://github.com/davidmyersdev/vite-plugin-node-polyfills/issues/140
 // Remove this when upgrading to a version that includes the fix from PR #141.
@@ -86,7 +86,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
         },
       }),
       createShimsResolverPlugin(),
-      ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name })] : []),
+      ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name, entryFilePath: params.entryFilePath })] : []),
       ...(params.addRuntimeConfig ? [createRuntimeConfigPlugin({ vars: runtimeConfigVars })] : []),
       ...((params.seoTags || params.title) ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
     ],
@@ -95,8 +95,10 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       alias: shimPaths,
     },
     optimizeDeps: {
-      esbuildOptions: {
-        alias: shimPaths,
+      rolldownOptions: {
+        resolve: {
+          alias: shimPaths,
+        },
       },
     },
     server: {
@@ -104,25 +106,33 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       port: params.port,
     },
     build: {
-      rollupOptions: {
-        input: params.entryFilePath,
+      rolldownOptions: {
+        input: path.join(process.cwd(), './index.html'),
         output: {
-          // NOTE(krishan711): this splits each vendor into a separate file because
-          // if we try to chunk the smaller ones together it causes circular imports
-          manualChunks(id) {
-            if (id.includes('/node_modules/')) {
-              const packageName = getNodeModuleName(id);
-              let packageSize = moduleSizeCache[packageName];
-              if (packageSize === undefined) {
-                packageSize = getNodeModuleSize(packageName, process.cwd());
-                moduleSizeCache[packageName] = packageSize;
-              }
-              if (packageSize > 0) {
-                return `vendor-${packageName.replace('@', '').replace('/', '-')}`;
-              }
-              return 'vendor';
-            }
-            return undefined;
+          // NOTE(krishan711): Rolldown treats each name() return value as a separate
+          // code-splitting group, so minSize is evaluated per returned chunk name.
+          // Keep dedicated chunks only for larger packages and funnel smaller ones
+          // into a shared vendor chunk, matching the old webpack behavior.
+          codeSplitting: {
+            includeDependenciesRecursively: false,
+            groups: [{
+              name: (moduleId) => {
+                if (!moduleId.includes('/node_modules/')) {
+                  return null;
+                }
+                const packageName = getNodeModuleName(moduleId);
+                let packageSize = moduleSizeCache[packageName];
+                if (packageSize === undefined) {
+                  packageSize = getNodeModuleSize(packageName, process.cwd());
+                  moduleSizeCache[packageName] = packageSize;
+                }
+                const chunkName = packageSize >= (100 * 1024) ? `vendor-${packageName.replace('@', '').replace('/', '-')}` : 'vendor-small';
+                return chunkName;
+              },
+              test: /node_modules/,
+              priority: 10,
+              minSize: 100 * 1024,
+            }],
           },
         },
       },

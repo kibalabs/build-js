@@ -29,7 +29,7 @@ export const buildParams = async (defaultParams, inputParams, allowDev = true) =
 };
 
 export const getNodeModuleName = (importPath) => {
-  const nodeModulesIndex = importPath.indexOf('node_modules/');
+  const nodeModulesIndex = importPath.lastIndexOf('node_modules/');
   if (nodeModulesIndex === -1) {
     return null;
   }

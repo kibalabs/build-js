@@ -22,11 +22,14 @@ export const buildReactApp = async (inputParams = {}) => {
     runtimeConfigVars: {},
     seoTags: [],
     packageFilePath: path.join(process.cwd(), './package.json'),
-    entryFilePath: path.join(process.cwd(), './index.html'),
+    entryFilePath: path.join(process.cwd(), './src/index.tsx'),
     outputDirectory: path.join(process.cwd(), './dist'),
     publicDirectory: path.join(process.cwd(), './public'),
   };
   const params = await buildParams(defaultParams, inputParams);
+  if (params.webpackConfigModifier) {
+    console.warn('Ignoring webpackConfigModifier for Vite builds. Migrate this customization to viteConfigModifier.');
+  }
   let viteConfig = buildReactAppViteConfig(params);
   if (params.viteConfigModifier) {
     viteConfig = params.viteConfigModifier(viteConfig);

@@ -4,13 +4,20 @@ import path from 'node:path';
 export const createIndexPlugin = ({
   templateFilePath,
   name,
+  entryFilePath,
 }) => {
   const destinationPath = path.join(process.cwd(), './index.html');
   return {
     name: 'create-index',
     buildStart() {
       const data = fs.readFileSync(templateFilePath, 'utf-8');
-      fs.writeFileSync(destinationPath, data.replace('{title}', name));
+      const relativeEntryFilePath = path.relative(process.cwd(), entryFilePath).split(path.sep).join('/');
+      fs.writeFileSync(
+        destinationPath,
+        data
+          .replace('{title}', name)
+          .replace('{entryFilePath}', `/${relativeEntryFilePath}`),
+      );
     },
     buildEnd() {
       // NOTE(krishan711): annoyingly this isnt called in dev mode for some reason
