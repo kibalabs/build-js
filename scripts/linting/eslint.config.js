@@ -243,7 +243,7 @@ export const buildEslintConfig = (inputParams = {}) => {
         'import/no-webpack-loader-syntax': 'error',
         'import/prefer-default-export': 'off',
         'import/no-unresolved': 'off',
-        'import/no-extraneous-dependencies': 'off',
+        'import/no-extraneous-dependencies': 'error',
         'import/order': ['error', {
           groups: ['builtin', 'external', 'internal'],
           alphabetize: {
@@ -302,10 +302,13 @@ export const buildEslintConfig = (inputParams = {}) => {
           ignoreDOMComponents: true,
         }],
         'react/jsx-no-constructed-context-values': 'error',
+        'react/jsx-props-no-spreading': 'error',
         'react/jsx-no-script-url': 'error',
         'react/jsx-pascal-case': ['error', { allowAllCaps: true, ignore: [] }],
+        'react/no-array-index-key': 'error',
         'react/no-unstable-nested-components': 'error',
         'react/no-invalid-html-attribute': 'error',
+        'react/no-unused-prop-types': 'error',
         'react/style-prop-object': 'error',
         'react/void-dom-elements-no-children': 'error',
 
