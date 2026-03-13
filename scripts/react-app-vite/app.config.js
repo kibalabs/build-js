@@ -86,7 +86,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
         },
       }),
       createShimsResolverPlugin(),
-      ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name })] : []),
+      ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name, entryFilePath: params.entryFilePath })] : []),
       ...(params.addRuntimeConfig ? [createRuntimeConfigPlugin({ vars: runtimeConfigVars })] : []),
       ...((params.seoTags || params.title) ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
     ],
@@ -107,7 +107,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
     },
     build: {
       rolldownOptions: {
-        input: params.entryFilePath,
+        input: path.join(process.cwd(), './index.html'),
         output: {
           // NOTE(krishan711): Rolldown treats each name() return value as a separate
           // code-splitting group, so minSize is evaluated per returned chunk name.

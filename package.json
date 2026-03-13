@@ -83,7 +83,6 @@
     "vite-plugin-node-polyfills": "^0.25.0",
     "webpack": "^5.105.4",
     "webpack-bundle-analyzer": "^5.2.0",
-    "webpack-dev-server": "^5.2.3",
     "webpack-merge": "^6.0.1",
     "webpack-sources": "^3.3.4",
     "whatwg-fetch": "^3.6.20"

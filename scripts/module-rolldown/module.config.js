@@ -13,12 +13,14 @@ const defaultParams = {
   dev: undefined,
   name: undefined,
   packageFilePath: undefined,
+  entryFilePaths: undefined,
   entryFilePath: undefined,
   outputDirectory: undefined,
   excludeAllNodeModules: undefined,
   nodeModulesPath: undefined,
   nodeModulesPaths: undefined,
   outputFilename: undefined,
+  typescriptDeclarationCompilerOptions: undefined,
 };
 
 export const buildModuleRolldownConfig = (inputParams = {}) => {
@@ -54,8 +56,9 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
     plugins: [
       sassPlugin,
       ...(params.dev ? [] : [generateTypeDeclarationsPlugin({
-        inputDirectories: [params.entryFilePath],
+        inputFilePaths: params.entryFilePaths || [params.entryFilePath],
         outputDirectory: params.outputDirectory,
+        compilerOptions: params.typescriptDeclarationCompilerOptions,
       })]),
     ],
     define: {
