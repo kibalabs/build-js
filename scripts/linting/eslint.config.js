@@ -225,6 +225,10 @@ export const buildEslintConfig = (inputParams = {}) => {
 
         // Import rules
         'import/default': 'off',
+        'import/named': 'off',
+        'import/namespace': 'off',
+        'import/no-named-as-default': 'off',
+        'import/no-named-as-default-member': 'off',
         'import/extensions': 'off',
         'import/first': 'error',
         'import/newline-after-import': 'error',
@@ -234,8 +238,6 @@ export const buildEslintConfig = (inputParams = {}) => {
         'import/no-duplicates': 'error',
         'import/no-dynamic-require': 'error',
         'import/no-mutable-exports': 'error',
-        'import/no-named-as-default': 'error',
-        'import/no-named-as-default-member': 'error',
         'import/no-self-import': 'error',
         'import/no-useless-path-segments': ['error', { commonjs: true }],
         'import/no-webpack-loader-syntax': 'error',

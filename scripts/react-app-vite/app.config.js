@@ -111,22 +111,27 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
         output: {
           // NOTE(krishan711): this splits each vendor into a separate file because
           // if we try to chunk the smaller ones together it causes circular imports
-          // TODO(krishan711): manualChunks function form is deprecated in Vite 8,
-          // migrate to advancedChunks when the API stabilizes
-          manualChunks(id) {
-            if (id.includes('/node_modules/')) {
-              const packageName = getNodeModuleName(id);
-              let packageSize = moduleSizeCache[packageName];
-              if (packageSize === undefined) {
-                packageSize = getNodeModuleSize(packageName, process.cwd());
-                moduleSizeCache[packageName] = packageSize;
-              }
-              if (packageSize > 0) {
-                return `vendor-${packageName.replace('@', '').replace('/', '-')}`;
-              }
-              return 'vendor';
-            }
-            return undefined;
+          codeSplitting: {
+            includeDependenciesRecursively: false,
+            groups: [{
+              name: (moduleId) => {
+                if (!moduleId.includes('/node_modules/')) {
+                  return null;
+                }
+                const packageName = getNodeModuleName(moduleId);
+                let packageSize = moduleSizeCache[packageName];
+                if (packageSize === undefined) {
+                  packageSize = getNodeModuleSize(packageName, process.cwd());
+                  moduleSizeCache[packageName] = packageSize;
+                }
+                if (packageSize > 0) {
+                  return `vendor-${packageName.replace('@', '').replace('/', '-')}`;
+                }
+                return 'vendor';
+              },
+              test: /node_modules/,
+              priority: 10,
+            }],
           },
         },
       },
