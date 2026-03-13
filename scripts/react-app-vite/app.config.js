@@ -109,8 +109,10 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       rolldownOptions: {
         input: params.entryFilePath,
         output: {
-          // NOTE(krishan711): this splits each vendor into a separate file because
-          // if we try to chunk the smaller ones together it causes circular imports
+          // NOTE(krishan711): Rolldown treats each name() return value as a separate
+          // code-splitting group, so minSize is evaluated per returned chunk name.
+          // Keep dedicated chunks only for larger packages and funnel smaller ones
+          // into a shared vendor chunk, matching the old webpack behavior.
           codeSplitting: {
             includeDependenciesRecursively: false,
             groups: [{
@@ -124,13 +126,12 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
                   packageSize = getNodeModuleSize(packageName, process.cwd());
                   moduleSizeCache[packageName] = packageSize;
                 }
-                if (packageSize > 0) {
-                  return `vendor-${packageName.replace('@', '').replace('/', '-')}`;
-                }
-                return 'vendor';
+                const chunkName = packageSize >= (100 * 1024) ? `vendor-${packageName.replace('@', '').replace('/', '-')}` : 'vendor-small';
+                return chunkName;
               },
               test: /node_modules/,
               priority: 10,
+              minSize: 100 * 1024,
             }],
           },
         },
