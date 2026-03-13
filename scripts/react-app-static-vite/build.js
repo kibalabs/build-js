@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { build, mergeConfig } from 'vite';
 
-import { getPageData, renderViteHtml } from '../react-app-static/static.js';
+import { getPageData, renderViteHtml } from '../common/reactStatic.js';
 import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
 import { buildParams } from '../util.js';
 
