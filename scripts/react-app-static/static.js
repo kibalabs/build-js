@@ -1,10 +1,8 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import React from 'react';
 
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ReactDOMServer from 'react-dom/server';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ReactDOMStatic from 'react-dom/static';
 import { matchPath } from 'react-router';
 
@@ -115,7 +113,9 @@ export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageDat
 
 export const renderHtml = (app, page, defaultSeoTags, appName, webpackBuildStatsFilePath, pageData = null) => {
   let pageHead = { headId: '', base: null, title: null, links: [], metas: [], styles: [], scripts: [], noscripts: [] };
-  const setHead = (newHead) => { pageHead = newHead; };
+  const setHead = (newHead) => {
+    pageHead = newHead;
+  };
   const extractor = new ChunkExtractor({ statsFile: webpackBuildStatsFilePath });
   const bodyString = ReactDOMServer.renderToString(
     React.createElement(

@@ -1,28 +1,16 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import { fixupConfigRules } from '@eslint/compat';
-import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import { defineConfig, globalIgnores } from 'eslint/config';
+import importPlugin from 'eslint-plugin-import';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-// import react from 'eslint-plugin-react';
 
 import { removeUndefinedProperties } from '../util.js';
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
 
 
 export const buildEslintConfig = (inputParams = {}) => {
@@ -33,8 +21,21 @@ export const buildEslintConfig = (inputParams = {}) => {
   return defineConfig([
     js.configs.recommended,
     tseslint.configs.recommended,
-    // NOTE(krishan711): react is imported by airbnb
-    // react.configs.flat.recommended,
+    react.configs.flat.recommended,
+    react.configs.flat['jsx-runtime'],
+    jsxA11y.flatConfigs.recommended,
+    importPlugin.flatConfigs.recommended,
+    stylistic.configs.customize({
+      indent: 2,
+      quotes: 'single',
+      semi: true,
+      jsx: true,
+      commaDangle: 'always-multiline',
+      braceStyle: '1tbs',
+      arrowParens: true,
+      quoteProps: 'as-needed',
+    }),
+    stylistic.configs['disable-legacy'],
     {
       plugins: {
         'react-hooks': reactHooks,
@@ -51,17 +52,8 @@ export const buildEslintConfig = (inputParams = {}) => {
       '**/dist-ssr/**/*',
       '**/public/**/*',
     ]), {
-      // NOTE(krishan711): airbnb doesn't support 9 yet. when it does a lot of this can be cleaned up
-      extends: fixupConfigRules(compat.extends(
-        'airbnb',
-      )),
-      // extends: [
-      //   importPlugin.flatConfigs.recommended,
-      //   importPlugin.flatConfigs.typescript,
-      // ],
       plugins: {
         'unused-imports': unusedImports,
-        '@stylistic': stylistic,
       },
       languageOptions: {
         parser: tsParser,
@@ -84,12 +76,16 @@ export const buildEslintConfig = (inputParams = {}) => {
         },
       },
       rules: {
+        // TypeScript overrides
         'no-shadow': 'off',
-        '@stylistic/indent': ['error', 2],
         '@typescript-eslint/no-shadow': ['error'],
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'always' }],
         '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        'no-unused-vars': 'off',
+        'no-use-before-define': 'off',
+        // Unused imports
         'unused-imports/no-unused-imports': 'error',
         'unused-imports/no-unused-vars': ['error', {
           vars: 'all',
@@ -97,44 +93,155 @@ export const buildEslintConfig = (inputParams = {}) => {
           args: 'after-used',
           argsIgnorePattern: '^_',
         }],
-        '@typescript-eslint/ban-ts-comment': 'off',
+        // Stylistic overrides
+        '@stylistic/indent': ['error', 2],
+        '@stylistic/object-curly-newline': ['error', { ImportDeclaration: 'never' }],
+        '@stylistic/no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
+        '@stylistic/lines-between-class-members': 'off',
+        '@stylistic/jsx-quotes': ['error', 'prefer-single'],
+        '@stylistic/multiline-ternary': 'off',
+
+        // Core best practices (from airbnb)
+        'array-callback-return': ['error', { allowImplicit: true }],
+        'block-scoped-var': 'error',
+        camelcase: ['error', { properties: 'never', ignoreDestructuring: false }],
+        'class-methods-use-this': 'error',
+        'consistent-return': 'error',
+        curly: ['error', 'multi-line'],
+        'default-case': ['error', { commentPattern: '^no default$' }],
+        'default-case-last': 'error',
+        'default-param-last': 'error',
+        'dot-notation': ['error', { allowKeywords: true }],
+        eqeqeq: ['error', 'always', { null: 'ignore' }],
+        'grouped-accessor-pairs': 'error',
+        'guard-for-in': 'error',
+        'no-alert': 'warn',
+        'no-array-constructor': 'error',
+        'no-await-in-loop': 'error',
+        'no-bitwise': 'error',
+        'no-caller': 'error',
         'no-console': ['error', { allow: ['error', 'warn'] }],
-        'max-len': 'off',
-        'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 0 }],
-        'lines-between-class-members': 'off',
-        'object-curly-newline': ['error', { ImportDeclaration: 'never' }],
-        'no-use-before-define': 'off',
-        'import/extensions': 'off',
-        'no-unused-vars': 'off',
+        'no-constructor-return': 'error',
+        'no-continue': 'error',
+        'no-else-return': ['error', { allowElseIf: false }],
+        'no-empty-function': ['error', { allow: ['arrowFunctions', 'functions', 'methods'] }],
+        'no-eval': 'error',
+        'no-extend-native': 'error',
+        'no-extra-bind': 'error',
+        'no-extra-label': 'error',
+        'no-implied-eval': 'error',
+        'no-iterator': 'error',
+        'no-label-var': 'error',
+        'no-labels': ['error', { allowLoop: false, allowSwitch: false }],
+        'no-lone-blocks': 'error',
+        'no-lonely-if': 'error',
+        'no-loop-func': 'error',
+        'no-multi-assign': ['error'],
+        'no-multi-str': 'error',
         'no-nested-ternary': 'off',
-        'prefer-destructuring': 'off',
-        'arrow-body-style': 'off',
-        'max-classes-per-file': 'off',
-        'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
-        'jsx-quotes': ['error', 'prefer-single'],
-        'react/self-closing-comp': ['error', { component: true, html: true }],
-        'react/jsx-first-prop-new-line': ['error', 'multiline'],
-        'react/jsx-tag-spacing': ['error', { beforeClosing: 'never' }],
-        'react/jsx-closing-tag-location': 'error',
-        'react/jsx-closing-bracket-location': ['error', 'line-aligned'],
-        'react/jsx-one-expression-per-line': ['error', { allow: 'single-child' }],
-        'react/jsx-filename-extension': [1, { extensions: ['.tsx', '.jsx'] }],
-        'react/jsx-boolean-value': ['warn', 'always'],
-        'react/jsx-fragments': ['warn', 'element'],
-        'react/jsx-no-useless-fragment': 'off',
-        'react/destructuring-assignment': 'off',
-        'react/require-default-props': 'off',
-        'react/jsx-wrap-multilines': ['error', {
-          declaration: 'parens-new-line',
-          assignment: 'parens-new-line',
-          return: 'parens-new-line',
-          arrow: 'parens-new-line',
-          condition: 'parens-new-line',
-          logical: 'parens-new-line',
-          prop: 'parens-new-line',
+        'no-new': 'error',
+        'no-new-func': 'error',
+        'no-new-wrappers': 'error',
+        'no-octal-escape': 'error',
+        'no-param-reassign': ['error', {
+          props: true,
+          ignorePropertyModificationsFor: [
+            'acc', 'accumulator', 'e', 'ctx', 'context',
+            'req', 'request', 'res', 'response', '$scope', 'staticContext',
+          ],
         }],
+        'no-plusplus': 'error',
+        'no-promise-executor-return': 'error',
+        'no-proto': 'error',
+        'no-restricted-exports': ['error', { restrictedNamedExports: ['default', 'then'] }],
+        'no-restricted-globals': ['error',
+          { name: 'isFinite', message: 'Use Number.isFinite instead.' },
+          { name: 'isNaN', message: 'Use Number.isNaN instead.' },
+          'addEventListener', 'blur', 'close', 'closed', 'confirm', 'defaultStatus',
+          'defaultstatus', 'event', 'external', 'find', 'focus', 'frameElement',
+          'frames', 'history', 'innerHeight', 'innerWidth', 'length', 'location',
+          'locationbar', 'menubar', 'moveBy', 'moveTo', 'name', 'onblur', 'onerror',
+          'onfocus', 'onload', 'onresize', 'onunload', 'open', 'opener', 'opera',
+          'outerHeight', 'outerWidth', 'pageXOffset', 'pageYOffset', 'parent', 'print',
+          'removeEventListener', 'resizeBy', 'resizeTo', 'screen', 'screenLeft',
+          'screenTop', 'screenX', 'screenY', 'scroll', 'scrollbars', 'scrollBy',
+          'scrollTo', 'scrollX', 'scrollY', 'self', 'status', 'statusbar', 'stop',
+          'toolbar', 'top',
+        ],
+        'no-restricted-properties': ['error',
+          { object: 'arguments', property: 'callee', message: 'arguments.callee is deprecated' },
+          { object: 'global', property: 'isFinite', message: 'Please use Number.isFinite instead' },
+          { object: 'self', property: 'isFinite', message: 'Please use Number.isFinite instead' },
+          { object: 'window', property: 'isFinite', message: 'Please use Number.isFinite instead' },
+          { object: 'global', property: 'isNaN', message: 'Please use Number.isNaN instead' },
+          { object: 'self', property: 'isNaN', message: 'Please use Number.isNaN instead' },
+          { object: 'window', property: 'isNaN', message: 'Please use Number.isNaN instead' },
+          { property: '__defineGetter__', message: 'Please use Object.defineProperty instead.' },
+          { property: '__defineSetter__', message: 'Please use Object.defineProperty instead.' },
+          { object: 'Math', property: 'pow', message: 'Use the exponentiation operator (**) instead.' },
+        ],
+        'no-restricted-syntax': ['error',
+          { selector: 'ForInStatement', message: 'for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array.' },
+          { selector: 'LabeledStatement', message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.' },
+          { selector: 'WithStatement', message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.' },
+        ],
+        'no-return-assign': ['error', 'always'],
+        'no-script-url': 'error',
+        'no-self-compare': 'error',
+        'no-sequences': 'error',
+        'no-template-curly-in-string': 'error',
+        'no-throw-literal': 'error',
+        'no-undef-init': 'error',
+        'no-unneeded-ternary': ['error', { defaultAssignment: false }],
+        'no-unreachable-loop': 'error',
+        'no-unused-expressions': ['error', { allowShortCircuit: false, allowTernary: false, allowTaggedTemplates: false }],
+        'no-useless-computed-key': 'error',
+        'no-useless-concat': 'error',
+        'no-useless-constructor': 'error',
+        'no-useless-rename': 'error',
+        'no-useless-return': 'error',
+        'no-var': 'error',
+        'no-void': 'error',
+        'object-shorthand': ['error', 'always', { ignoreConstructors: false, avoidQuotes: true }],
+        'one-var': ['error', 'never'],
+        'prefer-arrow-callback': ['error', { allowNamedFunctions: false, allowUnboundThis: true }],
+        'prefer-const': ['error', { destructuring: 'any', ignoreReadBeforeAssign: true }],
+        'prefer-destructuring': 'off',
+        'prefer-exponentiation-operator': 'error',
+        'prefer-numeric-literals': 'error',
+        'prefer-object-spread': 'error',
+        'prefer-promise-reject-errors': ['error', { allowEmptyReject: true }],
+        'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
+        'prefer-rest-params': 'error',
+        'prefer-spread': 'error',
+        'prefer-template': 'error',
+        radix: 'error',
+        strict: ['error', 'never'],
+        'symbol-description': 'error',
+        yoda: 'error',
+        'arrow-body-style': 'off',
+        'max-len': 'off',
+        'max-classes-per-file': 'off',
+
+        // Import rules
+        'import/default': 'off',
+        'import/extensions': 'off',
+        'import/first': 'error',
+        'import/newline-after-import': 'error',
+        'import/no-absolute-path': 'error',
+        'import/no-amd': 'error',
+        'import/no-cycle': ['error', { maxDepth: Infinity }],
+        'import/no-duplicates': 'error',
+        'import/no-dynamic-require': 'error',
+        'import/no-mutable-exports': 'error',
+        'import/no-named-as-default': 'error',
+        'import/no-named-as-default-member': 'error',
+        'import/no-self-import': 'error',
+        'import/no-useless-path-segments': ['error', { commonjs: true }],
+        'import/no-webpack-loader-syntax': 'error',
         'import/prefer-default-export': 'off',
         'import/no-unresolved': 'off',
+        'import/no-extraneous-dependencies': 'off',
         'import/order': ['error', {
           groups: ['builtin', 'external', 'internal'],
           alphabetize: {
@@ -156,7 +263,54 @@ export const buildEslintConfig = (inputParams = {}) => {
           pathGroupsExcludedImportTypes: ['builtin'],
           'newlines-between': 'always',
         }],
+        'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
+
+        // React rules
+        'react/self-closing-comp': ['error', { component: true, html: true }],
+        'react/jsx-first-prop-new-line': ['error', 'multiline'],
+        'react/jsx-tag-spacing': ['error', { beforeClosing: 'never' }],
+        'react/jsx-closing-tag-location': 'error',
+        'react/jsx-closing-bracket-location': ['error', 'line-aligned'],
+        'react/jsx-one-expression-per-line': ['error', { allow: 'single-child' }],
+        'react/jsx-filename-extension': [1, { extensions: ['.tsx', '.jsx'] }],
+        'react/jsx-boolean-value': ['warn', 'always'],
+        'react/jsx-fragments': ['warn', 'element'],
+        'react/jsx-no-useless-fragment': 'off',
+        'react/destructuring-assignment': 'off',
+        'react/require-default-props': 'off',
+        'react/jsx-wrap-multilines': ['error', {
+          declaration: 'parens-new-line',
+          assignment: 'parens-new-line',
+          return: 'parens-new-line',
+          arrow: 'parens-new-line',
+          condition: 'parens-new-line',
+          logical: 'parens-new-line',
+          prop: 'parens-new-line',
+        }],
+        'react/button-has-type': 'error',
+        'react/function-component-definition': ['error', {
+          namedComponents: ['function-declaration', 'function-expression'],
+          unnamedComponents: 'function-expression',
+        }],
+        'react/jsx-no-bind': ['error', {
+          ignoreRefs: true,
+          allowArrowFunctions: true,
+          allowFunctions: false,
+          allowBind: false,
+          ignoreDOMComponents: true,
+        }],
+        'react/jsx-no-constructed-context-values': 'error',
+        'react/jsx-no-script-url': 'error',
+        'react/jsx-pascal-case': ['error', { allowAllCaps: true, ignore: [] }],
+        'react/no-unstable-nested-components': 'error',
+        'react/no-invalid-html-attribute': 'error',
+        'react/style-prop-object': 'error',
+        'react/void-dom-elements-no-children': 'error',
+
+        // jsx-a11y override
         'jsx-a11y/anchor-is-valid': 'off',
+
+        // Other overrides
         'no-underscore-dangle': ['error', { allow: ['__filename', '__dirname'] }],
       },
     }, {
