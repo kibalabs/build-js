@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { defineConfig } from 'rolldown';
-import { minify } from 'rollup-plugin-esbuild';
 
 import { generateTypeDeclarationsPlugin } from './generateTypeDeclarationsPlugin.js';
 import { getExternalModules, getNodeModules } from '../common/packageUtil.js';
@@ -45,8 +44,7 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       name,
       format: 'esm',
       sourcemap: !params.dev,
-      // NOTE(krishan711): not production yet so uses plugin see https://rolldown.rs/guide/features#minification
-      minify: false,
+      minify: !params.dev,
     },
     platform: 'neutral',
     // Explicitly set mainFields for module resolution
@@ -55,8 +53,6 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
     },
     plugins: [
       sassPlugin,
-      minify(),
-      // NOTE(krishan711): couldn't get @rollup/plugin-typescript to emit declarations
       ...(params.dev ? [] : [generateTypeDeclarationsPlugin({
         inputDirectories: [params.entryFilePath],
         outputDirectory: params.outputDirectory,

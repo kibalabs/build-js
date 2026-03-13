@@ -51,7 +51,7 @@ export const buildStaticReactApp = async (inputParams = {}) => {
     build: {
       ssr: true,
       outDir: ssrDirectory,
-      rollupOptions: {
+      rolldownOptions: {
         input: appEntryFilePath,
         // NOTE(krishan711): prevent the hashes in the names
         output: {

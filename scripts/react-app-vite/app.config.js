@@ -16,7 +16,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // NOTE(krishan711): Workaround for vite-plugin-node-polyfills shim resolution issue.
 // External packages have hardcoded imports to 'vite-plugin-node-polyfills/shims/*' baked in,
-// but Rollup/esbuild can't resolve these from packages outside the workspace.
+// but the bundler can't resolve these from packages outside the workspace.
 // We resolve the actual shim paths and create aliases for both build and dev.
 // See: https://github.com/davidmyersdev/vite-plugin-node-polyfills/issues/140
 // Remove this when upgrading to a version that includes the fix from PR #141.
@@ -95,8 +95,10 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       alias: shimPaths,
     },
     optimizeDeps: {
-      esbuildOptions: {
-        alias: shimPaths,
+      rolldownOptions: {
+        resolve: {
+          alias: shimPaths,
+        },
       },
     },
     server: {
@@ -104,11 +106,13 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       port: params.port,
     },
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         input: params.entryFilePath,
         output: {
           // NOTE(krishan711): this splits each vendor into a separate file because
           // if we try to chunk the smaller ones together it causes circular imports
+          // TODO(krishan711): manualChunks function form is deprecated in Vite 8,
+          // migrate to advancedChunks when the API stabilizes
           manualChunks(id) {
             if (id.includes('/node_modules/')) {
               const packageName = getNodeModuleName(id);
