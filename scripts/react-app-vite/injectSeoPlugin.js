@@ -1,3 +1,19 @@
+export class Tag {
+  constructor(tagName, attributes) {
+    this.tagName = tagName;
+    this.attributes = attributes;
+  }
+}
+
+export class MetaTag extends Tag {
+  constructor(name, content) {
+    super('meta', {
+      name,
+      content,
+    });
+  }
+}
+
 export const injectSeoPlugin = ({
   title,
   tags,
