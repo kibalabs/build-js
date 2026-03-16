@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 
-import pluginReactSwc from '@vitejs/plugin-react-swc';
+import pluginReact from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 import { createIndexPlugin } from './createIndexPlugin.js';
@@ -42,7 +42,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
 
   return defineConfig({
     plugins: [
-      pluginReactSwc(),
+      pluginReact(),
       ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name, entryFilePath: params.entryFilePath })] : []),
       ...(params.addRuntimeConfig ? [createRuntimeConfigPlugin({ vars: runtimeConfigVars })] : []),
       ...((params.seoTags || params.title) ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
