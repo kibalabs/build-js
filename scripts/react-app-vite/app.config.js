@@ -1,11 +1,9 @@
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 
 import pluginReactSwc from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 import { createIndexPlugin } from './createIndexPlugin.js';
 import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin.js';
@@ -13,34 +11,6 @@ import { injectSeoPlugin } from './injectSeoPlugin.js';
 import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// NOTE(krishan711): Workaround for vite-plugin-node-polyfills shim resolution issue.
-// External packages have hardcoded imports to 'vite-plugin-node-polyfills/shims/*' baked in,
-// but the bundler can't resolve these from packages outside the workspace.
-// We resolve the actual shim paths and create aliases for both build and dev.
-// See: https://github.com/davidmyersdev/vite-plugin-node-polyfills/issues/140
-// Remove this when upgrading to a version that includes the fix from PR #141.
-const require = createRequire(import.meta.url);
-const shimPaths = {
-  'vite-plugin-node-polyfills/shims/buffer': require.resolve('vite-plugin-node-polyfills/shims/buffer'),
-  'vite-plugin-node-polyfills/shims/global': require.resolve('vite-plugin-node-polyfills/shims/global'),
-  'vite-plugin-node-polyfills/shims/process': require.resolve('vite-plugin-node-polyfills/shims/process'),
-};
-
-// NOTE(krishan711): Custom shim for node:module. Libraries like markdown-to-jsx v9 import
-// createRequire but never use it. The default polyfill (empty.js) doesn't export createRequire,
-// causing build errors. This provides a stub that throws if actually called.
-const moduleShimPath = path.join(__dirname, './moduleShim.js');
-
-const createShimsResolverPlugin = () => ({
-  name: 'vite-plugin-node-polyfills-shims-resolver',
-  resolveId(source) {
-    if (shimPaths[source]) {
-      return { id: shimPaths[source], external: false };
-    }
-    return null;
-  },
-});
 
 const defaultParams = {
   name: undefined,
@@ -73,34 +43,11 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
   return defineConfig({
     plugins: [
       pluginReactSwc(),
-      nodePolyfills({
-        // NOTE(krishan711): Use 'build' only for globals to avoid shim resolution issues in dev.
-        // See: https://github.com/davidmyersdev/vite-plugin-node-polyfills/issues/140
-        globals: {
-          Buffer: 'build',
-          global: 'build',
-          process: 'build',
-        },
-        overrides: {
-          module: moduleShimPath,
-        },
-      }),
-      createShimsResolverPlugin(),
       ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name, entryFilePath: params.entryFilePath })] : []),
       ...(params.addRuntimeConfig ? [createRuntimeConfigPlugin({ vars: runtimeConfigVars })] : []),
       ...((params.seoTags || params.title) ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
     ],
     mode: process.env.NODE_ENV || 'production',
-    resolve: {
-      alias: shimPaths,
-    },
-    optimizeDeps: {
-      rolldownOptions: {
-        resolve: {
-          alias: shimPaths,
-        },
-      },
-    },
     server: {
       host: '0.0.0.0',
       port: params.port,
@@ -114,7 +61,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
           // Keep dedicated chunks only for larger packages and funnel smaller ones
           // into a shared vendor chunk, matching the old webpack behavior.
           codeSplitting: {
-            includeDependenciesRecursively: false,
+            includeDependenciesRecursively: true,
             groups: [{
               name: (moduleId) => {
                 if (!moduleId.includes('/node_modules/')) {
