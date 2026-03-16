@@ -1,11 +1,11 @@
 install:
-	@ npm ci --legacy-peer-deps
+	@ npm ci
 
 install-updates:
-	@ npm install --legacy-peer-deps
+	@ npm install
 
 list-outdated: install
-	@ npm outdated --legacy-peer-deps
+	@ npm outdated
 
 lint-check:
 	@ node scripts/linting/run.js --config-modifier ./config.build.js
