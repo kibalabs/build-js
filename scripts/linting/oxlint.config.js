@@ -1,18 +1,11 @@
 import { removeUndefinedProperties } from '../util.js';
 
-
 export const buildOxlintConfig = (inputParams = {}) => {
-  const defaultParams = {
-  };
+  const defaultParams = {};
 
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   const config = {
-    plugins: [
-      'typescript',
-      'react',
-      'jsx-a11y',
-      'import',
-    ],
+    plugins: ['typescript', 'react', 'jsx-a11y', 'import'],
     categories: {
       correctness: 'off',
     },
@@ -29,13 +22,7 @@ export const buildOxlintConfig = (inputParams = {}) => {
         version: '19',
       },
     },
-    ignorePatterns: [
-      '**/node_modules/**/*',
-      '**/build/**/*',
-      '**/dist/**/*',
-      '**/dist-ssr/**/*',
-      '**/public/**/*',
-    ],
+    ignorePatterns: ['**/node_modules/**/*', '**/build/**/*', '**/dist/**/*', '**/dist-ssr/**/*', '**/public/**/*'],
     rules: {
       // Correctness (from eslint recommended)
       'constructor-super': 'error',
@@ -99,12 +86,15 @@ export const buildOxlintConfig = (inputParams = {}) => {
       'no-unused-expressions': ['error', { allowShortCircuit: false, allowTernary: false, allowTaggedTemplates: false }],
 
       // Unused vars/imports (replaces eslint-plugin-unused-imports)
-      'no-unused-vars': ['error', {
-        vars: 'all',
-        varsIgnorePattern: '^_',
-        args: 'after-used',
-        argsIgnorePattern: '^_',
-      }],
+      'no-unused-vars': [
+        'error',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
 
       'no-shadow': 'error',
 
@@ -144,31 +134,81 @@ export const buildOxlintConfig = (inputParams = {}) => {
       'no-new': 'error',
       'no-new-func': 'error',
       'no-new-wrappers': 'error',
-      'no-param-reassign': ['error', {
-        props: true,
-        ignorePropertyModificationsFor: [
-          'acc', 'accumulator', 'e', 'ctx', 'context',
-          'req', 'request', 'res', 'response', '$scope', 'staticContext',
-        ],
-      }],
+      'no-param-reassign': [
+        'error',
+        {
+          props: true,
+          ignorePropertyModificationsFor: ['acc', 'accumulator', 'e', 'ctx', 'context', 'req', 'request', 'res', 'response', '$scope', 'staticContext'],
+        },
+      ],
       'no-plusplus': 'error',
       'no-promise-executor-return': 'error',
       'no-proto': 'error',
-      'no-restricted-globals': ['error',
+      'no-restricted-globals': [
+        'error',
         { name: 'isFinite', message: 'Use Number.isFinite instead.' },
         { name: 'isNaN', message: 'Use Number.isNaN instead.' },
-        'addEventListener', 'blur', 'close', 'closed', 'confirm', 'defaultStatus',
-        'defaultstatus', 'event', 'external', 'find', 'focus', 'frameElement',
-        'frames', 'history', 'innerHeight', 'innerWidth', 'length', 'location',
-        'locationbar', 'menubar', 'moveBy', 'moveTo', 'name', 'onblur', 'onerror',
-        'onfocus', 'onload', 'onresize', 'onunload', 'open', 'opener', 'opera',
-        'outerHeight', 'outerWidth', 'pageXOffset', 'pageYOffset', 'parent', 'print',
-        'removeEventListener', 'resizeBy', 'resizeTo', 'screen', 'screenLeft',
-        'screenTop', 'screenX', 'screenY', 'scroll', 'scrollbars', 'scrollBy',
-        'scrollTo', 'scrollX', 'scrollY', 'self', 'status', 'statusbar', 'stop',
-        'toolbar', 'top',
+        'addEventListener',
+        'blur',
+        'close',
+        'closed',
+        'confirm',
+        'defaultStatus',
+        'defaultstatus',
+        'event',
+        'external',
+        'find',
+        'focus',
+        'frameElement',
+        'frames',
+        'history',
+        'innerHeight',
+        'innerWidth',
+        'length',
+        'location',
+        'locationbar',
+        'menubar',
+        'moveBy',
+        'moveTo',
+        'name',
+        'onblur',
+        'onerror',
+        'onfocus',
+        'onload',
+        'onresize',
+        'onunload',
+        'open',
+        'opener',
+        'opera',
+        'outerHeight',
+        'outerWidth',
+        'pageXOffset',
+        'pageYOffset',
+        'parent',
+        'print',
+        'removeEventListener',
+        'resizeBy',
+        'resizeTo',
+        'screen',
+        'screenLeft',
+        'screenTop',
+        'screenX',
+        'screenY',
+        'scroll',
+        'scrollbars',
+        'scrollBy',
+        'scrollTo',
+        'scrollX',
+        'scrollY',
+        'self',
+        'status',
+        'statusbar',
+        'stop',
+        'toolbar',
+        'top',
       ],
-      'no-restricted-properties': ['error',
+      'no-restricted-properties': [
+        'error',
         { object: 'arguments', property: 'callee', message: 'arguments.callee is deprecated' },
         { object: 'global', property: 'isFinite', message: 'Please use Number.isFinite instead' },
         { object: 'self', property: 'isFinite', message: 'Please use Number.isFinite instead' },
@@ -217,7 +257,7 @@ export const buildOxlintConfig = (inputParams = {}) => {
       'import/no-amd': 'error',
       'import/no-cycle': 'error',
       'import/no-dynamic-require': 'error',
-      'import/no-duplicates': 'error',
+      'import/no-duplicates': ['error', { preferInline: true }],
       'import/no-mutable-exports': 'error',
       'import/no-self-import': 'error',
       'import/no-webpack-loader-syntax': 'error',

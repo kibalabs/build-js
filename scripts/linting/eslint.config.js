@@ -1,21 +1,19 @@
 import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
-import { defineConfig, globalIgnores } from 'eslint/config';
 import importPlugin from 'eslint-plugin-import';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import unusedImports from 'eslint-plugin-unused-imports';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 import { removeUndefinedProperties } from '../util.js';
 
-
 export const buildEslintConfig = (inputParams = {}) => {
-  const defaultParams = {
-  };
+  const defaultParams = {};
   // eslint-disable-next-line unused-imports/no-unused-vars
   const params = { ...defaultParams, ...removeUndefinedProperties(inputParams) };
   return defineConfig([
@@ -45,13 +43,8 @@ export const buildEslintConfig = (inputParams = {}) => {
         'react-hooks/exhaustive-deps': 'error',
       },
     },
-    globalIgnores([
-      '**/node_modules/**/*',
-      '**/build/**/*',
-      '**/dist/**/*',
-      '**/dist-ssr/**/*',
-      '**/public/**/*',
-    ]), {
+    globalIgnores(['**/node_modules/**/*', '**/build/**/*', '**/dist/**/*', '**/dist-ssr/**/*', '**/public/**/*']),
+    {
       plugins: {
         'unused-imports': unusedImports,
       },
@@ -87,12 +80,15 @@ export const buildEslintConfig = (inputParams = {}) => {
         'no-use-before-define': 'off',
         // Unused imports
         'unused-imports/no-unused-imports': 'error',
-        'unused-imports/no-unused-vars': ['error', {
-          vars: 'all',
-          varsIgnorePattern: '^_',
-          args: 'after-used',
-          argsIgnorePattern: '^_',
-        }],
+        'unused-imports/no-unused-vars': [
+          'error',
+          {
+            vars: 'all',
+            varsIgnorePattern: '^_',
+            args: 'after-used',
+            argsIgnorePattern: '^_',
+          },
+        ],
         // Stylistic overrides
         '@stylistic/indent': ['error', 2],
         '@stylistic/object-curly-newline': ['error', { ImportDeclaration: 'never' }],
@@ -143,32 +139,82 @@ export const buildEslintConfig = (inputParams = {}) => {
         'no-new-func': 'error',
         'no-new-wrappers': 'error',
         'no-octal-escape': 'error',
-        'no-param-reassign': ['error', {
-          props: true,
-          ignorePropertyModificationsFor: [
-            'acc', 'accumulator', 'e', 'ctx', 'context',
-            'req', 'request', 'res', 'response', '$scope', 'staticContext',
-          ],
-        }],
+        'no-param-reassign': [
+          'error',
+          {
+            props: true,
+            ignorePropertyModificationsFor: ['acc', 'accumulator', 'e', 'ctx', 'context', 'req', 'request', 'res', 'response', '$scope', 'staticContext'],
+          },
+        ],
         'no-plusplus': 'error',
         'no-promise-executor-return': 'error',
         'no-proto': 'error',
         'no-restricted-exports': ['error', { restrictedNamedExports: ['default', 'then'] }],
-        'no-restricted-globals': ['error',
+        'no-restricted-globals': [
+          'error',
           { name: 'isFinite', message: 'Use Number.isFinite instead.' },
           { name: 'isNaN', message: 'Use Number.isNaN instead.' },
-          'addEventListener', 'blur', 'close', 'closed', 'confirm', 'defaultStatus',
-          'defaultstatus', 'event', 'external', 'find', 'focus', 'frameElement',
-          'frames', 'history', 'innerHeight', 'innerWidth', 'length', 'location',
-          'locationbar', 'menubar', 'moveBy', 'moveTo', 'name', 'onblur', 'onerror',
-          'onfocus', 'onload', 'onresize', 'onunload', 'open', 'opener', 'opera',
-          'outerHeight', 'outerWidth', 'pageXOffset', 'pageYOffset', 'parent', 'print',
-          'removeEventListener', 'resizeBy', 'resizeTo', 'screen', 'screenLeft',
-          'screenTop', 'screenX', 'screenY', 'scroll', 'scrollbars', 'scrollBy',
-          'scrollTo', 'scrollX', 'scrollY', 'self', 'status', 'statusbar', 'stop',
-          'toolbar', 'top',
+          'addEventListener',
+          'blur',
+          'close',
+          'closed',
+          'confirm',
+          'defaultStatus',
+          'defaultstatus',
+          'event',
+          'external',
+          'find',
+          'focus',
+          'frameElement',
+          'frames',
+          'history',
+          'innerHeight',
+          'innerWidth',
+          'length',
+          'location',
+          'locationbar',
+          'menubar',
+          'moveBy',
+          'moveTo',
+          'name',
+          'onblur',
+          'onerror',
+          'onfocus',
+          'onload',
+          'onresize',
+          'onunload',
+          'open',
+          'opener',
+          'opera',
+          'outerHeight',
+          'outerWidth',
+          'pageXOffset',
+          'pageYOffset',
+          'parent',
+          'print',
+          'removeEventListener',
+          'resizeBy',
+          'resizeTo',
+          'screen',
+          'screenLeft',
+          'screenTop',
+          'screenX',
+          'screenY',
+          'scroll',
+          'scrollbars',
+          'scrollBy',
+          'scrollTo',
+          'scrollX',
+          'scrollY',
+          'self',
+          'status',
+          'statusbar',
+          'stop',
+          'toolbar',
+          'top',
         ],
-        'no-restricted-properties': ['error',
+        'no-restricted-properties': [
+          'error',
           { object: 'arguments', property: 'callee', message: 'arguments.callee is deprecated' },
           { object: 'global', property: 'isFinite', message: 'Please use Number.isFinite instead' },
           { object: 'self', property: 'isFinite', message: 'Please use Number.isFinite instead' },
@@ -180,7 +226,8 @@ export const buildEslintConfig = (inputParams = {}) => {
           { property: '__defineSetter__', message: 'Please use Object.defineProperty instead.' },
           { object: 'Math', property: 'pow', message: 'Use the exponentiation operator (**) instead.' },
         ],
-        'no-restricted-syntax': ['error',
+        'no-restricted-syntax': [
+          'error',
           { selector: 'ForInStatement', message: 'for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array.' },
           { selector: 'LabeledStatement', message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.' },
           { selector: 'WithStatement', message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.' },
@@ -244,27 +291,34 @@ export const buildEslintConfig = (inputParams = {}) => {
         'import/prefer-default-export': 'off',
         'import/no-unresolved': 'off',
         'import/no-extraneous-dependencies': 'error',
-        'import/order': ['error', {
-          groups: ['builtin', 'external', 'internal'],
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: true,
+        'import/order': [
+          'error',
+          {
+            groups: ['builtin', 'external', 'internal'],
+            alphabetize: {
+              order: 'asc',
+              caseInsensitive: true,
+            },
+            pathGroups: [
+              {
+                pattern: 'react',
+                group: 'external',
+                position: 'before',
+              },
+              {
+                pattern: 'react-dom',
+                group: 'external',
+                position: 'before',
+              },
+              {
+                pattern: '@src/**',
+                group: 'internal',
+              },
+            ],
+            pathGroupsExcludedImportTypes: ['builtin'],
+            'newlines-between': 'always',
           },
-          pathGroups: [{
-            pattern: 'react',
-            group: 'external',
-            position: 'before',
-          }, {
-            pattern: 'react-dom',
-            group: 'external',
-            position: 'before',
-          }, {
-            pattern: '@src/**',
-            group: 'internal',
-          }],
-          pathGroupsExcludedImportTypes: ['builtin'],
-          'newlines-between': 'always',
-        }],
+        ],
         'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
 
         // React rules
@@ -280,27 +334,36 @@ export const buildEslintConfig = (inputParams = {}) => {
         'react/jsx-no-useless-fragment': 'off',
         'react/destructuring-assignment': 'off',
         'react/require-default-props': 'off',
-        'react/jsx-wrap-multilines': ['error', {
-          declaration: 'parens-new-line',
-          assignment: 'parens-new-line',
-          return: 'parens-new-line',
-          arrow: 'parens-new-line',
-          condition: 'parens-new-line',
-          logical: 'parens-new-line',
-          prop: 'parens-new-line',
-        }],
+        'react/jsx-wrap-multilines': [
+          'error',
+          {
+            declaration: 'parens-new-line',
+            assignment: 'parens-new-line',
+            return: 'parens-new-line',
+            arrow: 'parens-new-line',
+            condition: 'parens-new-line',
+            logical: 'parens-new-line',
+            prop: 'parens-new-line',
+          },
+        ],
         'react/button-has-type': 'error',
-        'react/function-component-definition': ['error', {
-          namedComponents: ['function-declaration', 'function-expression'],
-          unnamedComponents: 'function-expression',
-        }],
-        'react/jsx-no-bind': ['error', {
-          ignoreRefs: true,
-          allowArrowFunctions: true,
-          allowFunctions: false,
-          allowBind: false,
-          ignoreDOMComponents: true,
-        }],
+        'react/function-component-definition': [
+          'error',
+          {
+            namedComponents: ['function-declaration', 'function-expression'],
+            unnamedComponents: 'function-expression',
+          },
+        ],
+        'react/jsx-no-bind': [
+          'error',
+          {
+            ignoreRefs: true,
+            allowArrowFunctions: true,
+            allowFunctions: false,
+            allowBind: false,
+            ignoreDOMComponents: true,
+          },
+        ],
         'react/jsx-no-constructed-context-values': 'error',
         'react/jsx-props-no-spreading': 'error',
         'react/jsx-no-script-url': 'error',
@@ -318,12 +381,14 @@ export const buildEslintConfig = (inputParams = {}) => {
         // Other overrides
         'no-underscore-dangle': ['error', { allow: ['__filename', '__dirname'] }],
       },
-    }, {
+    },
+    {
       files: ['**/*.tsx'],
       rules: {
         'react/prop-types': 'off',
       },
-    }, {
+    },
+    {
       files: ['**/*.stories.tsx', '**/*.stories.jsx', '.storybook/**/*'],
       rules: {
         'react/jsx-props-no-spreading': 'off',

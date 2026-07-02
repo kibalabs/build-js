@@ -1,11 +1,7 @@
 import { generateTypescriptDeclarations } from '../typing/generateDeclarations.js';
 import { buildTsConfig } from '../typing/ts.config.js';
 
-export const generateTypeDeclarationsPlugin = ({
-  inputFilePaths,
-  outputDirectory,
-  compilerOptions = {},
-}) => {
+export const generateTypeDeclarationsPlugin = ({ inputFilePaths, outputDirectory, compilerOptions = {} }) => {
   const tsConfig = buildTsConfig({});
   return {
     name: 'generate-type-declarations',

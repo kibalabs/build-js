@@ -2,8 +2,8 @@ import path from 'node:path';
 
 import { build, createServer } from 'vite';
 
-import { buildReactAppViteConfig } from './app.config.js';
 import { buildParams } from '../util.js';
+import { buildReactAppViteConfig } from './app.config.js';
 
 // NOTE(krishan711): docs at https://vite.dev/guide/api-javascript.html
 export const buildReactApp = async (inputParams = {}) => {

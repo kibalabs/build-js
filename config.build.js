@@ -1,4 +1,3 @@
-
 export default (config) => {
   const newConfig = config;
   newConfig.eslintConfigOverride = {

@@ -8,7 +8,6 @@ import { getPageData, renderViteHtml } from '../common/reactStatic.js';
 import { buildReactAppViteConfig } from '../react-app-vite/app.config.js';
 import { buildParams } from '../util.js';
 
-
 export const buildStaticReactApp = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
@@ -41,34 +40,38 @@ export const buildStaticReactApp = async (inputParams = {}) => {
   const clientDirectory = outputDirectoryPath;
   const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
   console.log('building app...');
-  await build(mergeConfig(viteConfig, {
-    build: {
-      outDir: clientDirectory,
-    },
-  }));
+  await build(
+    mergeConfig(viteConfig, {
+      build: {
+        outDir: clientDirectory,
+      },
+    }),
+  );
   console.log('building server app...');
-  await build(mergeConfig(viteConfig, {
-    build: {
-      ssr: true,
-      outDir: ssrDirectory,
-      rolldownOptions: {
-        input: appEntryFilePath,
-        // NOTE(krishan711): prevent the hashes in the names
-        output: {
-          entryFileNames: 'assets/[name].js',
-          chunkFileNames: 'assets/[name].js',
-          assetFileNames: 'assets/[name].[ext]',
+  await build(
+    mergeConfig(viteConfig, {
+      build: {
+        ssr: true,
+        outDir: ssrDirectory,
+        rolldownOptions: {
+          input: appEntryFilePath,
+          // NOTE(krishan711): prevent the hashes in the names
+          output: {
+            entryFileNames: 'assets/[name].js',
+            chunkFileNames: 'assets/[name].js',
+            assetFileNames: 'assets/[name].[ext]',
+          },
         },
       },
-    },
-  }));
-  const app = (await import(path.join(ssrDirectory, 'assets/app.js')));
+    }),
+  );
+  const app = await import(path.join(ssrDirectory, 'assets/app.js'));
   const appData = { name, port: params.port, defaultSeoTags: params.seoTags };
   const htmlTemplate = await fs.readFileSync(path.join(clientDirectory, 'index.html'), 'utf-8');
   // NOTE(krishan711): if this could be done in an parallel way it would be faster!
   params.pages.forEach(async (page) => {
     console.log(`Rendering page ${page.path} to ${page.filename}`);
-    const pageData = (app.routes && app.globals) ? await getPageData(page.path, app.routes, app.globals) : null;
+    const pageData = app.routes && app.globals ? await getPageData(page.path, app.routes, app.globals) : null;
     const html = await renderViteHtml(app.App, page, appData.defaultSeoTags, appData.name, pageData, htmlTemplate);
     const outputPath = path.join(outputDirectoryPath, page.filename);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });

@@ -3,13 +3,6 @@ import { program } from 'commander';
 
 import { runTyping } from './type.js';
 
-const params = program
-  .option('-e, --engine <engine>', "Type-check engine to use, either 'tsc' or 'tsgo'", 'tsc')
-  .option('-c, --config-modifier <path>')
-  .option('-d, --directory [path]')
-  .option('-o, --output-file [path]')
-  .option('-f, --output-file-format [format]')
-  .parse(process.argv)
-  .opts();
+const params = program.option('-e, --engine <engine>', "Type-check engine to use, either 'tsc' or 'tsgo'", 'tsc').option('-c, --config-modifier <path>').option('-d, --directory [path]').option('-o, --output-file [path]').option('-f, --output-file-format [format]').parse(process.argv).opts();
 
 runTyping(params);

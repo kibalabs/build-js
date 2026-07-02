@@ -6,7 +6,6 @@ import { rolldown } from 'rolldown';
 import { getExternalModules, isExternalModuleRequest } from '../common/packageUtil.js';
 import { buildParams } from '../util.js';
 
-
 const buildServerRolldownConfig = (params) => {
   const packageData = JSON.parse(fs.readFileSync(params.packageFilePath, 'utf8'));
   const name = params.name || packageData.name;
@@ -39,7 +38,6 @@ const buildServerRolldownConfig = (params) => {
     },
   };
 };
-
 
 export const buildServer = async (inputParams = {}) => {
   const defaultParams = {

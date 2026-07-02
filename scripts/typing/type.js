@@ -9,8 +9,8 @@ import chalk from 'chalk';
 import { glob } from 'glob';
 import typescript from 'typescript';
 
-import { buildTsConfig } from './ts.config.js';
 import { buildParams } from '../util.js';
+import { buildTsConfig } from './ts.config.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -56,12 +56,16 @@ const runTsc = (params) => {
   // NOTE(krishan711): I couldn't find a way to filter node_modules in the glob (filtering needed for lerna repos)
   const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts,tsx}'));
   const filteredFiles = files.filter((file) => !file.includes('/node_modules/'));
-  const config = typescript.parseJsonConfigFileContent({
-    compilerOptions: {
-      ...tsConfig.compilerOptions,
-      noEmit: true,
+  const config = typescript.parseJsonConfigFileContent(
+    {
+      compilerOptions: {
+        ...tsConfig.compilerOptions,
+        noEmit: true,
+      },
     },
-  }, typescript.sys, process.cwd());
+    typescript.sys,
+    process.cwd(),
+  );
   const program = typescript.createProgram(filteredFiles, config.options);
   // NOTE(krishan711): from https://github.com/microsoft/TypeScript-wiki/blob/master/Using-the-Compiler-API.md
   const emitResult = program.emit();
@@ -76,16 +80,19 @@ const runTsgo = async (params) => {
   const resolvedDirectory = path.resolve(params.directory || './src');
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'kibalabs-build-tsgo-'));
   const tsconfigFile = path.join(tempDirectory, 'tsconfig.json');
-  fs.writeFileSync(tsconfigFile, JSON.stringify({
-    compilerOptions: {
-      ...tsConfig.compilerOptions,
-      noEmit: true,
-      // NOTE: without an explicit rootDir, TypeScript infers it from the tsconfig file's own location
-      // (our temp directory), which doesn't contain the source files and causes a TS6059 error
-      rootDir: resolvedDirectory,
-    },
-    include: [resolvedDirectory],
-  }));
+  fs.writeFileSync(
+    tsconfigFile,
+    JSON.stringify({
+      compilerOptions: {
+        ...tsConfig.compilerOptions,
+        noEmit: true,
+        // NOTE: without an explicit rootDir, TypeScript infers it from the tsconfig file's own location
+        // (our temp directory), which doesn't contain the source files and causes a TS6059 error
+        rootDir: resolvedDirectory,
+      },
+      include: [resolvedDirectory],
+    }),
+  );
   try {
     const tscArgs = ['-p', tsconfigFile, '--pretty', 'false'];
     const output = await runNodeBin('typescript-native-preview', 'tsc', tscArgs);
@@ -219,7 +226,7 @@ export class PrettyFormatter {
       totalWarningCount += warningCount;
       return `${accumulatedValue}\n${this.getSummary(errorCount, warningCount)} in ${filePath}\n${fileMessages.join('\n')}\n`;
     }, '');
-    output += (totalErrorCount || totalWarningCount) ? `\nFailed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : chalk.green('Passed.');
+    output += totalErrorCount || totalWarningCount ? `\nFailed due to ${this.getSummary(totalErrorCount, totalWarningCount)}.` : chalk.green('Passed.');
     return output;
   }
 }
