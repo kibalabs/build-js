@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
+- [MINOR] Added --engine oxlint support to lint commands to use oxlint instead of eslint
+- [MINOR] Added --engine tsgo support to type commands to use new faster ts instead of eslint
 
 ### Changed
 
