@@ -22,6 +22,8 @@ export const runLinting = async (inputParams = {}) => {
     engine: 'eslint',
     configModifier: undefined,
     eslintConfigOverride: undefined,
+    oxlintConfigModifier: undefined,
+    oxfmtConfigModifier: undefined,
     stylelintConfigModifier: undefined,
     directory: undefined,
     outputFile: undefined,

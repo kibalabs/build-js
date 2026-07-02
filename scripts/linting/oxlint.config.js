@@ -310,8 +310,8 @@ export const buildOxlintConfig = (inputParams = {}) => {
       },
     ],
   };
-  if (params.configModifier) {
-    return params.configModifier(config);
+  if (params.oxlintConfigModifier) {
+    return params.oxlintConfigModifier(config);
   }
   return config;
 };

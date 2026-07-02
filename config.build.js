@@ -7,5 +7,11 @@ export default (config) => {
       'class-methods-use-this': 'off',
     },
   };
+  newConfig.oxlintConfigModifier = (oxlintConfig) => {
+    const newOxlintConfig = oxlintConfig;
+    newOxlintConfig.rules['no-console'] = 'off';
+    newOxlintConfig.rules['class-methods-use-this'] = 'off';
+    return newOxlintConfig;
+  };
   return newConfig;
 };
