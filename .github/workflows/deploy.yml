@@ -22,9 +22,9 @@ jobs:
           # NOTE(krishan711): need full history to calculate difference
           fetch-depth: 0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v4
       - name: Build docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v7
         with:
           context: .
           load: true
@@ -33,19 +33,17 @@ jobs:
           tags: ${{ env.DOCKER_IMAGE }}
       - name: Calculate commit count since last tag
         id: vars
-        run: echo ::set-output name=commit_count::$(git rev-list $(git describe --tags --abbrev=0)..HEAD --count)
+        run: echo "commit_count=$(git rev-list $(git describe --tags --abbrev=0)..HEAD --count)" >> "$GITHUB_OUTPUT"
       - name: Extract built package from Docker
         run: |
           docker create --name temp-container $DOCKER_IMAGE
           docker cp temp-container:/app/. ./
           docker rm temp-container
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-      - name: Update npm to latest
-        run: npm install -g npm@latest
       - name: Publish next package to npm
         if: steps.vars.outputs.commit_count != '0' && github.ref == 'refs/heads/main'
         run: npx kiba-publish --next --next-version ${{ steps.vars.outputs.commit_count }}
