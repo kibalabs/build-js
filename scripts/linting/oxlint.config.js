@@ -261,10 +261,10 @@ export const buildOxlintConfig = (inputParams = {}) => {
       'import/no-mutable-exports': 'error',
       'import/no-self-import': 'error',
       'import/no-webpack-loader-syntax': 'error',
-      // NOTE: import/order (grouping) has no oxlint equivalent - oxfmt is off (see lint.js `skipOxfmt`)
-      // because it's a full-file reprinter, not a partial transform, so only alphabetical sorting is
-      // enforced here; there's no react/react-dom-first grouping like the old eslint config had
-      'sort-imports': ['error', { allowSeparatedGroups: true }],
+      // NOTE: import/order and sort-imports are intentionally not ported here - oxlint's `sort-imports`
+      // rule sorts by syntax-kind then local binding name (not by module path/grouping like the old
+      // eslint `import/order` config did), so it's not a usable substitute; oxfmt's `sortImports` (path
+      // + group based, matching the old config) would work but is off by default - see lint.js `skipOxfmt`
 
       // React rules
       'react/self-closing-comp': ['error', { component: true, html: true }],
