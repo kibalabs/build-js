@@ -42,10 +42,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # NOTE: needs npm >=11.5.1 for OIDC trusted publishing (id-token: write above) - Node 24 LTS
+          # bundles a compatible npm by default, so no separate "update npm" step is needed (that used
+          # to force-install npm@latest, which now requires Node >=22.22.2 and broke on Node 20 runners)
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-      - name: Update npm to latest
-        run: npm install -g npm@latest
       - name: Publish next package to npm
         if: steps.vars.outputs.commit_count != '0' && github.ref == 'refs/heads/main'
         run: npx kiba-publish --next --next-version ${{ steps.vars.outputs.commit_count }}
