@@ -7,7 +7,7 @@ export const buildOxlintConfig = (inputParams = {}) => {
   const config = {
     plugins: ['typescript', 'react', 'jsx-a11y', 'import'],
     categories: {
-      correctness: 'off',
+      correctness: 'error',
     },
     env: {
       builtin: true,

@@ -30,6 +30,7 @@ export const runLinting = async (inputParams = {}) => {
     outputFileFormat: undefined,
     fix: false,
     skipStylelint: false,
+    skipOxfmt: true,
   };
   const params = await buildParams(defaultParams, inputParams);
   const workingDirectory = params.directory || process.cwd();
@@ -104,24 +105,30 @@ const runEslint = async (params, workingDirectory) => {
 
 const runOxlint = async (params, workingDirectory) => {
   const oxlintConfig = buildOxlintConfig(params);
-  const oxfmtConfig = buildOxfmtConfig(params);
   const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'kibalabs-build-oxlint-'));
   const oxlintConfigFile = path.join(tempDirectory, '.oxlintrc.json');
-  const oxfmtConfigFile = path.join(tempDirectory, '.oxfmtrc.json');
   fs.writeFileSync(oxlintConfigFile, JSON.stringify(oxlintConfig));
-  fs.writeFileSync(oxfmtConfigFile, JSON.stringify(oxfmtConfig));
+  if (!params.skipOxfmt) {
+    const oxfmtConfig = buildOxfmtConfig(params);
+    const oxfmtConfigFile = path.join(tempDirectory, '.oxfmtrc.json');
+    fs.writeFileSync(oxfmtConfigFile, JSON.stringify(oxfmtConfig));
+  }
   try {
     const oxlintArgs = ['-c', oxlintConfigFile, '--format', 'json', ...(params.fix ? ['--fix'] : []), workingDirectory];
     const oxlintOutput = await runNodeBin('oxlint', oxlintArgs);
     const oxlintDiagnostics = oxlintJsonToDiagnostics(JSON.parse(oxlintOutput || '{}'));
 
-    const oxfmtArgs = ['-c', oxfmtConfigFile, ...(params.fix ? [] : ['--list-different']), workingDirectory];
-    const oxfmtOutput = await runNodeBin('oxfmt', oxfmtArgs);
-    const oxfmtDiagnostics = params.fix ? [] : oxfmtListDifferentToDiagnostics(oxfmtOutput);
+    let oxfmtDiagnostics = [];
+    if (!params.skipOxfmt) {
+      const oxfmtConfigFile = path.join(tempDirectory, '.oxfmtrc.json');
+      const oxfmtArgs = ['-c', oxfmtConfigFile, ...(params.fix ? [] : ['--list-different']), workingDirectory];
+      const oxfmtOutput = await runNodeBin('oxfmt', oxfmtArgs);
+      oxfmtDiagnostics = params.fix ? [] : oxfmtListDifferentToDiagnostics(oxfmtOutput);
+    }
 
     return [
       { label: 'Oxlint', diagnostics: oxlintDiagnostics },
-      { label: 'Oxfmt', diagnostics: oxfmtDiagnostics },
+      ...(params.skipOxfmt ? [] : [{ label: 'Oxfmt', diagnostics: oxfmtDiagnostics }]),
     ];
   } finally {
     fs.rmSync(tempDirectory, { recursive: true, force: true });
