@@ -3,11 +3,10 @@ import path from 'node:path';
 
 import { defineConfig } from 'rolldown';
 
-import { generateTypeDeclarationsPlugin } from './generateTypeDeclarationsPlugin.js';
 import { getExternalModules, getNodeModules } from '../common/packageUtil.js';
 import { sassPlugin } from '../plugins/sassPlugin.js';
 import { removeUndefinedProperties } from '../util.js';
-
+import { generateTypeDeclarationsPlugin } from './generateTypeDeclarationsPlugin.js';
 
 const defaultParams = {
   dev: undefined,
@@ -55,11 +54,15 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
     },
     plugins: [
       sassPlugin,
-      ...(params.dev ? [] : [generateTypeDeclarationsPlugin({
-        inputFilePaths: params.entryFilePaths || [params.entryFilePath],
-        outputDirectory: params.outputDirectory,
-        compilerOptions: params.typescriptDeclarationCompilerOptions,
-      })]),
+      ...(params.dev
+        ? []
+        : [
+            generateTypeDeclarationsPlugin({
+              inputFilePaths: params.entryFilePaths || [params.entryFilePath],
+              outputDirectory: params.outputDirectory,
+              compilerOptions: params.typescriptDeclarationCompilerOptions,
+            }),
+          ]),
     ],
     define: {
       'process.env.PACKAGE_NAME': JSON.stringify(name),

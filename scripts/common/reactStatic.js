@@ -79,9 +79,7 @@ const removeTitleTagFromString = (htmlString) => {
 };
 
 export const renderViteHtml = async (app, page, defaultSeoTags, appName, pageData, htmlTemplate) => {
-  const bodyString = await renderToString(
-    React.createElement(app, { staticPath: page.path, pageData }),
-  );
+  const bodyString = await renderToString(React.createElement(app, { staticPath: page.path, pageData }));
   const extractedHeadTags = extractHeadContentFromString(bodyString);
   const extractedHeadTagsString = extractedHeadTags.join('');
   let pageSeoTags = page.seoTags;

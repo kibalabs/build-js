@@ -60,10 +60,7 @@ export const getNodeModuleSize = (moduleName, projectRoot) => {
 };
 
 export const findModulePath = (moduleName, projectRoot) => {
-  const potentialPaths = [
-    path.join(projectRoot, 'node_modules', moduleName),
-    path.join(projectRoot, 'node_modules', '@types', moduleName),
-  ];
+  const potentialPaths = [path.join(projectRoot, 'node_modules', moduleName), path.join(projectRoot, 'node_modules', '@types', moduleName)];
   for (let index = 0; index < potentialPaths.length; index += 1) {
     const potentialPath = potentialPaths[index];
     if (fs.existsSync(potentialPath)) {

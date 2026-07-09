@@ -2,58 +2,61 @@
   "name": "@kibalabs/build",
   "version": "0.14.1",
   "description": "Utils for building frontend projects at Kiba Labs",
+  "homepage": "https://github.com/kibalabs/build-js",
+  "bugs": "https://github.com/kibalabs/build-js/issues",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kibalabs/build-js.git"
   },
-  "homepage": "https://github.com/kibalabs/build-js",
-  "bugs": "https://github.com/kibalabs/build-js/issues",
-  "type": "module",
   "bin": {
-    "build-react-app-vite": "scripts/react-app-vite/run.js",
-    "build-react-app-static-vite": "scripts/react-app-static-vite/run.js",
-    "build-react-app-ssr-vite": "scripts/react-app-ssr-vite/run.js",
     "build-module-rolldown": "scripts/module-rolldown/run.js",
+    "build-react-app-ssr-vite": "scripts/react-app-ssr-vite/run.js",
+    "build-react-app-static-vite": "scripts/react-app-static-vite/run.js",
+    "build-react-app-vite": "scripts/react-app-vite/run.js",
     "build-server": "scripts/server/run.js",
+    "kiba-publish": "scripts/publish/run.js",
     "lint": "scripts/linting/run.js",
-    "type-check": "scripts/typing/run.js",
-    "kiba-publish": "scripts/publish/run.js"
+    "type-check": "scripts/typing/run.js"
   },
   "files": [
     "scripts/*"
   ],
-  "engines": {
-    "node": ">=20.19"
-  },
+  "type": "module",
   "dependencies": {
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^9.39.4",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react": "^6.0.3",
     "chalk": "^5.6.2",
-    "commander": "^14.0.3",
+    "commander": "^15.0.0",
     "compression": "^1.8.1",
-    "eslint": "^9.39.2",
+    "eslint": "^9.39.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-unused-imports": "^4.4.1",
     "express": "^5.2.1",
     "glob": "^13.0.6",
-    "globals": "^17.4.0",
+    "globals": "^17.7.0",
+    "oxfmt": "^0.57.0",
+    "oxlint": "^1.72.0",
     "postcss-scss": "^4.0.9",
     "rimraf": "^6.1.3",
-    "rolldown": "^1.0.0-rc.9",
-    "sass": "^1.98.0",
-    "stylelint": "^17.4.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.0",
-    "vite": "^8.0.0"
+    "rolldown": "^1.1.4",
+    "sass": "^1.101.0",
+    "stylelint": "^17.14.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.1",
+    "typescript-native-preview": "npm:typescript@7.0.1-rc",
+    "vite": "^8.1.3"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "@types/node": "^26.1.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }
