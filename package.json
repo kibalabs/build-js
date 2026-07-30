@@ -48,7 +48,7 @@
     "stylelint": "^17.14.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.62.1",
-    "typescript-native-preview": "npm:typescript@7.0.1-rc",
+    "typescript-native-preview": "npm:typescript@7.0.2",
     "vite": "^8.1.3"
   },
   "devDependencies": {

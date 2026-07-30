@@ -13,10 +13,10 @@ export const buildOxfmtConfig = (inputParams = {}) => {
       customGroups: [{ groupName: 'react', elementNamePattern: ['react', 'react-dom'] }],
       groups: ['react', 'builtin', 'external', ['internal', 'subpath'], ['parent', 'sibling', 'index'], 'style', 'unknown'],
     },
-    // NOTE: the previous eslint config had 'max-len' turned off, so lines were never wrapped based on
-    // length alone - oxfmt caps printWidth at 320 (a true "never wrap" isn't supported), so this is the
-    // closest approximation; lines longer than 320 chars will still get wrapped
-    printWidth: 320,
+    // NOTE: printWidth 120 chosen as a middle ground between Prettier's default (80, which wraps too
+    // aggressively for this codebase's style) and eslint's old 'max-len: off' (which never wrapped) -
+    // this keeps existing multi-line JSX/statements that don't fit from being collapsed onto one line
+    printWidth: 120,
     ignorePatterns: ['**/node_modules/**/*', '**/build/**/*', '**/dist/**/*', '**/dist-ssr/**/*', '**/public/**/*'],
   };
   if (params.oxfmtConfigModifier) {
