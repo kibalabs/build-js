@@ -1,7 +1,6 @@
 import childProcess from 'child_process';
 import os from 'os';
 
-
 export const getPlatform = () => {
   let platform = process.platform;
   if (platform === 'linux' && os.release().indexOf('Microsoft') !== -1) {

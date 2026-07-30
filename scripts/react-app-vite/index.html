@@ -8,7 +8,9 @@
   </head>
   <body>
     <!-- NOTE(krishan711): needed for old webpack libraries -->
-    <script>window.global ||= window;</script>
+    <script>
+      window.global ||= window;
+    </script>
     <div id="root"><!--ssr-body--></div>
     <script type="module" src="{entryFilePath}"></script>
     <!--ssr-body-assets-->

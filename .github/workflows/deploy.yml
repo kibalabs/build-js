@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches: [main]
-    tags: ["v*"]
+    tags: ['v*']
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-deploy
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # Required for OIDC authentication with npm
+      id-token: write # Required for OIDC authentication with npm
     env:
       DOCKER_IMAGE: package
     steps:

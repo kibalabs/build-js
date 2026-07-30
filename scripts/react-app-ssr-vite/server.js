@@ -17,7 +17,7 @@ const shouldCompress = (req, res) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDirectory = path.join(__dirname, '_client');
 const ssrDirectory = path.join(__dirname, '_ssr');
-const app = (await import(path.join(ssrDirectory, 'assets/app.js')));
+const app = await import(path.join(ssrDirectory, 'assets/app.js'));
 const appData = (await import(path.join(ssrDirectory, 'appData.json'), { with: { type: 'json' } })).default;
 const htmlTemplate = await fs.readFileSync(path.join(clientDirectory, 'index.html'), 'utf-8');
 export const createAppServer = () => {
@@ -32,7 +32,7 @@ export const createAppServer = () => {
     console.log(`${req.method}:${req.path}:${queryString}`);
     const startTime = new Date();
     const page = { path: req.path };
-    const pageData = (app.routes && app.globals) ? await getPageData(page.path, app.routes, app.globals) : null;
+    const pageData = app.routes && app.globals ? await getPageData(page.path, app.routes, app.globals) : null;
     const html = await renderViteHtml(app.App, page, appData.defaultSeoTags, appData.name, pageData, htmlTemplate);
     // TODO(krishan711): move this stuff to a middleware
     if (process.env.NAME) {

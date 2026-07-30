@@ -5,10 +5,10 @@ import { fileURLToPath } from 'url';
 import pluginReact from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util.js';
 import { createIndexPlugin } from './createIndexPlugin.js';
 import { createRuntimeConfigPlugin } from './createRuntimeConfigPlugin.js';
 import { injectSeoPlugin } from './injectSeoPlugin.js';
-import { getNodeModuleName, getNodeModuleSize, removeUndefinedProperties } from '../util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -45,7 +45,7 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
       pluginReact(),
       ...(params.addHtmlOutput ? [createIndexPlugin({ templateFilePath: indexTemplateFilePath, name, entryFilePath: params.entryFilePath })] : []),
       ...(params.addRuntimeConfig ? [createRuntimeConfigPlugin({ vars: runtimeConfigVars })] : []),
-      ...((params.seoTags || params.title) ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
+      ...(params.seoTags || params.title ? [injectSeoPlugin({ title: params.title || name, tags: params.seoTags || [] })] : []),
     ],
     mode: process.env.NODE_ENV || 'production',
     server: {
@@ -62,24 +62,26 @@ export const buildReactAppViteConfig = (inputParams = {}) => {
           // into a shared vendor chunk, matching the old webpack behavior.
           codeSplitting: {
             includeDependenciesRecursively: true,
-            groups: [{
-              name: (moduleId) => {
-                if (!moduleId.includes('/node_modules/')) {
-                  return null;
-                }
-                const packageName = getNodeModuleName(moduleId);
-                let packageSize = moduleSizeCache[packageName];
-                if (packageSize === undefined) {
-                  packageSize = getNodeModuleSize(packageName, process.cwd());
-                  moduleSizeCache[packageName] = packageSize;
-                }
-                const chunkName = packageSize >= (100 * 1024) ? `vendor-${packageName.replace('@', '').replace('/', '-')}` : 'vendor-small';
-                return chunkName;
+            groups: [
+              {
+                name: (moduleId) => {
+                  if (!moduleId.includes('/node_modules/')) {
+                    return null;
+                  }
+                  const packageName = getNodeModuleName(moduleId);
+                  let packageSize = moduleSizeCache[packageName];
+                  if (packageSize === undefined) {
+                    packageSize = getNodeModuleSize(packageName, process.cwd());
+                    moduleSizeCache[packageName] = packageSize;
+                  }
+                  const chunkName = packageSize >= 100 * 1024 ? `vendor-${packageName.replace('@', '').replace('/', '-')}` : 'vendor-small';
+                  return chunkName;
+                },
+                test: /node_modules/,
+                priority: 10,
+                minSize: 100 * 1024,
               },
-              test: /node_modules/,
-              priority: 10,
-              minSize: 100 * 1024,
-            }],
+            ],
           },
         },
       },

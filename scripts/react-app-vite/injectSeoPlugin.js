@@ -14,10 +14,7 @@ export class MetaTag extends Tag {
   }
 }
 
-export const injectSeoPlugin = ({
-  title,
-  tags,
-}) => {
+export const injectSeoPlugin = ({ title, tags }) => {
   return {
     name: 'inject-seo',
     transformIndexHtml(html) {

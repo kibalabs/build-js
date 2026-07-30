@@ -1,7 +1,6 @@
 import { removeUndefinedProperties } from '../util.js';
 
-const defaultParams = {
-};
+const defaultParams = {};
 
 export const buildTsConfig = (inputParams = {}) => {
   // eslint-disable-next-line unused-imports/no-unused-vars

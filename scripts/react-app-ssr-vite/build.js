@@ -40,27 +40,31 @@ export const buildSsrReactApp = async (inputParams = {}) => {
   const clientDirectory = path.join(outputDirectoryPath, '_client');
   const ssrDirectory = path.join(outputDirectoryPath, '_ssr');
   console.log('building app...');
-  await build(mergeConfig(viteConfig, {
-    build: {
-      outDir: clientDirectory,
-    },
-  }));
+  await build(
+    mergeConfig(viteConfig, {
+      build: {
+        outDir: clientDirectory,
+      },
+    }),
+  );
   console.log('building server app...');
-  await build(mergeConfig(viteConfig, {
-    build: {
-      ssr: true,
-      outDir: ssrDirectory,
-      rolldownOptions: {
-        input: appEntryFilePath,
-        // NOTE(krishan711): prevent the hashes in the names
-        output: {
-          entryFileNames: 'assets/[name].js',
-          chunkFileNames: 'assets/[name].js',
-          assetFileNames: 'assets/[name].[ext]',
+  await build(
+    mergeConfig(viteConfig, {
+      build: {
+        ssr: true,
+        outDir: ssrDirectory,
+        rolldownOptions: {
+          input: appEntryFilePath,
+          // NOTE(krishan711): prevent the hashes in the names
+          output: {
+            entryFileNames: 'assets/[name].js',
+            chunkFileNames: 'assets/[name].js',
+            assetFileNames: 'assets/[name].[ext]',
+          },
         },
       },
-    },
-  }));
+    }),
+  );
   const appData = { name, port: params.port, defaultSeoTags: params.seoTags };
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   fs.copyFileSync(path.join(__dirname, './server.js'), path.join(outputDirectoryPath, 'index.js'));

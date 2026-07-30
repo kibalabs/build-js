@@ -1,6 +1,4 @@
-export const createRuntimeConfigPlugin = ({
-  vars = {},
-}) => {
+export const createRuntimeConfigPlugin = ({ vars = {} }) => {
   let scriptContent = 'const GLOBAL = typeof window !== "undefined" ? window : global;\n';
   Object.keys(vars).forEach((key) => {
     scriptContent += `GLOBAL.${key} = ${JSON.stringify(vars[key])};\n`;

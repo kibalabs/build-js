@@ -3,9 +3,8 @@ import path from 'node:path';
 import { sync } from 'glob';
 import { rolldown } from 'rolldown';
 
-import { buildModuleRolldownConfig } from './module.config.js';
 import { buildParams } from '../util.js';
-
+import { buildModuleRolldownConfig } from './module.config.js';
 
 const getEntryFilePaths = (params) => {
   if (!params.multiEntry) {
