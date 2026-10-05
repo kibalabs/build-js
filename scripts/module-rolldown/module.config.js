@@ -37,7 +37,6 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
   } else {
     externalModules.push(...getExternalModules(packageData));
   }
-  // NOTE(krishan711): not sure why but outputDirectory is not being used
   return defineConfig({
     input: params.entryFilePath,
     output: {
@@ -61,9 +60,11 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
         compilerOptions: params.typescriptDeclarationCompilerOptions,
       })]),
     ],
-    define: {
-      'process.env.PACKAGE_NAME': JSON.stringify(name),
-      'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
+    transform: {
+      define: {
+        'process.env.PACKAGE_NAME': JSON.stringify(name),
+        'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
+      },
     },
     external: (moduleName) => {
       // Treat node: prefixed imports as external
