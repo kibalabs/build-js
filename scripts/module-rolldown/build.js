@@ -65,7 +65,8 @@ export const buildModuleRolldown = async (inputParams = {}) => {
   if (params.rolldownConfigModifier) {
     rolldownConfig = params.rolldownConfigModifier(rolldownConfig);
   }
-  const bundle = await rolldown(rolldownConfig);
-  await bundle.write();
+  const { output, ...inputOptions } = rolldownConfig;
+  const bundle = await rolldown(inputOptions);
+  await bundle.write(output);
   await bundle.close();
 };

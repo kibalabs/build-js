@@ -27,9 +27,11 @@ const buildServerRolldownConfig = (params) => {
     resolve: {
       mainFields: ['module', 'main'],
     },
-    define: {
-      'process.env.PACKAGE_NAME': JSON.stringify(name),
-      'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
+    transform: {
+      define: {
+        'process.env.PACKAGE_NAME': JSON.stringify(name),
+        'process.env.PACKAGE_VERSION': JSON.stringify(packageData.version),
+      },
     },
     external: (moduleName) => {
       if (moduleName.startsWith('node:')) {
@@ -69,7 +71,8 @@ export const buildServer = async (inputParams = {}) => {
   if (params.rolldownConfigModifier) {
     rolldownConfig = params.rolldownConfigModifier(rolldownConfig);
   }
-  const bundle = await rolldown(rolldownConfig);
-  await bundle.write();
+  const { output, ...inputOptions } = rolldownConfig;
+  const bundle = await rolldown(inputOptions);
+  await bundle.write(output);
   await bundle.close();
 };
