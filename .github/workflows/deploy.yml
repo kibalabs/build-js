@@ -17,7 +17,7 @@ jobs:
       DOCKER_IMAGE: package
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # NOTE(krishan711): need full history to calculate difference
           fetch-depth: 0
@@ -40,7 +40,7 @@ jobs:
           docker cp temp-container:/app/. ./
           docker rm temp-container
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
@@ -58,7 +58,7 @@ jobs:
       contents: write
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
