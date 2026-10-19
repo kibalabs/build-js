@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - [MINOR] Fixed build-module-rolldown and build-server ignoring output options, so production builds are now minified (and modules get source maps) as configured
 - [PATCH] Fixed PACKAGE_NAME and PACKAGE_VERSION defines being dropped by Rolldown by moving them to transform.define
+- [PATCH] Fixed build-module-rolldown failing on scss/css imports since Rolldown removed css bundling, the sass plugin now emits each chunk's styles as a css file (e.g. dist/index.css) as before
 
 ### Removed
 - [MAJOR] Removed all webpack and babel support

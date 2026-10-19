@@ -53,7 +53,7 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
       mainFields: ['module', 'main'],
     },
     plugins: [
-      sassPlugin,
+      sassPlugin(),
       ...(params.dev ? [] : [generateTypeDeclarationsPlugin({
         inputFilePaths: params.entryFilePaths || [params.entryFilePath],
         outputDirectory: params.outputDirectory,

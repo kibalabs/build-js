@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import path from 'node:path';
 
 let sass = null;
 const loadSass = async () => {
@@ -13,35 +12,56 @@ const loadSass = async () => {
   return sass;
 };
 
-export const sassPlugin = {
-  name: 'sass',
-  async resolveId(source, importer) {
-    if (!source.endsWith('.scss')) {
-      return null;
-    }
-    const sassModule = await loadSass();
-    if (!sassModule) {
-      return null;
-    }
-    const resolved = path.resolve(path.dirname(importer || ''), source);
-    return resolved.replace('.scss', '.css');
-  },
-  async load(id) {
-    if (!id.endsWith('.css')) {
-      return null;
-    }
-    const scssPath = id.replace('.css', '.scss');
-    if (!fs.existsSync(scssPath)) {
-      return null;
-    }
-    const sassModule = await loadSass();
-    if (!sassModule) {
-      return null;
-    }
-    const result = sassModule.compile(scssPath, {
-      style: 'expanded',
-      loadPaths: ['node_modules'],
-    });
-    return result.css;
-  },
+// NOTE(krishan711): rolldown no longer bundles css (https://github.com/rolldown/rolldown/issues/4271)
+// so this compiles each imported style file, replaces it with an empty js module and emits the
+// styles of each chunk (in module order, like vite does) as a css file next to the chunk.
+export const sassPlugin = () => {
+  const moduleStyles = new Map();
+  return {
+    name: 'sass',
+    buildStart() {
+      moduleStyles.clear();
+    },
+    async load(id) {
+      if (!id.endsWith('.scss') && !id.endsWith('.css')) {
+        return null;
+      }
+      let css;
+      if (id.endsWith('.scss')) {
+        const sassModule = await loadSass();
+        if (!sassModule) {
+          return null;
+        }
+        const result = sassModule.compile(id, {
+          style: 'expanded',
+          loadPaths: ['node_modules'],
+        });
+        css = result.css;
+      } else {
+        css = fs.readFileSync(id, 'utf8');
+      }
+      moduleStyles.set(id, css);
+      return {
+        code: '',
+        moduleType: 'js',
+        moduleSideEffects: 'no-treeshake',
+      };
+    },
+    generateBundle(outputOptions, bundle) {
+      Object.values(bundle).forEach((chunk) => {
+        if (chunk.type !== 'chunk') {
+          return;
+        }
+        const chunkStyles = chunk.moduleIds.filter((moduleId) => moduleStyles.has(moduleId)).map((moduleId) => moduleStyles.get(moduleId));
+        if (chunkStyles.length === 0) {
+          return;
+        }
+        this.emitFile({
+          type: 'asset',
+          fileName: chunk.fileName.replace(/\.(m|c)?js$/, '.css'),
+          source: `${chunkStyles.join('\n')}\n`,
+        });
+      });
+    },
+  };
 };
