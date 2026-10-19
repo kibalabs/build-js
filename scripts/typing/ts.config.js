@@ -9,7 +9,7 @@ export const buildTsConfig = (inputParams = {}) => {
   return {
     compilerOptions: {
       target: 'ES2020',
-      jsx: 'react',
+      jsx: 'react-jsx',
       declaration: true,
       declarationMap: true,
       outDir: 'lib',
