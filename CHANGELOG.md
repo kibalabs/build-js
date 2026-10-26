@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Changed
 
+- [MINOR] Updated typescript to v6, type-check and declaration generation keep the v5 defaults for `types` and `noUncheckedSideEffectImports`
 - [MINOR] Fixed build-module-rolldown and build-server ignoring output options, so production builds are now minified (and modules get source maps) as configured
 - [PATCH] Fixed PACKAGE_NAME and PACKAGE_VERSION defines being dropped by Rolldown by moving them to transform.define
 - [PATCH] Fixed build-module-rolldown failing on scss/css imports since Rolldown removed css bundling, the sass plugin now emits each chunk's styles as a css file (e.g. dist/index.css) as before
