@@ -30,7 +30,7 @@ export const buildTsConfig = (inputParams = {}) => {
       resolveJsonModule: true,
       module: 'preserve',
       moduleResolution: 'bundler',
-      // NOTE(krishan711): typescript 6 defaults these to [] and true, keep the typescript 5 behaviour
+      // NOTE(krishan711): typescript 6+ defaults these to [] and true, keep the typescript 5 behaviour
       types: ['*'],
       noUncheckedSideEffectImports: false,
     },
