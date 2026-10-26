@@ -3,9 +3,9 @@ import path from 'node:path';
 
 import chalk from 'chalk';
 import { glob } from 'glob';
-import typescript from 'typescript';
 
 import { buildTsConfig } from './ts.config.js';
+import { runTsc } from './tsc.js';
 import { buildParams } from '../util.js';
 
 const defaultParams = {
@@ -21,17 +21,10 @@ export const runTyping = async (inputParams = {}) => {
   // NOTE(krishan711): I couldn't find a way to filter node_modules in the glob (filtering needed for lerna repos)
   const files = glob.sync(path.join(params.directory || './src', '**', '*.{ts,tsx}'));
   const filteredFiles = files.filter((file) => !file.includes('/node_modules/'));
-  const config = typescript.parseJsonConfigFileContent({
-    compilerOptions: {
-      ...tsConfig.compilerOptions,
-      // ...customConfig.compilerOptions,
-      noEmit: true,
-    },
-  }, typescript.sys, process.cwd());
-  const program = typescript.createProgram(filteredFiles, config.options);
-  // NOTE(krishan711): from https://github.com/microsoft/TypeScript-wiki/blob/master/Using-the-Compiler-API.md
-  const emitResult = program.emit();
-  const allDiagnostics = typescript.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
+  const allDiagnostics = runTsc(filteredFiles, {
+    ...tsConfig.compilerOptions,
+    noEmit: true,
+  });
   console.log(new PrettyFormatter().format(allDiagnostics));
   if (params.outputFile) {
     let formatter = null;
@@ -56,20 +49,18 @@ export class GitHubAnnotationsFormatter {
   format(typingDiagnostics) {
     const annotations = [];
     typingDiagnostics.forEach((diagnostic) => {
-      const start = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-      const end = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start + diagnostic.length);
-      const annotation = {
-        path: path.relative(process.cwd(), diagnostic.file.fileName),
-        start_line: start.line + 1,
-        end_line: end.line + 1,
-        message: typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
-        annotation_level: diagnostic.category === 1 ? 'failure' : 'warning',
-      };
-      if (annotation.start_line === annotation.end_line) {
-        annotation.start_column = start.character + 1;
-        annotation.end_column = end.character + 1;
+      if (!diagnostic.filePath) {
+        return;
       }
-      annotations.push(annotation);
+      annotations.push({
+        path: diagnostic.filePath,
+        start_line: diagnostic.line,
+        end_line: diagnostic.line,
+        start_column: diagnostic.column,
+        end_column: diagnostic.column,
+        message: diagnostic.messageLines.join('\n'),
+        annotation_level: diagnostic.category === 'error' ? 'failure' : 'warning',
+      });
     });
     return JSON.stringify(annotations);
   }
@@ -91,17 +82,10 @@ export class PrettyFormatter {
   format(typingDiagnostics) {
     const fileMessageMap = [];
     typingDiagnostics.forEach((diagnostic) => {
-      const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
-      const severity = diagnostic.category === 1 ? 'error' : 'warning';
-      let filePath = '(unknown)';
-      let line = 0;
-      let column = 0;
-      if (diagnostic.file) {
-        filePath = path.relative(process.cwd(), diagnostic.file.fileName);
-        const start = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-        line = start.line + 1;
-        column = start.character + 1;
-      }
+      const message = diagnostic.messageLines.join(' ');
+      const severity = diagnostic.category === 'error' ? 'error' : 'warning';
+      const filePath = diagnostic.filePath || '(unknown)';
+      const { line, column } = diagnostic;
       if (!(filePath in fileMessageMap)) {
         fileMessageMap[filePath] = [];
       }
