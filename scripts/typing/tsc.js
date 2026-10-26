@@ -5,9 +5,19 @@ import path from 'node:path';
 
 const require = createRequire(import.meta.url);
 
-// NOTE(krishan711): typescript 7 has no stable js compiler api so we run its tsc with a generated tsconfig.
-// It is installed as typescript-7 because typescript-eslint still needs typescript 6 for parsing.
-const getTscPath = () => path.join(path.dirname(require.resolve('typescript-7/package.json')), 'bin', 'tsc');
+// NOTE(krishan711): typescript 7 has no stable js compiler api so we run its native tsc with a generated tsconfig.
+// typescript-eslint still needs typescript 6 (as `typescript`) so we depend on the typescript 7 platform packages
+// directly, as the typescript 7 package's tsc bin would replace typescript 6's tsc in projects
+const getTscPath = () => {
+  const platformPackageName = `@typescript/typescript-${process.platform}-${process.arch}`;
+  let packageJsonPath;
+  try {
+    packageJsonPath = require.resolve(`${platformPackageName}/package.json`);
+  } catch {
+    throw new Error(`Unable to find ${platformPackageName}, typescript 7 may not support this platform or it needs adding to @kibalabs/build's optionalDependencies`);
+  }
+  return path.join(path.dirname(packageJsonPath), 'lib', process.platform === 'win32' ? 'tsc.exe' : 'tsc');
+};
 
 const PATH_COMPILER_OPTIONS = ['outDir', 'rootDir', 'declarationDir', 'baseUrl', 'tsBuildInfoFile'];
 
@@ -67,7 +77,7 @@ export const runTsc = (filePaths, compilerOptions) => {
     files: filePaths.map((filePath) => path.resolve(filePath)),
   }));
   try {
-    const result = spawnSync(process.execPath, [getTscPath(), '--project', configPath, '--pretty', 'false'], { encoding: 'utf-8', maxBuffer: 256 * 1024 * 1024 });
+    const result = spawnSync(getTscPath(), ['--project', configPath, '--pretty', 'false'], { encoding: 'utf-8', maxBuffer: 256 * 1024 * 1024 });
     if (result.error) {
       throw result.error;
     }

@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Changed
 
-- [MINOR] Updated type-check and declaration generation to typescript v7 (installed as `typescript-7`, run through its `tsc`), typescript v6 stays for typescript-eslint
+- [MINOR] Updated type-check and declaration generation to typescript v7 (its native tsc from the `@typescript/typescript-<platform>` packages), typescript v6 stays for typescript-eslint
 - [MINOR] Updated typescript to v6, type-check and declaration generation keep the v5 defaults for `types` and `noUncheckedSideEffectImports`
 - [MINOR] Fixed build-module-rolldown and build-server ignoring output options, so production builds are now minified (and modules get source maps) as configured
 - [PATCH] Fixed PACKAGE_NAME and PACKAGE_VERSION defines being dropped by Rolldown by moving them to transform.define

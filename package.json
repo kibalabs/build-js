@@ -48,9 +48,16 @@
     "sass": "^1.105.2",
     "stylelint": "^17.16.0",
     "typescript": "^6.0.3",
-    "typescript-7": "npm:typescript@^7.0.2",
     "typescript-eslint": "^8.71.2",
     "vite": "^8.3.4"
+  },
+  "optionalDependencies": {
+    "@typescript/typescript-darwin-arm64": "^7.0.2",
+    "@typescript/typescript-darwin-x64": "^7.0.2",
+    "@typescript/typescript-linux-arm64": "^7.0.2",
+    "@typescript/typescript-linux-x64": "^7.0.2",
+    "@typescript/typescript-win32-arm64": "^7.0.2",
+    "@typescript/typescript-win32-x64": "^7.0.2"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
