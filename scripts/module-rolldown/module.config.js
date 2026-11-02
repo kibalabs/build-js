@@ -20,6 +20,8 @@ const defaultParams = {
   nodeModulesPath: undefined,
   nodeModulesPaths: undefined,
   outputFilename: undefined,
+  entryFileNames: undefined,
+  chunkFileNames: undefined,
   typescriptDeclarationCompilerOptions: undefined,
 };
 
@@ -42,6 +44,8 @@ export const buildModuleRolldownConfig = (inputParams = {}) => {
     output: {
       dir: params.outputDirectory,
       file: params.outputFilename,
+      entryFileNames: params.entryFileNames,
+      chunkFileNames: params.chunkFileNames,
       name,
       format: 'esm',
       sourcemap: !params.dev,
