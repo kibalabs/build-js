@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import path from 'node:path';
 
 export const removeUndefinedProperties = (obj) => {
@@ -49,53 +48,4 @@ export const getNodeModuleName = (importPath) => {
   }
   const queryParamIndex = moduleName.indexOf('?');
   return queryParamIndex === -1 ? moduleName : moduleName.substring(0, queryParamIndex);
-};
-
-export const getNodeModuleSize = (moduleName, projectRoot) => {
-  const modulePath = findModulePath(moduleName, projectRoot);
-  if (!modulePath) {
-    return 0;
-  }
-  return calculateFolderSize(modulePath);
-};
-
-export const findModulePath = (moduleName, projectRoot) => {
-  const potentialPaths = [
-    path.join(projectRoot, 'node_modules', moduleName),
-    path.join(projectRoot, 'node_modules', '@types', moduleName),
-  ];
-  for (let index = 0; index < potentialPaths.length; index += 1) {
-    const potentialPath = potentialPaths[index];
-    if (fs.existsSync(potentialPath)) {
-      return potentialPath;
-    }
-  }
-  return null;
-};
-
-export const calculateFolderSize = (folderPath) => {
-  let size = 0;
-  const files = fs.readdirSync(folderPath);
-  files.forEach((file) => {
-    const filePath = path.join(folderPath, file);
-    const stats = fs.statSync(filePath);
-    if (stats.isDirectory()) {
-      size += calculateFolderSize(filePath);
-    } else {
-      size += stats.size;
-    }
-  });
-  return size;
-};
-
-export const getFileSize = (filePath) => {
-  const stats = fs.statSync(filePath);
-  return stats.size;
-};
-
-export const getFileSizes = (filePaths) => {
-  return filePaths.reduce((accumulator, filePath) => {
-    accumulator[filePath] = getFileSize(filePath);
-    return accumulator;
-  }, {});
 };

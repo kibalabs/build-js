@@ -8,18 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
+- [MINOR] Added `entries` to module builds for packages with several entries (e.g. subpath exports), e.g. `{ index: './src/index.ts', 'web3/index': './src/web3/index.ts' }` builds `dist/index.js` and `dist/web3/index.js` with the code they share in `dist/chunks/`. Each entry gets a css file with all the styles it uses, apart from the ones already in `dist/index.css` (so `dist/web3/index.css` is used on top of it)
 
 ### Changed
-
+- [MINOR] Changed react-app-vite vendor chunks to only hold their own package's code: packages with at least 100KB of code get their own `vendor-<package>` chunk (plus `vendor-<package>-lazy` for the parts only lazily loaded code uses), smaller ones needed up front share `vendor-small` and smaller ones only used lazily stay with the code that uses them. Previously a vendor chunk also took the packages it imports, so lazily loaded packages could end up loaded up front and chunks changed whenever any of those packages did. Chunks are split with rolldown's `strictExecutionOrder` so code still runs in the same order
+- [MINOR] Changed react-app-vite to put kibalabs packages in a chunk per entry (e.g. `vendor-kibalabs-core`, `vendor-kibalabs-core-web3`), so their releases don't change any third-party chunks
+- [MINOR] Changed module builds to emit one css file per entry with the styles of everything it imports (statically or lazily) instead of one per chunk, so shared and lazily loaded chunks (e.g. with `multiEntry`) no longer get css files of their own that nothing loads
+- [MINOR] Changed module builds to remove the output directory first, so files that are no longer built (e.g. chunks with old hashes) don't get published
 - [MINOR] Updated type-check and declaration generation to typescript v7 (installed as `typescript-7`, run through its `tsc`), typescript v6 stays for typescript-eslint
 - [MINOR] Updated typescript to v6, type-check and declaration generation keep the v5 defaults for `types` and `noUncheckedSideEffectImports`
 - [MINOR] Fixed build-module-rolldown and build-server ignoring output options, so production builds are now minified (and modules get source maps) as configured
 - [PATCH] Fixed PACKAGE_NAME and PACKAGE_VERSION defines being dropped by Rolldown by moving them to transform.define
 - [PATCH] Fixed build-module-rolldown failing on scss/css imports since Rolldown removed css bundling, the sass plugin now emits each chunk's styles as a css file (e.g. dist/index.css) as before
+- [PATCH] Fixed app configs importing `MetaTag`/`Tag` from `@kibalabs/build/scripts/plugins/injectSeoPlugin.js` (moved to `scripts/react-app-vite/`)
 - [MINOR] Updated type-check to use the automatic jsx runtime (`react-jsx`) to match the lint config and the builds, so `import React` is no longer needed just for jsx
 
 ### Removed
 - [MAJOR] Removed all webpack and babel support
+- [MINOR] Removed the unused `getNodeModuleSize`, `findModulePath`, `calculateFolderSize`, `getFileSize` and `getFileSizes` from `scripts/util.js`
 
 ## [0.14.1] - 2026-01-29
 

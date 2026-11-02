@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
 import { sync } from 'glob';
@@ -8,6 +9,9 @@ import { buildParams } from '../util.js';
 
 
 const getEntryFilePaths = (params) => {
+  if (params.entries) {
+    return Object.values(params.entries).map((entryFilePath) => path.resolve(process.cwd(), entryFilePath));
+  }
   if (!params.multiEntry) {
     return [params.entryFilePath];
   }
@@ -20,7 +24,16 @@ const getEntryFilePaths = (params) => {
     .map((filePath) => path.resolve(process.cwd(), filePath));
 };
 
-const getRolldownInput = (entryFilePaths, multiEntryDirectory) => {
+const getRolldownInput = (params, entryFilePaths) => {
+  if (params.entries) {
+    // NOTE(krishan711): explicit entries map output names (without extension) to source files,
+    // e.g. { index: './src/index.ts', 'react/index': './src/react/index.ts' } builds dist/index.js and dist/react/index.js
+    return Object.keys(params.entries).reduce((accumulator, outputName, index) => {
+      accumulator[outputName] = entryFilePaths[index];
+      return accumulator;
+    }, {});
+  }
+  const multiEntryDirectory = params.multiEntry;
   if (!multiEntryDirectory) {
     return entryFilePaths[0];
   }
@@ -36,6 +49,7 @@ export const buildModuleRolldown = async (inputParams = {}) => {
   const defaultParams = {
     configModifier: undefined,
     dev: false,
+    entries: null,
     multiEntry: null,
     allFiles: false,
     recursive: false,
@@ -56,16 +70,27 @@ export const buildModuleRolldown = async (inputParams = {}) => {
   if (params.start) {
     console.warn('Rolldown module watch mode is not implemented yet. Running a one-off build instead.');
   }
+  if (params.entries && params.multiEntry) {
+    throw new Error('entries and multiEntry cannot be used together');
+  }
   const entryFilePaths = getEntryFilePaths(params);
   let rolldownConfig = buildModuleRolldownConfig({
     ...params,
     entryFilePaths,
-    entryFilePath: getRolldownInput(entryFilePaths, params.multiEntry),
+    entryFilePath: getRolldownInput(params, entryFilePaths),
+    // NOTE(krishan711): shared code between explicit entries goes into chunks/ so the entry files keep their names
+    entryFileNames: params.entries ? '[name].js' : undefined,
+    chunkFileNames: params.entries ? 'chunks/[name]-[hash].js' : undefined,
   });
   if (params.rolldownConfigModifier) {
     rolldownConfig = params.rolldownConfigModifier(rolldownConfig);
   }
   const { output, ...inputOptions } = rolldownConfig;
+  // NOTE(krishan711): remove the previous build so files that are no longer built (e.g. chunks with old hashes) aren't published
+  const outputDirectory = path.resolve(params.outputDirectory);
+  if (outputDirectory.startsWith(`${process.cwd()}${path.sep}`)) {
+    fs.rmSync(outputDirectory, { recursive: true, force: true });
+  }
   const bundle = await rolldown(inputOptions);
   await bundle.write(output);
   await bundle.close();
