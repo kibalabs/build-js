@@ -23,4 +23,4 @@ This builds `dist/index.js` and `dist/web3/index.js` (with their type declaratio
 
 ## App vendor chunks
 
-`build-react-app-vite` puts each package with at least 100KB of code into its own `vendor-<package>` chunk and the smaller packages needed up front into `vendor-small` (smaller ones only used lazily stay with the code that uses them). Kibalabs packages get a chunk per entry (e.g. `vendor-kibalabs-core-web3`). A chunk only holds its own package's code, so it only changes when that package does and lazily loaded packages aren't loaded up front.
+`build-react-app-vite` puts each package with at least 100KB of code into its own `vendor-<package>` chunk (and the parts of it only used lazily into `vendor-<package>-lazy`) and the smaller packages needed up front into `vendor-small` (smaller ones only used lazily stay with the code that uses them). Kibalabs packages get a chunk per entry (e.g. `vendor-kibalabs-core-web3`). A chunk only holds its own package's code, so it only changes when that package does and lazily loaded packages aren't loaded up front.

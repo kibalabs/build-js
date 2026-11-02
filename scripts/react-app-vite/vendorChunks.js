@@ -27,7 +27,8 @@ export const getKibalabsChunkName = (moduleId) => {
 
 // NOTE(krishan711): Rolldown treats each name() return value as a separate code-splitting group, so
 // minSize is evaluated per returned chunk name. Packages that are at least largePackageSize (measured
-// as the code of their modules in this build) get their own vendor chunk and smaller packages that are
+// as the code of their modules in this build) get their own vendor chunk (and a -lazy one for the parts
+// only used by lazily loaded code) and smaller packages that are
 // needed up front share vendor-small (smaller ones only used lazily stay with the chunks that use them).
 // Each module goes to its own package's chunk (includeDependenciesRecursively: false), otherwise the first
 // package captured takes all its dependencies with it (e.g. a lazily loaded package taking a dependency
@@ -55,13 +56,23 @@ export const createVendorChunking = ({ largePackageSize = 100 * 1024 } = {}) => 
   const codeSplitting = {
     includeDependenciesRecursively: false,
     groups: [{
+      debugName: 'vendor-kibalabs',
       name: getKibalabsChunkName,
       test: KIBALABS_PACKAGE_PATTERN,
       priority: 30,
     }, {
+      // NOTE(krishan711): the parts of a large package that are needed up front and the parts only used
+      // lazily go into separate chunks, otherwise the lazy parts get loaded up front with the rest
+      debugName: 'vendor-large',
       name: (moduleId) => `vendor-${getChunkSafeName(getNodeModuleName(moduleId))}`,
       test: (moduleId) => NODE_MODULES_PATTERN.test(moduleId) && isLargePackage(moduleId),
+      tags: ['$initial'],
       priority: 20,
+    }, {
+      debugName: 'vendor-large-lazy',
+      name: (moduleId) => `vendor-${getChunkSafeName(getNodeModuleName(moduleId))}-lazy`,
+      test: (moduleId) => NODE_MODULES_PATTERN.test(moduleId) && isLargePackage(moduleId),
+      priority: 15,
     }, {
       name: 'vendor-small',
       test: NODE_MODULES_PATTERN,
