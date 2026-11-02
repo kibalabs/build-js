@@ -1,26 +1,65 @@
-# Build-JS
+# @kibalabs/build
 
-This is Kiba Lab's toolset to build JavaScript and Typescript projects. It serves (roughly) the same purpose as react-scripts and is just as opinionated, but in a different way.
+Kiba Labs' opinionated tooling to build, lint, type-check and publish TypeScript projects (React apps, libraries and Node servers), on Vite and Rolldown.
 
-For use, see other projects. We will update this README over time :)
+## Install
 
-## Modules with several entries
+```bash
+npm install --save-dev @kibalabs/build
+```
 
-`build-module-rolldown` builds `src/index.ts` into `dist/index.js` by default. For a package with subpath exports (e.g. `@kibalabs/core/web3`), set `entries` in the config modifier to map output names to source files:
+Requires Node 22.12+.
+
+## Commands
+
+| Command | Does |
+| --- | --- |
+| `build-react-app-vite` | Builds a React app from `src/index.tsx` into `dist/` (`--start` runs the dev server) |
+| `build-module-rolldown` | Builds a library from `src/index.ts` into `dist/` with type declarations and css |
+| `build-server` | Builds a Node server from `src/index.ts` into `dist/` |
+| `lint` | ESLint and Stylelint (`--fix` to fix) |
+| `type-check` | Type-checks `src/` |
+| `kiba-publish` | Publishes to npm (`--next` for a prerelease) |
+
+Production builds need `NODE_ENV=production`.
+
+## Configuration
+
+Every build command takes `--config-modifier <file>`, a module whose default export changes the build's config:
 
 ```js
+// config.build.js
 export default (config) => {
   const newConfig = config;
-  newConfig.entries = {
-    index: './src/index.ts',
-    'web3/index': './src/web3/index.ts',
-  };
+  newConfig.title = 'My App';
+  newConfig.viteConfigModifier = (viteConfig) => viteConfig;
   return newConfig;
 };
 ```
 
-This builds `dist/index.js` and `dist/web3/index.js` (with their type declarations), with the code they share in `dist/chunks/`. Each entry gets a css file with all the styles it uses (including the ones of lazily loaded code), apart from the ones already in `dist/index.css`, so `dist/web3/index.css` is used on top of `dist/index.css`.
+- Apps: `title`, `seoTags` (`MetaTag`/`Tag` from `@kibalabs/build/scripts/react-app-vite/injectSeoPlugin.js`), `viteConfigModifier`, `analyzeBundle`. Environment variables starting with `KRT_` are set on `window` at runtime.
+- Libraries: `entries`, `rolldownConfigModifier`.
+
+## Libraries with several entries
+
+For subpath exports (e.g. `@kibalabs/core/web3`), map output names to source files:
+
+```js
+newConfig.entries = {
+  index: './src/index.ts',
+  'web3/index': './src/web3/index.ts',
+};
+```
+
+This builds `dist/index.js` and `dist/web3/index.js` with their type declarations, and shared code in `dist/chunks/`. Each entry's css has all the styles it uses (including lazily loaded code's), minus the ones already in `dist/index.css`, so it's used on top of it.
 
 ## App vendor chunks
 
-`build-react-app-vite` puts each package with at least 100KB of code into its own `vendor-<package>` chunk (and the parts of it only used lazily into `vendor-<package>-lazy`) and the smaller packages needed up front into `vendor-small` (smaller ones only used lazily stay with the code that uses them). Kibalabs packages get a chunk per entry (e.g. `vendor-kibalabs-core-web3`). A chunk only holds its own package's code, so it only changes when that package does and lazily loaded packages aren't loaded up front.
+Each package with 100KB+ of code gets its own `vendor-<package>` chunk (`vendor-<package>-lazy` for the parts only lazy code uses). Smaller packages needed up front share `vendor-small`, and the rest stay with the code that uses them. Kibalabs packages get a chunk per entry (e.g. `vendor-kibalabs-core-web3`). A chunk only holds its own package's code, so it only changes when that package does.
+
+## Development
+
+```bash
+make install
+make lint-check
+```
