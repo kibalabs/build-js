@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
 import { sync } from 'glob';
@@ -85,6 +86,11 @@ export const buildModuleRolldown = async (inputParams = {}) => {
     rolldownConfig = params.rolldownConfigModifier(rolldownConfig);
   }
   const { output, ...inputOptions } = rolldownConfig;
+  // NOTE(krishan711): remove the previous build so files that are no longer built (e.g. chunks with old hashes) aren't published
+  const outputDirectory = path.resolve(params.outputDirectory);
+  if (outputDirectory.startsWith(`${process.cwd()}${path.sep}`)) {
+    fs.rmSync(outputDirectory, { recursive: true, force: true });
+  }
   const bundle = await rolldown(inputOptions);
   await bundle.write(output);
   await bundle.close();
