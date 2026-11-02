@@ -11,7 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - [MINOR] Added `entries` to module builds for packages with several entries (e.g. subpath exports), each with its own css
 
 ### Changed
-
+- [MINOR] Changed react-app-vite vendor chunks to only hold their own package's code: packages with at least 100KB of code get their own `vendor-<package>` chunk, smaller ones needed up front share `vendor-small` and smaller ones only used lazily stay with the code that uses them. Previously a vendor chunk also took the packages it imports, so lazily loaded packages could end up loaded up front and chunks changed whenever any of those packages did. Chunks are split with rolldown's `strictExecutionOrder` so code still runs in the same order
+- [MINOR] Changed react-app-vite to put kibalabs packages in a chunk per entry (e.g. `vendor-kibalabs-core`, `vendor-kibalabs-core-web3`), so their releases don't change any third-party chunks
 - [MINOR] Updated type-check and declaration generation to typescript v7 (installed as `typescript-7`, run through its `tsc`), typescript v6 stays for typescript-eslint
 - [MINOR] Updated typescript to v6, type-check and declaration generation keep the v5 defaults for `types` and `noUncheckedSideEffectImports`
 - [MINOR] Fixed build-module-rolldown and build-server ignoring output options, so production builds are now minified (and modules get source maps) as configured
@@ -21,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Removed
 - [MAJOR] Removed all webpack and babel support
+- [MINOR] Removed the unused `getNodeModuleSize`, `findModulePath`, `calculateFolderSize`, `getFileSize` and `getFileSizes` from `scripts/util.js`
 
 ## [0.14.1] - 2026-01-29
 
