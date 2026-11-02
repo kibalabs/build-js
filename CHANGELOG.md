@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## [Unreleased]
 
 ### Added
+- [MINOR] Added `entries` to module builds for packages with several entries (e.g. subpath exports), each with its own css
 
 ### Changed
 
