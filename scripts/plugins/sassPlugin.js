@@ -15,9 +15,11 @@ const loadSass = async () => {
 // NOTE(krishan711): rolldown no longer bundles css (https://github.com/rolldown/rolldown/issues/4271)
 // so this compiles each imported style file, replaces it with an empty js module and emits the
 // styles of each entry (in module order, like vite does) as a css file next to the entry's chunk.
-// An entry's styles include the ones in the chunks it imports, so styles in chunks shared between
-// entries aren't lost. With several entries, the other entries only get the styles that aren't
-// already in the base entry's css (e.g. dist/toast/index.css is used on top of dist/index.css).
+// An entry's styles include the ones in the chunks it imports (statically or dynamically, since
+// users load the css up front), so styles in shared or lazily loaded chunks aren't lost and those
+// chunks don't get css files of their own. With several entries, the other entries only get the
+// styles that aren't already in the base entry's css (e.g. dist/toast/index.css is used on top of
+// dist/index.css).
 export const sassPlugin = ({ baseEntryName = 'index' } = {}) => {
   const moduleStyles = new Map();
   return {
@@ -66,9 +68,15 @@ export const sassPlugin = ({ baseEntryName = 'index' } = {}) => {
           }
         });
         chunk.moduleIds.filter((moduleId) => moduleStyles.has(moduleId)).forEach((moduleId) => styleModuleIds.add(moduleId));
+        chunk.dynamicImports.forEach((importedFileName) => {
+          const importedChunk = chunksByFileName.get(importedFileName);
+          if (importedChunk) {
+            collectStyleModuleIds(importedChunk, visitedFileNames, styleModuleIds);
+          }
+        });
         return styleModuleIds;
       };
-      const entryChunks = chunks.filter((chunk) => chunk.isEntry || chunk.isDynamicEntry);
+      const entryChunks = chunks.filter((chunk) => chunk.isEntry);
       const baseEntryChunk = entryChunks.length > 1 ? entryChunks.find((chunk) => chunk.isEntry && chunk.name === baseEntryName) : undefined;
       const baseStyleModuleIds = baseEntryChunk ? collectStyleModuleIds(baseEntryChunk) : new Set();
       entryChunks.forEach((chunk) => {
