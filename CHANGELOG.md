@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - [MINOR] Changed react-app-vite to put kibalabs packages in a chunk per entry (e.g. `vendor-kibalabs-core`, `vendor-kibalabs-core-web3`), so their releases don't change any third-party chunks
 - [MINOR] Changed module builds to emit one css file per entry with the styles of everything it imports (statically or lazily) instead of one per chunk, so shared and lazily loaded chunks (e.g. with `multiEntry`) no longer get css files of their own that nothing loads
 - [MINOR] Changed module builds to remove the output directory first, so files that are no longer built (e.g. chunks with old hashes) don't get published
+- [MINOR] Updated @stylistic/eslint-plugin to v6, linting now uses its `list-style` rule (a multi-line list has each item on its own line, fixable with `--fix`) instead of `object-curly-newline`
 - [MINOR] Updated type-check and declaration generation to typescript v7 (installed as `typescript-7`, run through its `tsc`), typescript v6 stays for typescript-eslint
 - [MINOR] Updated typescript to v6, type-check and declaration generation keep the v5 defaults for `types` and `noUncheckedSideEffectImports`
 - [MINOR] Fixed build-module-rolldown and build-server ignoring output options, so production builds are now minified (and modules get source maps) as configured
